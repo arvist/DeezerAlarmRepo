@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="horizontal"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+   >
+
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+         />
+
+  <!--  <Switch
+        android:id="@+id/alarmSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:thumb="@drawable/apptheme_switch_inner_holo_light"
+        android:track="@drawable/apptheme_switch_track_holo_light"
+        android:textOn="ON"
+        android:textOff="OFF"
+        android:textColor="@color/colorAccent"
+        />-->
+    <android.support.v7.widget.SwitchCompat  xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/alarmSwitch"
+
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="16dp"
+        android:textOff="OFF"
+        android:textOn="ON"
+        android:clickable="true"
+        android:checked="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="16dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/daysLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/moTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mo"
+            android:layout_marginRight="4dp"
+            />
+
+        <TextView
+            android:id="@+id/tuTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Tu"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/weTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="We"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/thTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Th"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/frTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Fr"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/saTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Sa"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+        <TextView
+            android:id="@+id/suTextView"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="Su"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
