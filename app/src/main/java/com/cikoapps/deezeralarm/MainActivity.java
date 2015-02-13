@@ -1,6 +1,7 @@
 package com.cikoapps.deezeralarm;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
@@ -70,6 +71,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AlarmDBHelper alarmDBHelper = new AlarmDBHelper((getApplicationContext()));
+        if(alarmDBHelper.checkForData()) Log.e("DATABASE","VALID");
+        else Log.e("DATABASE","INVALID");
         notoRegular = Typeface.createFromAsset(getAssets(), "NotoSerif-Regular.ttf");
         toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
@@ -103,26 +107,21 @@ public class MainActivity extends ActionBarActivity {
         dateTextView.setText(date);
         dateTextView.setTypeface(notoRegular);
 
-        /*DigitalClock digitalClock = (DigitalClock) findViewById(R.id.digitalClock);
-        digitalClock.setTypeface(notoRegular);
-        digitalClock.setTextColor(getResources().getColor(R.color.colorPrimaryText));
-
-        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000L,500.0f, new MyLocationListener());
-        Location location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);*/
         location = getLocation();
-
-
-/*
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();*/
-
 
         windTextView = (TextView) mainTopLayout.findViewById(R.id.windTextView);
         tempTextView = (TextView) mainTopLayout.findViewById(R.id.tempTextView);
 
         new TestAsync().execute();
+
+        findViewById(R.id.floatingActionButtonView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), AddAlarmActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
     }
 
@@ -217,28 +216,33 @@ public class MainActivity extends ActionBarActivity {
         List<Alarm> testAlarms = new ArrayList<>();
         Alarm alarm1 = new Alarm();
         alarm1.title = "Morning Alarm";
-        alarm1.time = "06:00 AM";
-        alarm1.isEnabled = true;
+        alarm1.hour = 06;
+        alarm1.minute = 30;
+        alarm1.enabled = true;
         alarm1.repeatingDays = new boolean[]{true, true, true, true, true, false, false};
         Alarm alarm2 = new Alarm();
         alarm2.title = "You are late alarm";
-        alarm2.time = "07:00 AM";
-        alarm2.isEnabled = true;
+        alarm2.hour = 12;
+        alarm2.minute = 30;
+        alarm2.enabled = true;
         alarm2.repeatingDays = new boolean[]{true, true, true, true, true, false, false};
         Alarm alarm3 = new Alarm();
         alarm3.title = "Weekend alarm";
-        alarm3.time = "08:00 AM";
-        alarm3.isEnabled = true;
+        alarm3.hour = 9;
+        alarm3.minute = 30;
+        alarm3.enabled = true;
         alarm3.repeatingDays = new boolean[]{false, false, false, false, false, true, true};
         Alarm alarm4 = new Alarm();
         alarm4.title = "You are late alarm";
-        alarm4.time = "07:00 AM";
-        alarm4.isEnabled = true;
+        alarm4.hour = 7;
+        alarm4.minute = 30;
+        alarm4.enabled = true;
         alarm4.repeatingDays = new boolean[]{false, false, false, false, false, false, false};
         Alarm alarm5 = new Alarm();
         alarm5.title = "Empty";
-        alarm5.time = "Empty";
-        alarm5.isEnabled = true;
+        alarm5.hour = 8;
+        alarm5.minute = 30;
+        alarm5.enabled = true;
         alarm5.repeatingDays = new boolean[]{false, false, false, false, false, false, false};
         testAlarms.add(alarm1);
         testAlarms.add(alarm2);

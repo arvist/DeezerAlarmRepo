@@ -1,147 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:orientation="horizontal"
-    android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     android:layout_marginLeft="16dp"
-   >
+    android:layout_marginTop="8dp"
+    android:orientation="horizontal">
 
 
     <TextView
         android:id="@+id/titleTextView"
-        android:textColor="@color/colorPrimaryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        />
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/timeTextView"
-        android:textColor="@color/colorPrimaryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-         />
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
 
-  <!--  <Switch
-        android:id="@+id/alarmSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/more"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:thumb="@drawable/apptheme_switch_inner_holo_light"
-        android:track="@drawable/apptheme_switch_track_holo_light"
-        android:textOn="ON"
-        android:textOff="OFF"
-        android:textColor="@color/colorAccent"
-        />-->
-    <android.support.v7.widget.SwitchCompat  xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/alarmSwitch"
+        ripple:rv_centered="true"
+        ripple:rv_color="@color/colorRippleWhiteBackground"
+        ripple:rv_ripplePadding="15dp"
+        ripple:rv_rippleDuration="200"
+        android:paddingRight="16dp">
 
-        android:layout_width="50dp"
-        android:layout_height="20dp"
-        android:layout_marginRight="16dp"
-        android:textOff="OFF"
-        android:textOn="ON"
-        android:clickable="true"
-        android:checked="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="16dp"/>
+        <android.support.v7.widget.SwitchCompat xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/alarmSwitch"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+
+            android:checked="true"
+            android:clickable="true"
+            android:textOff="OFF"
+            android:textOn="ON" />
+    </com.andexert.library.RippleView>
 
 
     <LinearLayout
         android:id="@+id/daysLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:textSize="14sp">
 
         <TextView
             android:id="@+id/moTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mo"
             android:layout_marginRight="4dp"
-            />
+            android:text="Mo"
+            android:textColor="@color/colorPrimaryText" />
 
         <TextView
             android:id="@+id/tuTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Tu"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="4dp"/>
+            android:text="Tu"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/weTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="We"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="4dp"/>
+            android:text="We"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/thTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Th"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="4dp"/>
+            android:text="Th"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/frTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Fr"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="4dp"/>
+            android:text="Fr"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/saTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Sa"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="4dp"/>
+            android:text="Sa"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/suTextView"
-            android:textColor="@color/colorPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Su"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginLeft="4dp"/>
+            android:text="Su"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

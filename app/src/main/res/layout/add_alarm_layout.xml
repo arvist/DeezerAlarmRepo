@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/app_bar" />
+
+    <TextView
+        android:id="@+id/titleInfoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_below="@+id/appBar"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="22dp"
+        android:gravity="center_horizontal"
+        android:text="Title"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/alarmTitle"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/titleInfoTextView"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/confirmAlarmAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:elevation="5dp"
+        android:src="@drawable/ic_confirm" />
+
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/cancelAlarmAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:elevation="5dp"
+        android:src="@drawable/ic_cancel" />
+
+    <TextView
+        android:id="@+id/ringtone"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"
+        android:layout_marginBottom="38dp"
+        android:gravity="center_vertical"
+        android:text="My favorite song playlist"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_above="@+id/ringtone"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:text="Ringtone"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/editRingtoneButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignLeft="@+id/titleInfoTextView"
+        android:layout_alignStart="@+id/titleInfoTextView"
+        android:layout_alignTop="@+id/ringtone"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/colorTransparent"
+        android:padding="12dp"
+        android:src="@drawable/ic_edit"
+        android:theme="@style/Base.Widget.AppCompat.ActionBar.Solid" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_above="@+id/radioGroup"
+        android:layout_alignLeft="@+id/radioGroup"
+        android:layout_alignStart="@+id/radioGroup"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@id/ringtone"
+        android:gravity="center_vertical"
+        android:text="Repeat Alarm"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cancelAlarmAdd"
+        android:layout_alignLeft="@+id/cancelAlarmAdd"
+        android:layout_alignStart="@+id/cancelAlarmAdd"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioButtonYes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignStart="@+id/textView"
+            android:layout_below="@+id/textView"
+            android:paddingBottom="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="Yes" />
+
+        <RadioButton
+            android:id="@+id/radioButtonNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_toLeftOf="@+id/editRingtoneButton"
+            android:layout_toStartOf="@+id/editRingtoneButton"
+            android:checked="true"
+            android:paddingBottom="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="No" />
+    </RadioGroup>
+
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:timePickerMode="spinner" />
+
+
+
+</RelativeLayout>

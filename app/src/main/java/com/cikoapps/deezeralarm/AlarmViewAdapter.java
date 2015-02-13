@@ -29,7 +29,6 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.alarmList = alarmList;
-        Log.e(alarmList.size() + " ", "ALARM LIST SIZE");
         notoRegular = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Regular.ttf");
         notoBold = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Bold.ttf");
 
@@ -48,7 +47,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         alarmViewHolder.titleTextView.setText(alarm.title);
         alarmViewHolder.titleTextView.setTypeface(notoRegular);
         alarmViewHolder.titleTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
-        alarmViewHolder.timeTextView.setText(alarm.time);
+        alarmViewHolder.timeTextView.setText(alarm.hour + " : " + alarm.minute);
         alarmViewHolder.timeTextView.setTypeface(notoRegular);
         alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         alarmViewHolder.alarmSwitch.setWillNotDraw(false);
@@ -59,8 +58,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
             alarmViewHolder.alarmSwitch.setTrackResource(R.drawable.apptheme_switch_track_holo_light);
         }
 
-        alarmViewHolder.alarmSwitch.setChecked(alarm.isEnabled);
-        Log.e(alarm.title + "  " + position, areAllFalse(alarm.repeatingDays) + " ");
+        alarmViewHolder.alarmSwitch.setChecked(alarm.enabled);
         if (areAllFalse(alarm.repeatingDays)) {
 
             for (int i = 0; i < alarmViewHolder.daysTextViewList.size(); i++) {
@@ -80,9 +78,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
                     dayTextView.setTypeface(notoRegular);
                 }
             }
-            Log.e(alarm.title + "  " + position, "DRAWN");
         }
-        Log.e(alarmList.size() + " ", "" + position);
         if (position == alarmList.size() - 1) {
             alarmViewHolder.titleTextView.setTextColor(context.getResources().getColor(R.color.colorTransparent));
             alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorTransparent));
