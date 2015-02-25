@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <include
+        android:id="@+id/mainTopLayout"
+        layout="@layout/weather_layout" />
+
+    <View
+        android:id="@+id/horizontalLineView"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="202dp"
+        android:background="@color/colorDivider" />
+
+    <FrameLayout
+        android:id="@+id/alarm_bottom_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="204dp">
+
+    </FrameLayout>
+
+
+</RelativeLayout>

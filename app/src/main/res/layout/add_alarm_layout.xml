@@ -7,7 +7,7 @@
 
     <include
         android:id="@+id/appBar"
-        layout="@layout/app_bar" />
+        layout="@layout/app_bar_add_alarm" />
 
     <TextView
         android:id="@+id/titleInfoTextView"
@@ -31,7 +31,8 @@
         android:layout_marginRight="16dp"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:maxLength="30" />
 
     <com.shamanland.fab.FloatingActionButton
         android:id="@+id/confirmAlarmAdd"
@@ -61,13 +62,14 @@
     <TextView
         android:id="@+id/ringtone"
         android:layout_width="wrap_content"
+        android:maxWidth="180dp"
         android:layout_height="48dp"
         android:layout_alignBottom="@+id/textView"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignStart="@+id/textView2"
         android:layout_marginBottom="38dp"
         android:gravity="center_vertical"
-        android:text="My favorite song playlist"
+        android:text="Default ringtone"
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp" />
 
@@ -86,15 +88,13 @@
         android:id="@+id/editRingtoneButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_alignLeft="@+id/titleInfoTextView"
-        android:layout_alignStart="@+id/titleInfoTextView"
-        android:layout_alignTop="@+id/ringtone"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorTransparent"
         android:padding="12dp"
         android:src="@drawable/ic_edit"
-        android:theme="@style/Base.Widget.AppCompat.ActionBar.Solid" />
+        android:theme="@style/Base.Widget.AppCompat.ActionBar.Solid"
+        android:layout_alignTop="@+id/ringtone"
+        android:layout_toRightOf="@+id/ringtone"
+        android:layout_toEndOf="@+id/ringtone" />
 
     <TextView
         android:id="@+id/textView"
@@ -154,7 +154,6 @@
         android:layout_above="@+id/textView2"
         android:layout_centerHorizontal="true"
         android:timePickerMode="spinner" />
-
 
 
 </RelativeLayout>

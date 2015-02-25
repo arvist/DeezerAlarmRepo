@@ -1,0 +1,141 @@
+<RelativeLayout
+    android:id="@+id/mainTopLayout"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentRight="true"
+    android:layout_below="@+id/appBar"
+    android:layout_gravity="top"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/tempImageView"
+        android:layout_width="25dp"
+        android:layout_height="35dp"
+        android:src="@drawable/temp"
+        android:layout_below="@+id/summaryTextView"
+        android:layout_alignLeft="@+id/summaryTextView"
+        android:layout_alignStart="@+id/summaryTextView" />
+
+    <TextView
+        android:id="@+id/tempTextView"
+        android:layout_width="90dp"
+        android:layout_height="35dp"
+        android:layout_above="@+id/windTextView"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp"
+        android:layout_toEndOf="@+id/tempImageView"
+        android:layout_toRightOf="@+id/tempImageView"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="14sp"
+        android:text="28.6*C" />
+
+    <ImageView
+        android:id="@+id/windImageView"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/wind"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/tempImageView"
+        android:layout_alignStart="@+id/tempImageView" />
+
+    <TextView
+        android:id="@+id/summaryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_above="@+id/tempTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="14sp"
+        android:text="Mostly Cloudy"
+        android:maxWidth="150dp" />
+
+    <TextView
+        android:id="@+id/windTextView"
+        android:layout_width="90dp"
+        android:layout_height="35dp"
+        android:layout_alignLeft="@+id/tempTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/tempTextView"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="14sp"
+        android:text="4.5 m/s" />
+
+    <ImageView
+        android:id="@+id/weatherImageView"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:contentDescription="weather image"
+        android:src="@drawable/weather_sunny"
+        android:layout_alignTop="@+id/digitalClock"
+        android:layout_alignLeft="@+id/summaryTextView"
+        android:layout_alignStart="@+id/summaryTextView" />
+
+    <DigitalClock
+        android:id="@+id/digitalClock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="42dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/digitalClock"
+        android:layout_alignRight="@+id/digitalClock"
+        android:layout_below="@+id/digitalClock"
+        android:paddingTop="8dp"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="14sp"
+        android:text="February 25, 2015" />
+
+    <ImageButton
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/refreshButton"
+        android:src="@drawable/ic_action_cached"
+        android:background="@color/colorTransparent"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/timeTextView"
+        android:layout_toStartOf="@+id/timeTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7 minutes"
+        android:id="@+id/timeTextView"
+        android:layout_below="@+id/tempTextView"
+        android:layout_toLeftOf="@+id/text_ago"
+        android:layout_toStartOf="@+id/text_ago" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" ago"
+        android:id="@+id/text_ago"
+        android:layout_alignTop="@+id/timeTextView"
+        android:layout_alignRight="@+id/dateTextView"
+        android:layout_alignEnd="@+id/dateTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Riga"
+        android:id="@+id/cityTextView"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/dateTextView"
+        android:layout_alignStart="@+id/dateTextView" />
+
+
+</RelativeLayout>

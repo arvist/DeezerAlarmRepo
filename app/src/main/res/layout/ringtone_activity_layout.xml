@@ -1,31 +1,49 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-    <include layout="@layout/app_bar"
+    <include
         android:id="@+id/ringtoneAppBar"
-        />
+        layout="@layout/app_bar_select_ringtone" />
 
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/ringtone_tabs"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
-        app:pstsPaddingMiddle="false"
-        app:pstsIndicatorColor ="@color/colorAccent"
+        android:textColor="@color/colorWhite"
         android:textSize="14sp"
-        android:textColor = "@color/colorWhite"
-        />
+        app:pstsIndicatorColor="@color/colorAccent"
+        app:pstsPaddingMiddle="false"
+        app:pstsIndicatorHeight="3dp"
+        android:layout_below="@+id/ringtoneAppBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/ringtone_pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:context=".MainActivity"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ringtone_tabs" />
 
-</LinearLayout>
+    <com.shamanland.fab.FloatingActionButton
+        android:id="@+id/confirmRingtone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:elevation="5dp"
+        android:src="@drawable/ic_confirm"
+        android:background="@color/colorTransparent"
+        android:layout_gravity="right" />
+
+</RelativeLayout>
