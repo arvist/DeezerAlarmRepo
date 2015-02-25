@@ -14,6 +14,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,7 +81,18 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     protected String doInBackground(Void... arg0) {
         Log.e(TAG, "weather data async in doInBackground");
-        String url = "http://api.forecast.io/forecast/9f1f81ecb721deab510e0c1249aca1b4/" + latitude + "," + longitude + "";
+        final String apikey = "0a6bad312fb111db3c658e0250965";
+        String url = "http://api.worldweatheronline.com/premium/v1/weather.ashx?q=" +
+                ""+latitude+"%2C"+longitude+""+
+                "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&show_comments=no&showlocaltime=no&" +
+                "key="+apikey+"";
+        latitude = HelperClass.round(latitude,3);
+        longitude = HelperClass.round(longitude,3);
+
+        Log.e(TAG, url);
+
+        Log.e(TAG, url);
+        //String url = "http://api.forecast.io/forecast/9f1f81ecb721deab510e0c1249aca1b4/" + latitude + "," + longitude + "";
         weatherJson = getJSONFromUrl(url);
         return "You are at PostExecute";
     }
@@ -88,24 +100,29 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     protected void onPostExecute(String result) {
         if (weatherJson != null) {
             try {
-                JSONObject currentlyJSONObj = weatherJson.getJSONObject("currently");
+               /* JSONObject currentlyJSONObj = weatherJson.getJSONObject("currently");
                 String icon = currentlyJSONObj.getString("icon");
                 String summary = currentlyJSONObj.getString("summary");
                 double tempF = currentlyJSONObj.getDouble("temperature");
                 double windSpeedMph = currentlyJSONObj.getDouble("windSpeed");
                 double tempC = HelperClass.round(helperClass.getCelsiusFromFarenheit(tempF), 1);
-                double windSpeedMs = HelperClass.round(helperClass.getMsFromMph(windSpeedMph), 1);
-                setWeatherImage(icon);
+                double windSpeedMs = HelperClass.round(helperClass.getMsFromMph(windSpeedMph), 1);*/
+                JSONObject dataJsonObj = weatherJson.getJSONObject("data");
+                //JSONArray currentConditionJsonArr = dataJsonObj.getJSONArray("current_condition");
+                String summary = dataJsonObj.getJSONObject("weatherDesc").getString("value");
+
+
+                // setWeatherImage(icon);
 
                 tempImageView.setImageResource(R.drawable.temp);
                 windImageView.setImageResource(R.drawable.wind);
                 if (metricSystem) {
-                    windTextView.setText(windSpeedMs + "m/s");
-                    tempTextView.setText(tempC + " ℃");
+                    // windTextView.setText(windSpeedMs + "m/s");
+                    //tempTextView.setText(tempC + " ℃");
                     summaryTextView.setText(summary);
                 } else {
-                    windTextView.setText(windSpeedMph + "mph");
-                    tempTextView.setText(tempF + " °F ");
+                    //windTextView.setText(windSpeedMph + "mph");
+                    //tempTextView.setText(tempF + " °F ");
                     summaryTextView.setText(summary);
                 }
             } catch (JSONException e) {

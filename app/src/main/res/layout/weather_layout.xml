@@ -51,7 +51,7 @@
         android:gravity="center_vertical"
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp"
-        android:text="Mostly Cloudy"
+        android:text=""
         android:maxWidth="150dp" />
 
     <TextView
