@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/albumImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_cancel"
+        android:background="@color/colorTransparent"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="9dp" />
+
+    <TextView
+        android:id="@+id/albumTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="16sp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:layout_alignTop="@+id/albumImage"
+        android:layout_alignLeft="@+id/albumArtistTextView"
+        android:layout_alignStart="@+id/albumArtistTextView" />
+
+    <TextView
+        android:id="@+id/albumArtistTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Album artist"
+        android:textSize="14dp"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_below="@+id/albumTitleTextView"
+        android:layout_toRightOf="@+id/albumImage"
+        android:layout_toEndOf="@+id/albumImage" />
+
+    <RadioButton
+        android:id="@+id/albumRadioButton"
+        android:button="@drawable/material_radio_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:checked="true"
+        android:layout_marginRight="16dp" />
+
+</RelativeLayout>
