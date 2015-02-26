@@ -54,7 +54,7 @@ public class MyLocation implements
             double longitude = Double.parseDouble(lng);
             Log.e(TAG, lat + " - LAT");
             Log.e(TAG, lng + " - LNG");
-            new WeatherDataAsync(mainTopLayout, metricSystem, latitude, longitude, context).execute();
+            new WeatherDataAsync(mainTopLayout, true ,true, latitude, longitude, context).execute();
         }
     }
 

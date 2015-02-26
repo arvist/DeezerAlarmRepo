@@ -1,9 +1,11 @@
 package com.cikoapps.deezeralarm.HelperClasses;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -48,8 +50,10 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     private String TAG = "WeatherDataAsync.java";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private boolean windKBool;
+    private boolean tempCBool;
 
-    public WeatherDataAsync(RelativeLayout weatherLayout, boolean metricSystem, double latitude, double longtitude, Context context) {
+    public WeatherDataAsync(RelativeLayout weatherLayout, boolean tempCBool, boolean windKBool, double latitude, double longtitude, Context context) {
 
         dateTextView = (TextView) weatherLayout.findViewById(R.id.dateTextView);
         weatherImageView = (ImageView) weatherLayout.findViewById(R.id.weatherImageView);
@@ -62,7 +66,8 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         cityTextView = (TextView) weatherLayout.findViewById(R.id.cityTextView);
 
 
-        this.metricSystem = metricSystem;
+        this.tempCBool = tempCBool;
+        this.windKBool = windKBool;
         this.latitude = latitude;
         this.longitude = longtitude;
         setDate();
@@ -86,19 +91,14 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     protected String doInBackground(Void... arg0) {
 
-        Log.e(TAG, "weather data async in doInBackground");
         final String apikey = "0a6bad312fb111db3c658e0250965";
+        latitude = HelperClass.round(latitude, 3);
+        longitude = HelperClass.round(longitude, 3);
         String url = "http://api.worldweatheronline.com/premium/v1/weather.ashx?q=" +
                 "" + latitude + "%2C" + longitude + "" +
                 "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&show_comments=no&showlocaltime=no&" +
                 "key=" + apikey + "";
-        latitude = HelperClass.round(latitude, 3);
-        longitude = HelperClass.round(longitude, 3);
-
         Log.e(TAG, url);
-
-        Log.e(TAG, url);
-        //String url = "http://api.forecast.io/forecast/9f1f81ecb721deab510e0c1249aca1b4/" + latitude + "," + longitude + "";
         weatherJson = getJSONFromUrl(url);
         return "You are at PostExecute";
     }
@@ -107,58 +107,41 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         if (weatherJson != null) {
             try {
                 JSONObject dataJsonObj = weatherJson.getJSONObject("data");
-                JSONArray currentConditionJsonArr = dataJsonObj.getJSONArray("current_condition");
-                JSONArray nearestAreaJsonArr = dataJsonObj.getJSONArray("nearest_area");
-                String city = dataJsonObj.getJSONArray("nearest_area").getJSONObject(0).getJSONArray("region").getJSONObject(0).get("value").toString();
-                Log.e(TAG, city);
-                JSONObject currentConditionJsonObj = currentConditionJsonArr.getJSONObject(0);
+                JSONObject currentConditionJsonObj = dataJsonObj.getJSONArray("current_condition").getJSONObject(0);
                 JSONObject weatherDesc = currentConditionJsonObj.getJSONArray("weatherDesc").getJSONObject(0);
                 String summary = weatherDesc.get("value").toString();
                 String tempC = currentConditionJsonObj.getString("temp_C");
                 String tempF = currentConditionJsonObj.getString("temp_F");
                 String windSpeedMph = currentConditionJsonObj.getString("windspeedMiles");
                 String windSpeedKmph = currentConditionJsonObj.getString("windspeedKmph");
-                // setWeatherImage(icon);
-
-                tempImageView.setImageResource(R.drawable.temp);
-                windImageView.setImageResource(R.drawable.wind);
+                String city = dataJsonObj.getJSONArray("nearest_area").getJSONObject(0).getJSONArray("region").getJSONObject(0).getString("value").toString();
                 cityTextView.setText(city);
                 summaryTextView.setText(summary);
                 summaryTextView.setMaxLines(2);
-                if (metricSystem) {
-                    windTextView.setText(windSpeedKmph + " kmph");
-                    tempTextView.setText(tempC + " ℃");
-
+                timeTextView.setText("0 minutes");
+                if (windKBool) {
+                    windTextView.setText(windSpeedKmph + " kph");
                 } else {
                     windTextView.setText(windSpeedMph + "mph");
-                    tempTextView.setText(tempF + " °F ");
                 }
-            } catch (JSONException e) {
-                if (metricSystem) {
-                    windTextView.setText(0 + "m/s");
-                    tempTextView.setText(0 + " ℃");
+                if (tempCBool) {
+                    tempTextView.setText(tempC + " ℃");
                 } else {
-                    windTextView.setText(0 + "mph");
-                    tempTextView.setText(0 + " °F ");
+                    tempTextView.setText(tempF + " ℉");
                 }
+                saveWeatherToSharedPreferences(summary, Float.parseFloat(tempC), Float.parseFloat(tempF)
+                        , Float.parseFloat(windSpeedKmph), Float.parseFloat(windSpeedMph), city, -1);
+            } catch (JSONException e) {
             }
-        } else {
-            weatherImageView.setWillNotDraw(true);
-            tempImageView.setWillNotDraw(true);
-            windImageView.setWillNotDraw(true);
-            windTextView.setWillNotDraw(true);
-            tempTextView.setWillNotDraw(true);
         }
-
     }
 
 
-    private void setWeatherImage(String icon) {
-            /*
-            clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night
-             */
+    private int setWeatherImage(String icon) {
+
         if (icon.equalsIgnoreCase("clear-day")) {
             weatherImageView.setImageResource(R.drawable.ic_launcher);
+
         } else if (icon.equalsIgnoreCase("clear-night")) {
             weatherImageView.setImageResource(R.drawable.ic_launcher);
         } else if (icon.equalsIgnoreCase("rain")) {
@@ -186,6 +169,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         } else {
             weatherImageView.setImageResource(R.drawable.ic_launcher);
         }
+        return -1;
     }
 
     public JSONObject getJSONFromUrl(String url) {
@@ -225,6 +209,57 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         return jObj;
     }
 
+    private void saveWeatherToSharedPreferences(String summary, float tempC, float tempF, float windKmh, float windMph,
+                                                String city, int weatherImage) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("summary", summary);
+        editor.putFloat("tempC", tempC);
+        editor.putFloat("tempF", tempF);
+        editor.putFloat("windKmh", windKmh);
+        editor.putFloat("windMph", windMph);
+        editor.putString("city", city);
+        editor.putLong("time", Calendar.getInstance().getTimeInMillis());
+        editor.putInt("weather", weatherImage);
+        editor.commit();
+        Log.e(TAG, "Saved to shared preferences");
+    }
 
+    public void setFromSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Calendar calendar = Calendar.getInstance();
+        long timeNow = calendar.getTimeInMillis();
+        boolean windKmBool = sharedPreferences.getBoolean("windKmBool", true);
+        boolean tempCBool = sharedPreferences.getBoolean("tempCBool", true);
+        String summary = sharedPreferences.getString("summary", "");
+
+        float tempC = sharedPreferences.getFloat("tempC", -1);
+        float tempF = sharedPreferences.getFloat("tempF", -1);
+        float windKmh = sharedPreferences.getFloat("windKmh", -1);
+        float windMph = sharedPreferences.getFloat("windMph", -1);
+
+        String city = sharedPreferences.getString("city", "");
+        long updateTime = sharedPreferences.getLong("time", -1);
+        int weatherImage = sharedPreferences.getInt("weather", -1);
+        weatherImageView.setImageResource(weatherImage);
+        long timeFromUpdateLong = timeNow - updateTime;
+        int minutes = (int) (timeFromUpdateLong / 60000);
+        timeTextView.setText(minutes + " minutes");
+        cityTextView.setText(city);
+        windImageView.setImageResource(R.drawable.wind);
+        tempImageView.setImageResource(R.drawable.temp);
+        if (windKmBool) {
+            windTextView.setText(windKmh + "kph");
+        } else {
+            windTextView.setText(windMph + "mph");
+        }
+        if (tempCBool) {
+            tempTextView.setText(tempC + " ℃");
+        } else {
+            tempTextView.setText(tempF + " ℉");
+        }
+
+        summaryTextView.setText(summary);
+        Log.e(TAG, "data loaded from shared preferences");
+    }
 }
-

@@ -16,6 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -53,6 +56,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
+        mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
+
+        weatherDataAsync = new WeatherDataAsync(mainTopLayout, true, true, -1, -1, context);
+        weatherDataAsync.setFromSharedPreferences();
         appBarActions();
         AlarmDBHelper alarmDBHelper = new AlarmDBHelper((getApplicationContext()));
         if (alarmDBHelper.checkForData()) Log.e("DATABASE", "VALID");
@@ -60,7 +68,6 @@ public class MainActivity extends ActionBarActivity {
         notoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
-        context = this;
 
         alarmRecyclerView = (RecyclerView) findViewById(R.id.alarmRecyclerView);
         alarmRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(
@@ -73,7 +80,6 @@ public class MainActivity extends ActionBarActivity {
         alarmRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         alarmRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
 
 
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
@@ -96,10 +102,19 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void refresh() {
+
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 myLocation.reconnectGoogleApiClient();
+                RotateAnimation anim = new RotateAnimation(0f, 350f, 48, 48);
+                anim.initialize(48, 48, 48, 48);
+                // Step 2:  Set the Animation properties
+                anim.setInterpolator(new LinearInterpolator());
+                anim.setRepeatCount(Animation.RELATIVE_TO_SELF);
+                anim.setDuration(700);
+                refreshButton.startAnimation(anim);
+
             }
         });
     }

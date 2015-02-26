@@ -95,7 +95,7 @@ public class AlarmScreenActivity extends DeezerBase {
         double longitude = coordinates[1];
 
         if (helperClass.haveNetworkConnection()) {
-            new WeatherDataAsync(mainTopLayout, metricSystem, latitude, longitude, this).execute();
+            new WeatherDataAsync(mainTopLayout, true, true, latitude, longitude, this).execute();
         }
     }
 

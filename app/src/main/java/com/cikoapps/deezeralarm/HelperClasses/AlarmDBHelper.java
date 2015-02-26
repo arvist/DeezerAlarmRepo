@@ -45,8 +45,8 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
             this.getReadableDatabase();
             myDataBase = myContext.openOrCreateDatabase(DB_NAME, Context.MODE_PRIVATE, null);
             myDataBase.execSQL(SQL_CREATE_ALARM);
-            Log.e("DEBUG", SQL_CREATE_ALARM);
-
+            myDataBase.execSQL(SQL_CREATE_WEATHER);
+            Log.e(TAG, SQL_CREATE_WEATHER);
         }
         close();
     }
@@ -75,7 +75,19 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
-
+    private static final String SQL_CREATE_WEATHER =
+            "CREATE TABLE `weather` (\n" +
+                    "\t`_id`\tINTEGER,\n" +
+                    "\t`timeStamp`\tTEXT,\n" +
+                    "\t`city`\tTEXT,\n" +
+                    "\t`tempC`\tREAL,\n" +
+                    "\t`tempF`\tREAL,\n" +
+                    "\t`windK`\tREAL,\n" +
+                    "\t`windM`\tREAL,\n" +
+                    "\t`summary`\tTEXT,\n" +
+                    "\t`icon_id`\tINTEGER,\n" +
+                    "\tPRIMARY KEY(_id)\n" +
+                    ");";
     private static final String SQL_CREATE_ALARM =
             "CREATE TABLE " + AlarmContract.TABLE_NAME + " (" + "\"" +
                     AlarmContract._ID + "\"" + " INTEGER PRIMARY KEY AUTOINCREMENT," + "\"" +
@@ -88,10 +100,22 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                     AlarmContract.COLUMN_NAME_ALARM_TONE + "\"" + " TEXT," + "\"" +
                     AlarmContract.COLUMN_NAME_ID + "\"" + " INT," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_TYPE + "\"" + " INT," + "\"" +
-
                     AlarmContract.COLUMN_NAME_ALARM_ENABLED + "\"" + " BOOLEAN" + " )";
 
+    public void insertWeather(String timeStamp, String city, double tempC, double tempF,
+                              double windK, double windM, String summary, int icon_id ){
+        String insertQuery = "Insert into weather (timeStamp, city, tempC, tempF, windK, windM, summary, icon_Id) " +
+                "values(\""+timeStamp+"\",\""+city+"\", "+tempC+", "+tempF+", "+windK+", "+windM+", \""+summary+"\", "+icon_id+");";
+        try {
+            openDataBase();
+            myDataBase.execSQL(insertQuery);
+            Log.e("DEBUG", insertQuery);
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+    }
     public void insertAlarm(String title, int hour, int minute, String repeatDays, boolean repeatWeekly, String alarmToneName,
                             String alarmTone, long alamrid, int type, boolean enabled) {
 
