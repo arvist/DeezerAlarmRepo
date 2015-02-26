@@ -2,6 +2,7 @@ package com.cikoapps.deezeralarm.HelperClasses;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
@@ -9,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.R;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,6 +28,7 @@ import java.util.Calendar;
 
 public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
+    TextView cityTextView;
     JSONObject weatherJson;
     TextView dateTextView;
     ImageView weatherImageView;
@@ -43,6 +46,8 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     TextView timeTextView;
     private String TAG = "WeatherDataAsync.java";
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
 
     public WeatherDataAsync(RelativeLayout weatherLayout, boolean metricSystem, double latitude, double longtitude, Context context) {
 
@@ -54,6 +59,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         windTextView = (TextView) weatherLayout.findViewById(R.id.windTextView);
         tempTextView = (TextView) weatherLayout.findViewById(R.id.tempTextView);
         timeTextView = (TextView) weatherLayout.findViewById(R.id.timeTextView);
+        cityTextView = (TextView) weatherLayout.findViewById(R.id.cityTextView);
 
 
         this.metricSystem = metricSystem;
@@ -67,7 +73,6 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     }
 
-
     public void setDate() {
         Calendar currentTime = Calendar.getInstance();
         int month = currentTime.get(currentTime.MONTH);
@@ -80,14 +85,15 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     }
 
     protected String doInBackground(Void... arg0) {
+
         Log.e(TAG, "weather data async in doInBackground");
         final String apikey = "0a6bad312fb111db3c658e0250965";
         String url = "http://api.worldweatheronline.com/premium/v1/weather.ashx?q=" +
-                ""+latitude+"%2C"+longitude+""+
+                "" + latitude + "%2C" + longitude + "" +
                 "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&show_comments=no&showlocaltime=no&" +
-                "key="+apikey+"";
-        latitude = HelperClass.round(latitude,3);
-        longitude = HelperClass.round(longitude,3);
+                "key=" + apikey + "";
+        latitude = HelperClass.round(latitude, 3);
+        longitude = HelperClass.round(longitude, 3);
 
         Log.e(TAG, url);
 
@@ -100,30 +106,32 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     protected void onPostExecute(String result) {
         if (weatherJson != null) {
             try {
-               /* JSONObject currentlyJSONObj = weatherJson.getJSONObject("currently");
-                String icon = currentlyJSONObj.getString("icon");
-                String summary = currentlyJSONObj.getString("summary");
-                double tempF = currentlyJSONObj.getDouble("temperature");
-                double windSpeedMph = currentlyJSONObj.getDouble("windSpeed");
-                double tempC = HelperClass.round(helperClass.getCelsiusFromFarenheit(tempF), 1);
-                double windSpeedMs = HelperClass.round(helperClass.getMsFromMph(windSpeedMph), 1);*/
                 JSONObject dataJsonObj = weatherJson.getJSONObject("data");
-                //JSONArray currentConditionJsonArr = dataJsonObj.getJSONArray("current_condition");
-                String summary = dataJsonObj.getJSONObject("weatherDesc").getString("value");
-
-
+                JSONArray currentConditionJsonArr = dataJsonObj.getJSONArray("current_condition");
+                JSONArray nearestAreaJsonArr = dataJsonObj.getJSONArray("nearest_area");
+                String city = dataJsonObj.getJSONArray("nearest_area").getJSONObject(0).getJSONArray("region").getJSONObject(0).get("value").toString();
+                Log.e(TAG, city);
+                JSONObject currentConditionJsonObj = currentConditionJsonArr.getJSONObject(0);
+                JSONObject weatherDesc = currentConditionJsonObj.getJSONArray("weatherDesc").getJSONObject(0);
+                String summary = weatherDesc.get("value").toString();
+                String tempC = currentConditionJsonObj.getString("temp_C");
+                String tempF = currentConditionJsonObj.getString("temp_F");
+                String windSpeedMph = currentConditionJsonObj.getString("windspeedMiles");
+                String windSpeedKmph = currentConditionJsonObj.getString("windspeedKmph");
                 // setWeatherImage(icon);
 
                 tempImageView.setImageResource(R.drawable.temp);
                 windImageView.setImageResource(R.drawable.wind);
+                cityTextView.setText(city);
+                summaryTextView.setText(summary);
+                summaryTextView.setMaxLines(2);
                 if (metricSystem) {
-                    // windTextView.setText(windSpeedMs + "m/s");
-                    //tempTextView.setText(tempC + " ℃");
-                    summaryTextView.setText(summary);
+                    windTextView.setText(windSpeedKmph + " kmph");
+                    tempTextView.setText(tempC + " ℃");
+
                 } else {
-                    //windTextView.setText(windSpeedMph + "mph");
-                    //tempTextView.setText(tempF + " °F ");
-                    summaryTextView.setText(summary);
+                    windTextView.setText(windSpeedMph + "mph");
+                    tempTextView.setText(tempF + " °F ");
                 }
             } catch (JSONException e) {
                 if (metricSystem) {

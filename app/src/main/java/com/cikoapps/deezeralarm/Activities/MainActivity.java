@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
+import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
 import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
 import com.cikoapps.deezeralarm.R;
@@ -47,8 +47,7 @@ public class MainActivity extends ActionBarActivity {
     ImageButton refreshButton;
     WeatherDataAsync weatherDataAsync;
     RelativeLayout mainTopLayout;
-    double latitude;
-    double longitude;
+    MyLocation myLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +75,8 @@ public class MainActivity extends ActionBarActivity {
 
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
 
-        HelperClass helperClass = new HelperClass(this);
-        double[] coordinates = helperClass.getGPS();
-        double latitude = coordinates[0];
-        double longitude = coordinates[1];
-        Log.e(TAG, "Latitude " + latitude + "Longitude " + longitude);
+
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
-        weatherDataAsync = new WeatherDataAsync(mainTopLayout, metricSystem, latitude, longitude, this);
-        weatherDataAsync.execute();
 
 
         findViewById(R.id.floatingActionButtonView).setOnClickListener(new View.OnClickListener() {
@@ -97,17 +90,16 @@ public class MainActivity extends ActionBarActivity {
 
         longClickDialog();
         refresh();
+
+        myLocation = new MyLocation(this, metricSystem, mainTopLayout);
+        myLocation.buildGoogleApiClient();
     }
 
     private void refresh() {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                weatherDataAsync.cancel(true);
-                weatherDataAsync = null;
-                weatherDataAsync = new WeatherDataAsync(mainTopLayout, metricSystem, latitude, longitude, context);
-                weatherDataAsync.execute();
-                // New Thread that changes image src every some? milliseconds.
+                myLocation.reconnectGoogleApiClient();
             }
         });
     }
