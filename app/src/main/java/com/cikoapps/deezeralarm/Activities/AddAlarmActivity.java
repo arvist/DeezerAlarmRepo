@@ -106,14 +106,15 @@ public class AddAlarmActivity extends DeezerBase {
                     repeatingDaysDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            if (helperClass.allFalse(selected)) {
+                                findViewById(R.id.radioButtonYes).setActivated(false);
+                                findViewById(R.id.radioButtonNo).setActivated(true);
+                            }
                         }
                     });
                     repeatingDaysDialog.show();
                 }
-                if (helperClass.allFalse(selected)) {
-                    findViewById(R.id.radioButtonYes).setActivated(false);
-                    findViewById(R.id.radioButtonNo).setActivated(true);
-                }
+
             }
 
         });

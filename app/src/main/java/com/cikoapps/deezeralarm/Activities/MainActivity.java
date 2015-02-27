@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,15 +18,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
+import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
 import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
@@ -33,6 +33,7 @@ import com.cikoapps.deezeralarm.adapters.AlarmViewAdapter;
 import com.cikoapps.deezeralarm.models.Alarm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
@@ -51,12 +52,14 @@ public class MainActivity extends ActionBarActivity {
     WeatherDataAsync weatherDataAsync;
     RelativeLayout mainTopLayout;
     MyLocation myLocation;
+    HelperClass helperClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        helperClass = new HelperClass(this);
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
 
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, true, true, -1, -1, context);
@@ -96,25 +99,38 @@ public class MainActivity extends ActionBarActivity {
 
         longClickDialog();
         refresh();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int refreshTime = preferences.getInt("selectedInterval", 1);
 
-        myLocation = new MyLocation(this, metricSystem, mainTopLayout);
-        myLocation.buildGoogleApiClient();
+        long lastUpdateTimeMillis = preferences.getLong("time", 0);
+        Calendar deleteCalendar = Calendar.getInstance();
+        deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);
+        Log.e(TAG, "Last update time - " + deleteCalendar.getTime().toString());
+        int milliSecondsRefreshTime = (refreshTime + 1) * 5 * 60000;
+        Log.e(TAG, "Refresh Time in Minutes - " + (milliSecondsRefreshTime / 60000));
+        Calendar calendar = Calendar.getInstance();
+        Log.e(TAG, "Time now - " + calendar.getTime().toString());
+        long currentMillis = calendar.getTimeInMillis();
+        if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
+            myLocation = new MyLocation(this, metricSystem, mainTopLayout);
+            myLocation.buildGoogleApiClient();
+        }
     }
 
     private void refresh() {
-
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myLocation.reconnectGoogleApiClient();
-                RotateAnimation anim = new RotateAnimation(0f, 350f, 48, 48);
-                anim.initialize(48, 48, 48, 48);
-                // Step 2:  Set the Animation properties
-                anim.setInterpolator(new LinearInterpolator());
-                anim.setRepeatCount(Animation.RELATIVE_TO_SELF);
-                anim.setDuration(700);
-                refreshButton.startAnimation(anim);
-
+                if (new HelperClass(context).haveNetworkConnection()) {
+                    if (myLocation != null) {
+                        myLocation.reconnectGoogleApiClient();
+                    } else {
+                        myLocation = new MyLocation(context, metricSystem, mainTopLayout);
+                        myLocation.buildGoogleApiClient();
+                    }
+                } else {
+                    Toast.makeText(context, "No network connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

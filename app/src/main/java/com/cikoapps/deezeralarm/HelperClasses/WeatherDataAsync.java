@@ -3,22 +3,24 @@ package com.cikoapps.deezeralarm.HelperClasses;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+import android.widget.DigitalClock;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.R;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,8 +30,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 
+@SuppressWarnings("deprecation")
 public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
+    ImageButton refreshButton;
     TextView cityTextView;
     JSONObject weatherJson;
     TextView dateTextView;
@@ -48,10 +52,11 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     TextView timeTextView;
     private String TAG = "WeatherDataAsync.java";
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
-    private boolean windKBool;
-    private boolean tempCBool;
+
+    private Animation a;
+    boolean windMilesBool;
+    boolean tempFBool;
+    boolean clock12Hours;
 
     public WeatherDataAsync(RelativeLayout weatherLayout, boolean tempCBool, boolean windKBool, double latitude, double longtitude, Context context) {
 
@@ -64,10 +69,15 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         tempTextView = (TextView) weatherLayout.findViewById(R.id.tempTextView);
         timeTextView = (TextView) weatherLayout.findViewById(R.id.timeTextView);
         cityTextView = (TextView) weatherLayout.findViewById(R.id.cityTextView);
+        refreshButton = (ImageButton) weatherLayout.findViewById(R.id.refreshButton);
+        DigitalClock digitalClock = (DigitalClock) weatherLayout.findViewById(R.id.digitalClock);
 
 
-        this.tempCBool = tempCBool;
-        this.windKBool = windKBool;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        windMilesBool = preferences.getBoolean("windMilesBool", false);
+        tempFBool = preferences.getBoolean("tempFBool", false);
+        clock12Hours = preferences.getBoolean("clock12HoursBool", false);
+
         this.latitude = latitude;
         this.longitude = longtitude;
         setDate();
@@ -75,6 +85,18 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         this.context = context;
         notoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         helperClass = new HelperClass(context);
+
+        a = AnimationUtils.loadAnimation(context, R.anim.progress_anim);
+        a.setDuration(700);
+        refreshButton.startAnimation(a);
+        a.setInterpolator(new Interpolator() {
+            private final int frameCount = 16;
+
+            @Override
+            public float getInterpolation(float input) {
+                return (float) Math.floor(input * frameCount) / frameCount;
+            }
+        });
 
     }
 
@@ -91,6 +113,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     protected String doInBackground(Void... arg0) {
 
+
         final String apikey = "0a6bad312fb111db3c658e0250965";
         latitude = HelperClass.round(latitude, 3);
         longitude = HelperClass.round(longitude, 3);
@@ -98,7 +121,6 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 "" + latitude + "%2C" + longitude + "" +
                 "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&show_comments=no&showlocaltime=no&" +
                 "key=" + apikey + "";
-        Log.e(TAG, url);
         weatherJson = getJSONFromUrl(url);
         return "You are at PostExecute";
     }
@@ -119,21 +141,24 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 summaryTextView.setText(summary);
                 summaryTextView.setMaxLines(2);
                 timeTextView.setText("0 minutes");
-                if (windKBool) {
+                if (windMilesBool) {
+                    windTextView.setText(windSpeedMph + " mph");
+                } else {
                     windTextView.setText(windSpeedKmph + " kph");
-                } else {
-                    windTextView.setText(windSpeedMph + "mph");
                 }
-                if (tempCBool) {
-                    tempTextView.setText(tempC + " ℃");
-                } else {
+                if (tempFBool) {
                     tempTextView.setText(tempF + " ℉");
+                } else {
+                    tempTextView.setText(tempC + " ℃");
                 }
                 saveWeatherToSharedPreferences(summary, Float.parseFloat(tempC), Float.parseFloat(tempF)
                         , Float.parseFloat(windSpeedKmph), Float.parseFloat(windSpeedMph), city, -1);
+
             } catch (JSONException e) {
             }
         }
+        a.cancel();
+        a = null;
     }
 
 
@@ -184,7 +209,9 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             is = httpEntity.getContent();
 
         } catch (IOException e) {
+
             e.printStackTrace();
+
         }
         try {
             assert is != null;
@@ -196,15 +223,11 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
             is.close();
             json = sb.toString();
+            jObj = new JSONObject(json);
         } catch (Exception e) {
             Log.e("Buffer Error", "Error converting result " + e.toString());
         }
-        // try parse the string to a JSON object
-        try {
-            jObj = new JSONObject(json);
-        } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
-        }
+
         // return JSON String
         return jObj;
     }
@@ -229,8 +252,9 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Calendar calendar = Calendar.getInstance();
         long timeNow = calendar.getTimeInMillis();
-        boolean windKmBool = sharedPreferences.getBoolean("windKmBool", true);
-        boolean tempCBool = sharedPreferences.getBoolean("tempCBool", true);
+        boolean windMilesBool = sharedPreferences.getBoolean("windMilesBool", true);
+        Log.e(TAG, "WindMilesBool" + windMilesBool);
+        boolean tempFBool = sharedPreferences.getBoolean("tempFBool", false);
         String summary = sharedPreferences.getString("summary", "");
 
         float tempC = sharedPreferences.getFloat("tempC", -1);
@@ -244,22 +268,32 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         weatherImageView.setImageResource(weatherImage);
         long timeFromUpdateLong = timeNow - updateTime;
         int minutes = (int) (timeFromUpdateLong / 60000);
-        timeTextView.setText(minutes + " minutes");
+        if (minutes < 60) {
+            timeTextView.setText(minutes + " minutes");
+        } else if (minutes > 60 && minutes < 1439) {
+            int hours = minutes / 60;
+            timeTextView.setText(hours + " hours");
+        } else if (minutes > 1439) {
+            int days = minutes / 1440;
+            timeTextView.setText(days + " days");
+        }
         cityTextView.setText(city);
         windImageView.setImageResource(R.drawable.wind);
         tempImageView.setImageResource(R.drawable.temp);
-        if (windKmBool) {
-            windTextView.setText(windKmh + "kph");
-        } else {
+        if (windMilesBool) {
             windTextView.setText(windMph + "mph");
-        }
-        if (tempCBool) {
-            tempTextView.setText(tempC + " ℃");
         } else {
+            windTextView.setText(windKmh + "kph");
+        }
+        if (tempFBool) {
             tempTextView.setText(tempF + " ℉");
+
+        } else {
+            tempTextView.setText(tempC + " ℃");
         }
 
         summaryTextView.setText(summary);
         Log.e(TAG, "data loaded from shared preferences");
+        a.cancel();
     }
 }
