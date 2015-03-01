@@ -70,7 +70,6 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         timeTextView = (TextView) weatherLayout.findViewById(R.id.timeTextView);
         cityTextView = (TextView) weatherLayout.findViewById(R.id.cityTextView);
         refreshButton = (ImageButton) weatherLayout.findViewById(R.id.refreshButton);
-        DigitalClock digitalClock = (DigitalClock) weatherLayout.findViewById(R.id.digitalClock);
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -121,6 +120,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 "" + latitude + "%2C" + longitude + "" +
                 "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&show_comments=no&showlocaltime=no&" +
                 "key=" + apikey + "";
+        Log.e(TAG, url);
         weatherJson = getJSONFromUrl(url);
         return "You are at PostExecute";
     }
@@ -133,10 +133,12 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 JSONObject weatherDesc = currentConditionJsonObj.getJSONArray("weatherDesc").getJSONObject(0);
                 String summary = weatherDesc.get("value").toString();
                 String tempC = currentConditionJsonObj.getString("temp_C");
+                String weatherCode = currentConditionJsonObj.getString("weatherCode");
                 String tempF = currentConditionJsonObj.getString("temp_F");
                 String windSpeedMph = currentConditionJsonObj.getString("windspeedMiles");
                 String windSpeedKmph = currentConditionJsonObj.getString("windspeedKmph");
                 String city = dataJsonObj.getJSONArray("nearest_area").getJSONObject(0).getJSONArray("region").getJSONObject(0).getString("value").toString();
+                setWeatherImage(weatherCode);
                 cityTextView.setText(city);
                 summaryTextView.setText(summary);
                 summaryTextView.setMaxLines(2);
@@ -161,41 +163,6 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         a = null;
     }
 
-
-    private int setWeatherImage(String icon) {
-
-        if (icon.equalsIgnoreCase("clear-day")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-
-        } else if (icon.equalsIgnoreCase("clear-night")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("rain")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("snow")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("sleet")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("wind")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("fog")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("cloudy")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("partly-cloudy-day")) {
-            weatherImageView.setImageResource(R.drawable.weather_sunny);
-        } else if (icon.equalsIgnoreCase("partly-cloudy-night")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("hail")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("thunderstorm")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else if (icon.equalsIgnoreCase("tornado")) {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        } else {
-            weatherImageView.setImageResource(R.drawable.ic_launcher);
-        }
-        return -1;
-    }
 
     public JSONObject getJSONFromUrl(String url) {
         InputStream is = null;
@@ -296,4 +263,123 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         Log.e(TAG, "data loaded from shared preferences");
         a.cancel();
     }
-}
+
+    public void setWeatherImage(String icon) {
+        Calendar calendar = Calendar.getInstance();
+        Context context;
+        Log.e(TAG, icon);
+        int weatherCode = Integer.parseInt(icon);
+        Log.e(TAG, weatherCode + " " + calendar.getTime());
+        if (weatherCode == 122) {
+            weatherImageView.setImageResource(R.drawable.ic_mist);
+        } else if (weatherCode == 248 || weatherCode == 260) {
+            weatherImageView.setImageResource(R.drawable.ic_fog);
+        } else if (weatherCode == 113) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_sunny);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_clear_sky_night);
+            }
+        } else if (weatherCode == 116) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_sunny_intervals);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_night);
+            }
+        } else if (weatherCode == 119) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_white_cloud);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_black_low_cloud);
+            }
+        } else if (weatherCode == 389) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_thunderstorms);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_thunderstorms_night);
+            }
+        } else if (weatherCode == 176 || weatherCode == 263 || weatherCode == 353) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_light_rain_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_light_rain_showers_night);
+            }
+        } else if (weatherCode == 299 || weatherCode == 305 || weatherCode == 356) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_heavy_rain_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_heavy_rain_showers_night);
+            }
+        } else if (weatherCode == 323 || weatherCode == 326 || weatherCode == 368) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_light_snow_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_light_snow_showers_night);
+            }
+        } else if (weatherCode == 299 || weatherCode == 305 || weatherCode == 356) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_heavy_rain_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_heavy_rain_showers_night);
+            }
+        } else if (weatherCode == 335 || weatherCode == 371) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_heavy_snow_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_heavy_snow_showers_night);
+            }
+        } else if (weatherCode == 179 || weatherCode == 362 || weatherCode == 365 || weatherCode == 374) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_sleet_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_sleet_showers_night);
+            }
+        } else if (weatherCode == 200 || weatherCode == 386 || weatherCode == 392) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_thundery_showers);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_thundery_showers_night);
+            }
+        } else if (weatherCode == 266 || weatherCode == 293 || weatherCode == 296) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_rain);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain_night);
+            }
+        } else if (weatherCode == 302 || weatherCode == 308 || weatherCode == 359) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain_night);
+            }
+        } else if (weatherCode == 227 || weatherCode == 320 || weatherCode == 395) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_snow);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_snow_night);
+            }
+        } else if (weatherCode == 389) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_thunderstorms);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_thunderstorms_night);
+            }
+        } else if (weatherCode == 230 || weatherCode == 329 || weatherCode == 332 || weatherCode == 338) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain_night);
+            }
+        } else if (weatherCode == 182 || weatherCode == 185 || weatherCode == 281 || weatherCode == 284 || weatherCode == 311
+                || weatherCode == 311 || weatherCode == 314 || weatherCode == 317 || weatherCode == 350 || weatherCode == 377) {
+            if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_sleet);
+            } else {
+                weatherImageView.setImageResource(R.drawable.ic_cloudy_with_sleet_night);
+            }
+        }
+
+    }
+
+    }
+
