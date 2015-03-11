@@ -5,7 +5,7 @@
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/alarm_screen_button"
+        android:id="@+id/stopButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -30,7 +30,7 @@
     </android.support.v7.widget.CardView>
 
     <TextView
-        android:id="@+id/alarmTitle"
+        android:id="@+id/alarmTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/mainTopLayout"
@@ -44,12 +44,11 @@
         android:id="@+id/quoteTextView"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/alarmTitle"
+        android:layout_below="@+id/alarmTitleTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="I get up every morning and it's going to be a great day. You never know when it's going to be over so I refuse to have a bad day"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textColor="@color/colorPrimaryText" />
 
     <TextView
@@ -59,7 +58,7 @@
         android:layout_below="@+id/quoteTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:textColor="@color/colorSecondaryText"
-        android:text="Paul Henderson"
-        android:textSize="22sp" />
+        android:textSize="22sp"
+        android:gravity="center"
+        android:textColor="@color/colorSecondaryText" />
 </RelativeLayout>

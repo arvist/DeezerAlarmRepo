@@ -30,7 +30,7 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
     ArrayList<Album> albumsList;
     LayoutInflater inflater;
     ArrayList<Bitmap> images;
-    static Typeface notoRegular;
+    static Typeface robotoRegular;
     public static int selectedPosition = -1;
 
     public DeezerAlbumAdapter(Context mContext, ArrayList<Album> albums) {
@@ -42,7 +42,7 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
         for (int i = 0; i < albumsList.size(); i++) {
             images.add(null);
         }
-        notoRegular = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
     }
 
     @Override
@@ -66,11 +66,11 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
             holder.albumArtistTextView.setWillNotDraw(false);
             holder.albumTitleTextView.setWillNotDraw(false);
             holder.albumTitleTextView.setText(album.title);
-            holder.albumTitleTextView.setTypeface(notoRegular);
+            holder.albumTitleTextView.setTypeface(robotoRegular);
             holder.albumArtistTextView.setText(album.artist);
-            holder.albumArtistTextView.setTypeface(notoRegular);
+            holder.albumArtistTextView.setTypeface(robotoRegular);
             if (album.imageUrlMedium.length() > 1) {
-                holder.albumImageView.setImageResource(R.drawable.weather_sunny);
+                holder.albumImageView.setImageResource(R.drawable.ic_album);
                 if (album.selected && RingtoneActivity.selectedRingtone.type == 2) {
                     holder.albumRadioButton.setChecked(true);
                 } else holder.albumRadioButton.setChecked(false);
@@ -78,7 +78,7 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
                 if (images.get(position) != null) {
                     holder.albumImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(album.imageUrlMedium, holder.albumImageView, position).execute();
+                    new ImageLoadTask(album.imageUrlMedium, holder.albumImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
             holder.albumRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -88,19 +88,19 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
                         album.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerAlbumFragment.updateSelectedRingtone(album.id, album.title);
-                    } else if (selectedPosition != -1 && selectedPosition == position) {
+                        DeezerAlbumFragment.updateSelectedRingtone(album.id, album.title, album.artist);
+                    } else if (selectedPosition == position) {
                         album.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
-                        DeezerAlbumFragment.updateSelectedRingtone(-1, "");
+                        DeezerAlbumFragment.updateSelectedRingtone(-1, "", "");
                     } else {
                         albumsList.get(selectedPosition).selected = false;
                         notifyItemChanged(selectedPosition);
                         album.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerAlbumFragment.updateSelectedRingtone(album.id, album.title);
+                        DeezerAlbumFragment.updateSelectedRingtone(album.id, album.title, album.artist);
                     }
 
                 }

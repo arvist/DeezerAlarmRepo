@@ -7,35 +7,68 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".Activities.RingtoneActivity"
-            android:label="Ringtone Picker" />
+            android:configChanges="orientation"
+            android:label="Ringtone Picker"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HelperClasses.DeezerBase"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.MainActivity"
-            android:label="@string/app_name">
+            android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".Activities.SplashScreenActivity"
+            android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Activities.AddAlarmActivity"
-            android:label="New Alarm" />
-        <activity android:name=".Activities.AlarmScreenActivity">
-
-        </activity>
+            android:configChanges="orientation"
+            android:label="New Alarm"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.AlarmScreenActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="" />
+        <activity
+            android:name=".Activities.SettingsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.EditAlarmActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.QuoteActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="" />
 
         <service
             android:name=".HelperClasses.AlarmService"
             android:enabled="true" />
 
-        <activity android:name=".Activities.SettingsActivity" />
 
         <receiver android:name=".HelperClasses.AlarmManagerHelper">
             <intent-filter>
@@ -45,10 +78,8 @@
 
     </application>
 
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />

@@ -1,7 +1,6 @@
 package com.cikoapps.deezeralarm.Fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,11 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.adapters.DeezerRadioAdapter;
+import com.cikoapps.deezeralarm.models.Radio;
 import com.deezer.sdk.model.AImageOwner;
 import com.deezer.sdk.network.request.DeezerRequest;
 import com.deezer.sdk.network.request.DeezerRequestFactory;
@@ -25,76 +28,44 @@ import com.deezer.sdk.network.request.event.JsonRequestListener;
 import com.deezer.sdk.network.request.event.RequestListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class DeezerRadioFragment extends Fragment {
 
-    private static final String TAG = "DeezerRadioFrag";
+    private static final String TAG = "DeezerRadioFragment";
     static Activity callingActivity;
-    private static final String ARG_POSITION = "position";
     private static Context context;
-    private static ProgressDialog progress;
-    private int position;
     DeezerRadioAdapter mAdapter;
     ArrayList<com.deezer.sdk.model.Radio> radioArrayList;
     ArrayList<com.cikoapps.deezeralarm.models.Radio> localRadioList;
-
-
     RecyclerView recyclerView;
+    private ProgressBar progress;
+    private static boolean onlyWiFi;
+    private TextView noWifiTextView;
+    private boolean enableNoWiFiTextView = false;
 
-    public static Fragment newInstance(int position, Context mContext, Activity activity) {
+    public static Fragment newInstance(Context mContext, Activity activity, boolean onlyWifiConnection) {
         DeezerRadioFragment f = new DeezerRadioFragment();
         callingActivity = activity;
         context = mContext;
-        Bundle b = new Bundle();
-        b.putInt(ARG_POSITION, position);
-        f.setArguments(b);
-        progress = new ProgressDialog(activity);
-        progress.setTitle("Loading");
-        progress.setMessage("Please wait...");
+        onlyWiFi = onlyWifiConnection;
         return f;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // outState.putSerializable("localRadioList",(Serializable)localRadioList);
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            Log.e(TAG, "Recreating radio list from saved instance state");
-
-            localRadioList = (ArrayList<com.cikoapps.deezeralarm.models.Radio>) savedInstanceState.getSerializable("localRadioList");
-            mAdapter = new DeezerRadioAdapter(context, localRadioList);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setAdapter(mAdapter);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
-        } else {
-
-            if (radioArrayList != null && radioArrayList.size() > 0) {
-                Log.e(TAG, "Not recreating deezer radio fragment, getting from backstak");
-
-                //returning from backstack, data is fine, do nothing
-            } else {
-                //progress.show();
-                Log.e(TAG, "Downloading radio list from net");
-                getUserRadio();
-            }
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        position = getArguments().getInt(ARG_POSITION);
-        getUserRadio();
+        boolean WiFiConnected = (new HelperClass(context)).isWifiConnected();
+        if ((onlyWiFi && WiFiConnected) || !onlyWiFi) {
+            getUserRadio();
+        } else {
+            enableNoWiFiTextView = true;
+        }
     }
+
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -102,14 +73,14 @@ public class DeezerRadioFragment extends Fragment {
         if (this.isVisible()) {
             if (!isVisibleToUser) {
                 if (mAdapter != null) {
-                    if (mAdapter.selectedPosition >= 0) {
-                        mAdapter.notifyItemChanged(mAdapter.selectedPosition);
+                    if (DeezerRadioAdapter.selectedPosition >= 0) {
+                        mAdapter.notifyItemChanged(DeezerRadioAdapter.selectedPosition);
                     }
                 }
-            } else if (isVisibleToUser) {
+            } else {
                 if (mAdapter != null) {
-                    if (mAdapter.selectedPosition >= 0) {
-                        mAdapter.notifyItemChanged(mAdapter.selectedPosition);
+                    if (DeezerRadioAdapter.selectedPosition >= 0) {
+                        mAdapter.notifyItemChanged(DeezerRadioAdapter.selectedPosition);
                     }
                 }
             }
@@ -123,18 +94,33 @@ public class DeezerRadioFragment extends Fragment {
 
             public void onResult(Object result, Object requestId) {
 
+                //noinspection unchecked
+                recyclerView.setVisibility(View.VISIBLE);
+                progress.setVisibility(View.GONE);
                 radioArrayList = (ArrayList<com.deezer.sdk.model.Radio>) result;
                 for (com.deezer.sdk.model.Radio radio : radioArrayList) {
-                    progress.dismiss();
-                    com.cikoapps.deezeralarm.models.Radio radioLocal = new com.cikoapps.deezeralarm.models.Radio(radio.getId(), radio.getTitle()
+                    com.cikoapps.deezeralarm.models.Radio radioLocal = new com.cikoapps.deezeralarm.models.Radio(radio.getId(), radio.getTitle().trim()
                             , radio.getPictureUrl(), radio.getImageUrl(AImageOwner.ImageSize.small), radio.getImageUrl(AImageOwner.ImageSize.medium),
                             radio.getImageUrl(AImageOwner.ImageSize.big));
-
                     localRadioList.add(radioLocal);
                 }
                 if (localRadioList.size() < 1) {
                     localRadioList.add(new com.cikoapps.deezeralarm.models.Radio(-1, "No radios found", "", "", "", ""));
                 }
+
+
+                Collections.sort(localRadioList, new Comparator<Radio>() {
+                    @Override
+                    public int compare(Radio lhs, Radio rhs) {
+                        return lhs.title.compareTo(rhs.title);
+                    }
+
+                    @Override
+                    public boolean equals(Object object) {
+                        return false;
+                    }
+                });
+
                 mAdapter = new DeezerRadioAdapter(context, localRadioList);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(mLayoutManager);
@@ -144,18 +130,20 @@ public class DeezerRadioFragment extends Fragment {
             }
 
             public void onUnparsedResult(String requestResponse, Object requestId) {
+                Log.e(TAG, "Unparsed Result");
             }
 
             public void onException(Exception e, Object requestId) {
+                Log.e(TAG, "Error getting radios " + e.getMessage());
             }
         };
         DeezerRequest currUserRadioRequest = DeezerRequestFactory.requestRadios();
-        currUserRadioRequest.setId("currUserRadioRequest");
+        currUserRadioRequest.setId(TAG);
         ((RingtoneActivity) getActivity()).deezerConnect.requestAsync(currUserRadioRequest, requestListener);
     }
 
     public static void updateSelectedRingtone(long id, String name) {
-        RingtoneActivity.selectedRingtone.updateDeezerRingtone(4, id, name);
+        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.RADIO_ID, id, name, "");
     }
 
     @Override
@@ -164,6 +152,15 @@ public class DeezerRadioFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.radioRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setVisibility(View.INVISIBLE);
+        progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
+        progress.setVisibility(View.VISIBLE);
+        noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        if (enableNoWiFiTextView) {
+            noWifiTextView.setVisibility(View.VISIBLE);
+        } else {
+            noWifiTextView.setVisibility(View.GONE);
+        }
         return rootView;
     }
 }

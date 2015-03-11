@@ -16,14 +16,14 @@
         android:layout_below="@+id/appBar"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:text="Title"
         android:textColor="@color/colorPrimaryText"
         android:textSize="24sp" />
 
     <EditText
-        android:id="@+id/alarmTitle"
+        android:id="@+id/alarmTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@+id/titleInfoTextView"
@@ -62,13 +62,16 @@
     <TextView
         android:id="@+id/ringtone"
         android:layout_width="wrap_content"
-        android:maxWidth="180dp"
+        android:maxWidth="250dp"
         android:layout_height="48dp"
         android:layout_alignBottom="@+id/textView"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignStart="@+id/textView2"
         android:layout_marginBottom="38dp"
         android:gravity="center_vertical"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:text="Default ringtone"
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp" />
@@ -84,17 +87,27 @@
         android:textColor="@color/colorPrimaryText"
         android:textSize="20sp" />
 
-    <ImageButton
-        android:id="@+id/editRingtoneButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@color/colorTransparent"
-        android:padding="12dp"
-        android:src="@drawable/ic_edit"
-        android:theme="@style/Base.Widget.AppCompat.ActionBar.Solid"
-        android:layout_alignTop="@+id/ringtone"
+    <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/more_ringtone"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        ripple:rv_centered="true"
+        ripple:rv_color="@color/colorRippleWhiteBackground"
+        ripple:rv_rippleDuration="175"
+        android:layout_alignBottom="@+id/ringtone"
         android:layout_toRightOf="@+id/ringtone"
-        android:layout_toEndOf="@+id/ringtone" />
+        android:layout_toEndOf="@+id/ringtone">
+
+        <ImageButton
+            android:id="@+id/editRingtoneButton"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@color/colorTransparent"
+            android:padding="12dp"
+            android:src="@drawable/ic_edit"
+            android:theme="@style/Base.Widget.AppCompat.ActionBar.Solid" />
+    </com.andexert.library.RippleView>
 
     <TextView
         android:id="@+id/textView"

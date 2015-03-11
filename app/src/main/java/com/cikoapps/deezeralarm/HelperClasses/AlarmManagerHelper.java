@@ -40,16 +40,14 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         AlarmDBHelper dbHelper = new AlarmDBHelper(context);
 
         List<Alarm> alarms = dbHelper.getAlarmList();
-        Log.e(TAG, alarms.size() + "  Total Alarms ");
         for (Alarm alarm : alarms) {
-            Log.e(TAG, alarm.alarmToneName + " - is Enabled   " + alarm.enabled);
+            alarm.minute = alarm.minute - 1;
             if (alarm.enabled) {
                 PendingIntent pIntent = createPendingIntent(context, alarm);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, alarm.hour);
-                calendar.set(Calendar.MINUTE, alarm.minute);
-                calendar.set(Calendar.SECOND, 30);
-
+                calendar.set(Calendar.MINUTE, (alarm.minute));
+                calendar.set(Calendar.SECOND, 55);
                 //Find next time to set
                 final int nowHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
                 final int nowMinute = Calendar.getInstance().get(Calendar.MINUTE);
@@ -60,12 +58,9 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                     if ((alarm.hour > nowHour) ||
                             ((alarm.hour == nowHour) && (alarm.minute > nowMinute)) ||
                             ((alarm.hour == nowHour) && (alarm.minute == nowMinute) && (nowSecond < 30))) {
-                        Log.e(TAG, "Today alarm");
-
                     } else {
                         calendar.add(Calendar.DAY_OF_YEAR, 1);
                     }
-                    Log.e(TAG, "Setting no repeated Alarm " + alarm.alarmTone);
                     notRepeatedAlarm = true;
                     setAlarm(context, calendar, pIntent);
 
@@ -100,7 +95,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                                 day = 1;
                                 calendar.set(Calendar.DAY_OF_WEEK, 1);
                                 setAlarm(context, calendar, pIntent);
-                                Log.e(TAG, "Setting repeated alarm on Sunday " + alarm.alarmTone);
                                 isSunday = true;
                                 alarmSet = true;
                             } else {
@@ -109,7 +103,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                             if (!isSunday) {
                                 calendar.set(Calendar.DAY_OF_WEEK, day);
                                 setAlarm(context, calendar, pIntent);
-                                Log.e(TAG, "Setting repeated alarm on " + day);
                                 alarmSet = true;
                             }
                             break;
@@ -123,17 +116,14 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                             if (repeatingDay && dayOfWeek <= nowDay && alarm.repeatWeekly) {
                                 int day = dayOfWeek;
                                 if (day == 6) {
-                                    day = 1;
                                     calendar.add(Calendar.WEEK_OF_YEAR, 1);
                                     calendar.set(Calendar.DAY_OF_WEEK, 1);
-                                    isSunday = true;
                                 } else {
                                     day = day + 2;
                                     calendar.add(Calendar.WEEK_OF_YEAR, 1);
                                     calendar.set(Calendar.DAY_OF_WEEK, day);
                                 }
                                 setAlarm(context, calendar, pIntent);
-                                alarmSet = true;
                                 break;
                             }
                         }
@@ -165,7 +155,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         AlarmDBHelper dbHelper = new AlarmDBHelper(context);
 
         List<Alarm> alarms = dbHelper.getAlarmList();
-        Log.e(TAG, "Cancelling alarms total - " + alarms.size());
         if (alarms != null) {
             for (Alarm alarm : alarms) {
                 if (alarm.enabled) {
@@ -178,7 +167,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
     }
 
     private static PendingIntent createPendingIntent(Context context, Alarm alarm) {
-        Log.e(TAG, "Creating Pending intent");
         Intent intent = new Intent(context, AlarmService.class);
         intent.putExtra(ID, alarm.id);
         intent.putExtra(NAME, alarm.title);
@@ -188,8 +176,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         intent.putExtra(TYPE, alarm.type);
         intent.putExtra(ALARM_ID, alarm.alarmid);
         intent.putExtra(ONE_TIME_ALARM, alarm.repeatWeekly);
-        Log.e(TAG, alarm.repeatWeekly + "  REPEAT WEEKLEY");
-
         return PendingIntent.getService(context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

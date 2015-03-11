@@ -24,16 +24,13 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-/**
- * Created by arvis.taurenis on 2/15/2015.
- */
 public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAdapter.DeezerPlaylistViewHolder> {
 
     Context context;
     ArrayList<Playlist> playlistList;
     LayoutInflater inflater;
     ArrayList<Bitmap> images;
-    static Typeface notoRegular;
+    static Typeface robotoRegular;
     public static int selectedPosition = -1;
 
     public DeezerPlaylistAdapter(Context mContext, ArrayList<Playlist> playlist) {
@@ -48,7 +45,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
         for (int i = 0; i < playlistList.size(); i++) {
             images.add(null);
         }
-        notoRegular = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
     }
 
     @Override
@@ -65,18 +62,18 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
             holder.playListImage.setWillNotDraw(true);
             holder.playListImage.setImageBitmap(null);
             holder.playListInfoTextView.setWillNotDraw(true);
-            holder.playtListTitleTextView.setWillNotDraw(true);
+            holder.playListTitleTextView.setWillNotDraw(true);
         } else {
             holder.playlistChecked.setWillNotDraw(false);
             holder.playListImage.setWillNotDraw(false);
             holder.playListInfoTextView.setWillNotDraw(false);
-            holder.playtListTitleTextView.setWillNotDraw(false);
-            holder.playtListTitleTextView.setText(playlist.title);
-            holder.playtListTitleTextView.setTypeface(notoRegular);
+            holder.playListTitleTextView.setWillNotDraw(false);
+            holder.playListTitleTextView.setText(playlist.title);
+            holder.playListTitleTextView.setTypeface(robotoRegular);
             holder.playListInfoTextView.setText(playlist.info);
-            holder.playListInfoTextView.setTypeface(notoRegular);
+            holder.playListInfoTextView.setTypeface(robotoRegular);
             if (playlist.imageUrlMedium.length() > 1) {
-                holder.playListImage.setImageResource(R.drawable.weather_sunny);
+                holder.playListImage.setImageResource(R.drawable.ic_playlist);
                 if (playlist.selected && RingtoneActivity.selectedRingtone.type == 1) {
                     holder.playlistChecked.setChecked(true);
                 } else holder.playlistChecked.setChecked(false);
@@ -84,7 +81,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
                     if (images.get(position) != null) {
                         holder.playListImage.setImageBitmap(images.get(position));
                     } else {
-                        new ImageLoadTask(playlist.imageUrlMedium, holder.playListImage, position).execute();
+                        new ImageLoadTask(playlist.imageUrlMedium, holder.playListImage, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
@@ -97,7 +94,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
                         notifyItemChanged(position);
                         DeezerPlaylistsFragment.updateSelectedRingtone(playlist.id, playlist.title);
                         DeezerPlaylistsFragment.updateSelectedRingtone(playlist.id, playlist.title);
-                    } else if (selectedPosition != -1 && selectedPosition == position) {
+                    } else if (selectedPosition == position) {
                         playlist.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
@@ -125,14 +122,14 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
 
 
         ImageView playListImage;
-        TextView playtListTitleTextView;
+        TextView playListTitleTextView;
         TextView playListInfoTextView;
         RadioButton playlistChecked;
 
         public DeezerPlaylistViewHolder(View itemView) {
             super(itemView);
             playListImage = (ImageView) itemView.findViewById(R.id.playListImage);
-            playtListTitleTextView = (TextView) itemView.findViewById(R.id.playtListTitleTextView);
+            playListTitleTextView = (TextView) itemView.findViewById(R.id.playtListTitleTextView);
             playListInfoTextView = (TextView) itemView.findViewById(R.id.playListInfoTextView);
             playlistChecked = (RadioButton) itemView.findViewById(R.id.playlistChecked);
 

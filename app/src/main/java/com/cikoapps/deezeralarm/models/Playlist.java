@@ -1,9 +1,6 @@
 package com.cikoapps.deezeralarm.models;
 
-/**
- * Created by arvis.taurenis on 2/15/2015.
- */
-public class Playlist implements java.io.Serializable {
+public class Playlist {
     public long id;
     public String title;
     public String info;

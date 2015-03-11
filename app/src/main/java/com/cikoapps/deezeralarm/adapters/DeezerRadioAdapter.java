@@ -23,27 +23,25 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by arvis.taurenis on 2/16/2015.
- */
 public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.DeezerRadioViewHolder> {
+    private static final String TAG = "DeezerRadioAdapter";
     Context context;
     ArrayList<Radio> radioList;
     LayoutInflater inflater;
     ArrayList<Bitmap> images;
-    static Typeface notoRegular;
+    static Typeface robotoRegular;
     public static int selectedPosition = -1;
 
     public DeezerRadioAdapter(Context mContext, ArrayList<Radio> radio) {
         context = mContext;
-        radioList = radio;
+        radioList = new ArrayList<>(radio);
         radioList.add(null);
         inflater = LayoutInflater.from(context);
         images = new ArrayList<>();
         for (int i = 0; i < radioList.size(); i++) {
             images.add(null);
         }
-        notoRegular = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
     }
 
     @Override
@@ -64,22 +62,19 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
             holder.radioRadioButton.setWillNotDraw(false);
             holder.radioTitleTextView.setWillNotDraw(false);
             holder.radioImageView.setWillNotDraw(false);
-
-
             holder.radioTitleTextView.setText(radio.title);
-            holder.radioTitleTextView.setTypeface(notoRegular);
+            holder.radioTitleTextView.setTypeface(robotoRegular);
 
             if (radio.imageUrlMedium.length() > 1) {
-                holder.radioImageView.setImageResource(R.drawable.weather_sunny);
+                holder.radioImageView.setImageResource(R.drawable.ic_radio);
                 if (radio.selected && RingtoneActivity.selectedRingtone.type == 4) {
                     holder.radioRadioButton.setChecked(true);
                 } else holder.radioRadioButton.setChecked(false);
                 if (images.get(position) != null) {
                     holder.radioImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(radio.imageUrlMedium, holder.radioImageView, position).execute();
+                    new ImageLoadTask(radio.imageUrlMedium, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-
             }
             holder.radioRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -89,7 +84,7 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
                         selectedPosition = position;
                         notifyItemChanged(position);
                         DeezerRadioFragment.updateSelectedRingtone(radio.id, radio.title);
-                    } else if (selectedPosition != -1 && selectedPosition == position) {
+                    } else if (selectedPosition == position) {
                         radio.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
@@ -132,12 +127,10 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
         private String url;
-        private ImageView imageView;
         private int position;
 
-        public ImageLoadTask(String url, ImageView imageView, int position) {
+        public ImageLoadTask(String url, int position) {
             this.url = url;
-            this.imageView = imageView;
             this.position = position;
         }
 

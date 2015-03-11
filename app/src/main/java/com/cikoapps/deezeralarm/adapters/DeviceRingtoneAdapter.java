@@ -27,7 +27,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
     private LayoutInflater inflater;
     ArrayList<DeviceRingtone> deviceRingtones = new ArrayList<>();
     Context context;
-    static Typeface notoRegular;
+    static Typeface robotoRegular;
     MediaPlayer mediaPlayer;
     public int selectedPosition = -1;
 
@@ -38,7 +38,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
         this.deviceRingtones = deviceRingtones;
         if (deviceRingtones.get(deviceRingtones.size() - 1) != null)
             this.deviceRingtones.add(null);
-        notoRegular = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         this.mediaPlayer = media;
 
     }
@@ -64,7 +64,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
             deviceRingtoneViewHolder.deviceRingtoneRadioButton.setWillNotDraw(false);
             deviceRingtoneViewHolder.itemTextView.setWillNotDraw(false);
             deviceRingtoneViewHolder.itemTextView.setText(deviceRingtone.title);
-            deviceRingtoneViewHolder.itemTextView.setTypeface(notoRegular);
+            deviceRingtoneViewHolder.itemTextView.setTypeface(robotoRegular);
             if (deviceRingtone.selected && RingtoneActivity.selectedRingtone.type == 0) {
                 deviceRingtoneViewHolder.deviceRingtoneRadioButton.setChecked(true);
             } else deviceRingtoneViewHolder.deviceRingtoneRadioButton.setChecked(false);
@@ -76,7 +76,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                         selectedPosition = position;
                         notifyItemChanged(position);
                         DeviceRingtoneFragment.updateSelectedRingtone(deviceRingtone.Uri, deviceRingtone.title);
-                    } else if (selectedPosition != -1 && selectedPosition == position) {
+                    } else if (selectedPosition == position) {
                         deviceRingtone.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
@@ -110,9 +110,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                                 mHandler.postDelayed(new Runnable() {
                                     public void run() {
                                         try {
-                                            if (mp != null) {
-                                                mp.release();
-                                            }
+                                            mp.release();
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -125,7 +123,6 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                             public void onCompletion(MediaPlayer mp) {
                                 mp.reset();
                                 mp.release();
-                                mp = null;
                             }
                         });
                     } catch (IOException e) {

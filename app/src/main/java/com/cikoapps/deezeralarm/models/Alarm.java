@@ -4,10 +4,7 @@ import android.content.Context;
 
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
 
-/**
- * Created by arvis.taurenis on 2/10/2015.
- */
-public class Alarm implements java.io.Serializable {
+public class Alarm {
     public String title;
     public int id = 0;
     public int hour;
@@ -18,6 +15,9 @@ public class Alarm implements java.io.Serializable {
     public String alarmTone;
     public long alarmid = 0;
     public int type;
+    public String artist;
+    public boolean usClock;
+    public String partOfDay = ""; //AM/FM
 
 
     String repeatDays;
@@ -35,10 +35,6 @@ public class Alarm implements java.io.Serializable {
         repeatingDays = new boolean[7];
     }
 
-    public void setRepeatingDay(int dayOfWeek, boolean value) {
-        repeatingDays[dayOfWeek] = value;
-    }
-
     public boolean getRepeatingDay(int dayOfWeek) {
         return repeatingDays[dayOfWeek];
     }
@@ -47,14 +43,14 @@ public class Alarm implements java.io.Serializable {
     public void insertIntoDataBase(Context context) {
         AlarmDBHelper alarmDBHelper = new AlarmDBHelper(context);
         this.repeatDays = repeatingDaysToString();
-        alarmDBHelper.insertAlarm(title, hour, minute, repeatDays, repeatWeekly, alarmToneName, alarmTone,
+        alarmDBHelper.insertAlarm(title, hour, minute, repeatDays, repeatWeekly, alarmToneName, artist, alarmTone,
                 alarmid, type, enabled);
         alarmDBHelper.close();
 
     }
 
     public Alarm(String title, int id, int hour, int minute, boolean enabled, boolean[] repeatingDays,
-                 boolean repeatWeekly, String alarmTone, long alarmid, int type, String alarmToneName) {
+                 boolean repeatWeekly, String alarmTone, String artist, long alarmid, int type, String alarmToneName) {
         this.title = title;
         this.id = id;
         this.hour = hour;
@@ -64,13 +60,14 @@ public class Alarm implements java.io.Serializable {
         this.repeatWeekly = repeatWeekly;
         this.alarmTone = alarmTone;
         this.alarmid = alarmid;
-
+        this.artist = artist;
         this.type = type;
         this.alarmToneName = alarmToneName;
     }
 
+
     public Alarm(String title, int hour, int minute, boolean enabled, boolean[] repeatingDays,
-                 boolean repeatWeekly, String alarmTone, long alarmid, int type, String alarmToneName) {
+                 boolean repeatWeekly, String alarmTone, long alarmid, int type, String alarmToneName, String artist) {
         this.title = title;
         this.hour = hour;
         this.minute = minute;
@@ -78,6 +75,7 @@ public class Alarm implements java.io.Serializable {
         this.repeatingDays = repeatingDays;
         this.repeatWeekly = repeatWeekly;
         this.alarmTone = alarmTone;
+        this.artist = artist;
         this.alarmid = alarmid;
         this.type = type;
         this.alarmToneName = alarmToneName;

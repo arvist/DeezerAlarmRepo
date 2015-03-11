@@ -16,7 +16,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:background="@color/colorTransparent"
-        android:src="@drawable/ic_cancel" />
+        android:src="@drawable/ic_radio" />
 
     <TextView
         android:id="@+id/radioTitleTextView"

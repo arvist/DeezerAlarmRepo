@@ -1,9 +1,7 @@
 package com.cikoapps.deezeralarm.models;
 
-/**
- * Created by arvis.taurenis on 2/16/2015.
- */
-public class Album implements java.io.Serializable {
+
+public class Album {
     public long id;
     public String title;
     public String artist;

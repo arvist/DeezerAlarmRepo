@@ -1,6 +1,6 @@
 package com.cikoapps.deezeralarm.models;
 
-public class Radio implements java.io.Serializable {
+public class Radio {
     public long id;
     public String title;
     String pictureUrl;
@@ -19,4 +19,5 @@ public class Radio implements java.io.Serializable {
         this.imageUrlLarge = imageUrlLarge;
 
     }
+
 }

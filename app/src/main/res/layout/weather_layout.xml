@@ -8,16 +8,25 @@
     android:layout_gravity="top"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <View
+        android:id="@+id/horizontalLineView"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorPrimaryText" />
+
     <ImageView
         android:id="@+id/tempImageView"
-        android:layout_width="25dp"
+        android:layout_width="35dp"
         android:layout_height="35dp"
-        android:src="@drawable/temp"
+        android:src="@drawable/ic_temperature_dark"
         android:layout_above="@+id/windImageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp" />
+        android:layout_marginStart="18dp"
+        android:contentDescription="@string/tempImageContentDesc" />
 
     <TextView
         android:id="@+id/tempTextView"
@@ -34,10 +43,11 @@
         android:id="@+id/windImageView"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:src="@drawable/wind"
+        android:src="@drawable/ic_wind_dark"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/tempImageView"
-        android:layout_alignStart="@+id/tempImageView" />
+        android:layout_alignStart="@+id/tempImageView"
+        android:contentDescription="@string/windImageIconDesc" />
 
     <TextView
         android:id="@+id/windTextView"
@@ -54,7 +64,7 @@
         android:id="@+id/weatherImageView"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:contentDescription="weather image"
+        android:contentDescription="@string/weatherImageContentDesc"
         android:layout_alignTop="@+id/digitalClock"
         android:layout_alignLeft="@+id/tempImageView"
         android:layout_alignStart="@+id/tempImageView" />
@@ -67,7 +77,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:textColor="@color/colorPrimaryText"
-        android:textSize="42dp"
+        android:textSize="42sp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp" />
 
@@ -81,33 +91,33 @@
         android:paddingTop="8dp"
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp"
-        android:text="February 25, 2015" />
+        android:text="@string/defaultDateWeatherString" />
 
     <ImageButton
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:id="@+id/refreshButton"
         android:src="@drawable/ic_action_cached"
-
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/timeTextView"
         android:layout_toStartOf="@+id/timeTextView"
-        android:background="@color/colorTransparent"/>
+        android:background="@color/colorTransparent"
+        android:contentDescription="@string/refreshButtonContentDesc" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="7 minutes"
+        android:text="@string/defaultRefreshString"
         android:id="@+id/timeTextView"
         android:layout_below="@+id/tempTextView"
-        android:layout_toLeftOf="@+id/text_ago"
-        android:layout_toStartOf="@+id/text_ago" />
+        android:layout_toLeftOf="@+id/textAgo"
+        android:layout_toStartOf="@+id/textAgo" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" ago"
-        android:id="@+id/text_ago"
+        android:text="@string/agoText"
+        android:id="@+id/textAgo"
         android:layout_alignTop="@+id/timeTextView"
         android:layout_alignRight="@+id/dateTextView"
         android:layout_alignEnd="@+id/dateTextView" />
@@ -128,11 +138,9 @@
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp"
         android:maxWidth="150dp"
-        android:layout_alignTop="@+id/cityTextView"
-        android:layout_alignLeft="@+id/weatherImageView"
-        android:layout_alignStart="@+id/weatherImageView"
-        android:layout_centerVertical="true"
-        android:gravity="center_vertical|center_horizontal" />
-
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_below="@+id/weatherImageView"
+        android:layout_alignLeft="@+id/tempImageView"
+        android:layout_alignStart="@+id/tempImageView" />
 
 </RelativeLayout>

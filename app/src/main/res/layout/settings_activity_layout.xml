@@ -9,292 +9,421 @@
         layout="@layout/app_bar_settings" />
 
     <RelativeLayout
+        android:id="@+id/layoutTemp"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:id="@+id/layoutTemp"
-        android:layout_below="@+id/appBar"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/appBar">
 
         <TextView
+            android:id="@+id/textUseF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:text="Use Fahrenheit"
-            android:textColor="@color/colorPrimaryText"
-            android:id="@+id/textUseF"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:text="Use Fahrenheit"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16sp" />
 
         <TextView
+            android:id="@+id/useCelsius"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:layout_alignLeft="@+id/textUseF"
+            android:layout_alignStart="@+id/textUseF"
+            android:layout_below="@+id/textUseF"
+            android:gravity="center_vertical"
             android:text="Default value Celsius"
             android:textColor="@color/colorSecondaryText"
-            android:id="@+id/useCelsius"
-            android:gravity="center_vertical"
-            android:layout_below="@+id/textUseF"
-            android:layout_alignLeft="@+id/textUseF"
-            android:layout_alignStart="@+id/textUseF" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButtonTemp"
-            android:checked="false"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:textSize="14sp" />
 
         <View
             android:id="@+id/horizontalLineView"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
-            android:background="@color/colorDivider"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:background="@color/colorDivider" />
+
+        <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more_fahrenheit"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            ripple:rv_centered="true"
+            ripple:rv_color="@color/colorRippleWhiteBackground"
+            ripple:rv_rippleDuration="125">
+
+            <RadioButton
+                android:id="@+id/radioButtonTemp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/more_fahrenheit"
+                android:button="@drawable/material_radio_btn_settings"
+                android:checked="false" />
+        </com.andexert.library.RippleView>
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/layoutWiFi"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:layout_below="@+id/layoutTemp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/layoutWind">
+        android:layout_below="@+id/layoutWind">
 
         <TextView
+            android:id="@+id/textDoNotUseCellular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:text="Use Miles per hour"
-            android:textColor="@color/colorPrimaryText"
-            android:id="@+id/text12Miles"
-            android:gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:layout_marginTop="16dp" />
+            android:gravity="center_vertical"
+            android:text="Do not use cellular network"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16sp" />
+
+
+        <View
+            android:id="@+id/horizontalLineWifFiView"
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="@color/colorDivider" />
+
+        <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more_cellular"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            ripple:rv_centered="true"
+            ripple:rv_color="@color/colorRippleWhiteBackground"
+            ripple:rv_rippleDuration="125">
+
+            <RadioButton
+                android:id="@+id/radioButtonWifi"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignTop="@+id/more_cellular"
+                android:layout_centerInParent="true"
+                android:button="@drawable/material_radio_btn_settings"
+                android:checked="false" />
+        </com.andexert.library.RippleView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutWind"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/layoutTemp">
 
         <TextView
+            android:id="@+id/text12Miles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:text="Use Miles per hour"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textUseKmh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/text12Miles"
+            android:layout_alignStart="@+id/text12Miles"
+            android:layout_below="@+id/text12Miles"
+            android:gravity="center_vertical"
             android:text="Default value kilometer per hour"
             android:textColor="@color/colorSecondaryText"
-            android:id="@+id/textUseKmh"
-            android:gravity="center_vertical"
-            android:layout_below="@+id/text12Miles"
-            android:layout_alignLeft="@+id/text12Miles"
-            android:layout_alignStart="@+id/text12Miles" />
+            android:textSize="14sp" />
 
-        <RadioButton
+        <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more_miles"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButtonWind"
-            android:checked="false"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_centerVertical="true"
+            android:layout_height="70dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_centerVertical="true"
+            ripple:rv_centered="true"
+            ripple:rv_color="@color/colorRippleWhiteBackground"
+            ripple:rv_rippleDuration="125">
+
+            <RadioButton
+                android:id="@+id/radioButtonWind"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerInParent="true"
+                android:button="@drawable/material_radio_btn_settings"
+                android:checked="false" />
+        </com.andexert.library.RippleView>
 
         <View
             android:id="@+id/horizontalLineViewWind"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
-            android:background="@color/colorDivider"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:background="@color/colorDivider" />
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/layoutRingtone"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/layoutRingtone"
-        android:layout_below="@+id/layoutWind">
+        android:layout_below="@+id/layoutWiFi">
 
         <TextView
+            android:id="@+id/textDefaultRingtone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:text="Default Ringtone"
-            android:textColor="@color/colorPrimaryText"
-            android:id="@+id/textDefaultRingtone"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="false"
-            android:layout_marginTop="16dp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:text="Default Ringtone"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16sp" />
+
 
         <TextView
+            android:id="@+id/ringtoneText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:layout_above="@+id/textRingtoneInfo"
+            android:layout_toEndOf="@+id/textDefaultRingtone"
+            android:layout_toRightOf="@+id/textDefaultRingtone"
+            android:paddingLeft="8dp"
+            android:text=" " />
+
+        <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more_ringtone"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
+            ripple:rv_centered="true"
+            ripple:rv_color="@color/colorRippleWhiteBackground"
+            ripple:rv_rippleDuration="125">
+
+            <ImageButton
+                android:id="@+id/buttonRingtone"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right|center_vertical"
+                android:background="@color/colorTransparent"
+                android:src="@drawable/ic_edit" />
+
+        </com.andexert.library.RippleView>
+
+        <TextView
+            android:id="@+id/textRingtoneInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textDefaultRingtone"
+            android:layout_alignStart="@+id/textDefaultRingtone"
+            android:layout_below="@+id/textDefaultRingtone"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
             android:text="Not selected"
             android:textColor="@color/colorSecondaryText"
-            android:id="@+id/textRingotneInfo"
-            android:gravity="center_vertical"
-            android:layout_below="@+id/textDefaultRingtone"
-            android:layout_alignLeft="@+id/textDefaultRingtone"
-            android:layout_alignStart="@+id/textDefaultRingtone" />
-
+            android:textSize="14sp" />
 
         <View
             android:id="@+id/horizontalLineViewRingotne"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
-            android:background="@color/colorDivider"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_gravity="right|bottom"
+            android:background="@color/colorDivider" />
 
-        <ImageButton
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:id="@+id/buttonRingtone"
-            android:src="@drawable/ic_edit"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@color/colorTransparent" />
+        <ProgressBar
+            android:id="@+id/cover_progress"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="24dp" />
+    </FrameLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:id="@+id/ringtoneText"
-            android:layout_above="@+id/textRingotneInfo"
-            android:layout_toRightOf="@+id/textDefaultRingtone"
-            android:layout_toEndOf="@+id/textDefaultRingtone"
-            android:paddingLeft="8dp" />
-    </RelativeLayout>
-
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/layoutRefresh"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:layout_below="@+id/layoutRingtone"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/layoutRefresh">
+        android:layout_below="@+id/layoutRingtone">
 
         <TextView
+            android:id="@+id/textWeatherRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weather Refresh rate"
-            android:id="@+id/textWeatherRefresh"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:text="Weather Refresh rate"
             android:textColor="@color/colorPrimaryText"
             android:textSize="16sp" />
 
-        <ImageButton
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:id="@+id/buttonRate"
-            android:src="@drawable/ic_edit"
-            android:background="@color/colorTransparent"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
+
+        <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="16dp" />
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right|center_vertical"
+            ripple:rv_centered="true"
+            ripple:rv_color="@color/colorRippleWhiteBackground"
+            ripple:rv_rippleDuration="125">
+
+            <ImageButton
+                android:id="@+id/buttonRate"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right|center_vertical"
+                android:background="@color/colorTransparent"
+                android:src="@drawable/ic_edit" />
+
+        </com.andexert.library.RippleView>
+
+        <ProgressBar
+            android:id="@+id/cover_progress_refresh"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="24dp" />
+
+
+        <TextView
+            android:id="@+id/textTimeSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textWeatherRefresh"
+            android:layout_alignStart="@+id/textWeatherRefresh"
+            android:layout_below="@+id/textWeatherRefresh"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:text="10 minutes"
+            android:textSize="14sp" />
 
         <View
             android:id="@+id/horizontalLineViewRefresh"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
             android:background="@color/colorDivider"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/more_disconnect"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10 minutes"
-            android:id="@+id/textTimeSelected"
-            android:layout_below="@+id/textWeatherRefresh"
-            android:layout_alignLeft="@+id/textWeatherRefresh"
-            android:layout_alignStart="@+id/textWeatherRefresh"
-            android:textSize="14sp" />
-    </RelativeLayout>
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal|bottom" />
+    </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/layoutAccount"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:layout_below="@+id/layoutRefresh"
-        android:layout_alignLeft="@+id/layoutRefresh"
-        android:layout_alignStart="@+id/layoutRefresh">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/layoutRefresh">
 
         <TextView
+            android:id="@+id/deezerAccountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Deezer Account"
-            android:id="@+id/deezerAccountText"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="16sp"
-            android:layout_marginLeft="14dp"
-            android:layout_marginStart="14dp"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Connect"
-            android:id="@+id/connect"
-            android:padding="4dp"
-            android:layout_below="@+id/deezerAccountText"
-            android:layout_toRightOf="@+id/deezerAccountText"
-            android:layout_toEndOf="@+id/deezerAccountText"
-            android:layout_marginLeft="42dp"
-            android:layout_marginStart="42dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Deezer Account"
+            android:textColor="@color/colorPrimaryText"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Disconnect"
-            android:id="@+id/disconnect"
-            android:padding="4dp"
-            android:layout_alignTop="@+id/connect"
-            android:layout_alignParentRight="true"
+        <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more_disconnect"
+            android:layout_width="120dp"
+            android:layout_height="70dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
-            android:textSize="16sp" />
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            ripple:rv_centered="true"
+            ripple:rv_color="@color/colorRippleWhiteBackground"
+            ripple:rv_rippleDuration="140">
+
+            <TextView
+                android:id="@+id/disconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:padding="4dp"
+                android:text="Disconnect"
+                android:textSize="16sp" />
+        </com.andexert.library.RippleView>
 
         <View
             android:id="@+id/horizontalLineViewDeezer"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
-            android:background="@color/colorDivider"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:background="@color/colorDivider" />
 
     </RelativeLayout>
 </RelativeLayout>

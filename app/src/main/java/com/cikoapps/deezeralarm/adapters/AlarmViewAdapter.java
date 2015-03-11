@@ -5,13 +5,13 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cikoapps.deezeralarm.Activities.MainActivity;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
@@ -27,16 +27,19 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
     private LayoutInflater inflater;
     List<Alarm> alarmList = Collections.emptyList();
     Context context;
-    static Typeface notoRegular;
-    static Typeface notoBold;
+    static Typeface robotoRegular;
+    static Typeface robotoBold;
+    MainActivity mainActivityObject;
+    private String TAG = "AlarmViewAdapter";
 
-    public AlarmViewAdapter(Context context, List<Alarm> alarmList) {
+    public AlarmViewAdapter(Context context, List<Alarm> alarmList, MainActivity mainActivity) {
         this.context = context;
+        this.mainActivityObject = mainActivity;
         inflater = LayoutInflater.from(context);
         this.alarmList = alarmList;
-        this.alarmList.add(new Alarm("", -1, -1, -1, false, new boolean[]{false, false, false, false, false, false, false}, false, "", -1, -1, ""));
-        notoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
-        notoBold = Typeface.createFromAsset(context.getAssets(), "Roboto-Bold.ttf");
+        this.alarmList.add(new Alarm("", -1, -1, -1, false, new boolean[]{false, false, false, false, false, false, false}, false, "", "", -1, -1, ""));
+        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
+        robotoBold = Typeface.createFromAsset(context.getAssets(), "Roboto-Bold.ttf");
     }
 
     @Override
@@ -46,18 +49,25 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
     }
 
     @Override
-    public void onBindViewHolder(AlarmViewHolder alarmViewHolder, final int position) {
+    public void onBindViewHolder(final AlarmViewHolder alarmViewHolder, final int position) {
 
         Alarm alarm = alarmList.get(position);
         alarmViewHolder.titleTextView.setText(alarm.title);
-        alarmViewHolder.titleTextView.setTypeface(notoRegular);
+        alarmViewHolder.titleTextView.setTypeface(robotoRegular);
         alarmViewHolder.titleTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         String hourString = alarm.hour + "";
         String minuteString = alarm.minute + "";
         if (hourString.length() < 2) hourString = "0".concat(hourString);
         if (minuteString.length() < 2) minuteString = "0".concat(minuteString);
-        alarmViewHolder.timeTextView.setText(hourString + " : " + minuteString);
-        alarmViewHolder.timeTextView.setTypeface(notoRegular);
+        String timeString = hourString + " : " + minuteString;
+        if (alarm.usClock) {
+            timeString = timeString.concat(" " + alarm.partOfDay);
+            if (alarm.hour < 10) {
+                timeString = timeString.substring(1, timeString.length());
+            }
+        }
+        alarmViewHolder.timeTextView.setText(timeString);
+        alarmViewHolder.timeTextView.setTypeface(robotoRegular);
         alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         alarmViewHolder.alarmSwitch.setWillNotDraw(false);
 
@@ -70,20 +80,17 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         alarmViewHolder.alarmSwitch.setChecked(alarm.enabled);
         {
             for (int i = 0; i < alarmViewHolder.daysTextViewList.size(); i++) {
-
                 TextView dayTextView = alarmViewHolder.daysTextViewList.get(i);
                 dayTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
-
                 if (alarm.repeatingDays[i]) {
-                    dayTextView.setTypeface(notoBold);
+                    dayTextView.setTypeface(robotoBold);
                     dayTextView.setTextColor(context.getResources().getColor(R.color.colorAccent));
                 } else {
-                    dayTextView.setTypeface(notoRegular);
+                    dayTextView.setTypeface(robotoRegular);
                 }
             }
         }
         if (position == alarmList.size() - 1) {
-
             alarmViewHolder.titleTextView.setTextColor(context.getResources().getColor(R.color.colorTransparent));
             alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorTransparent));
             alarmViewHolder.alarmSwitch.setWillNotDraw(true);
@@ -93,12 +100,12 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
             }
             alarmViewHolder.rowItem.setOnClickListener(null);
             alarmViewHolder.rowItem.setOnLongClickListener(null);
-
         } else {
             alarmViewHolder.rowItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, ((TextView) v.findViewById(R.id.titleTextView)).getText(), Toast.LENGTH_SHORT).show();
+                    mainActivityObject.editAlarmActivityStart(alarmList.get(position));
+                    MainActivity.longClickedItem = position;
                 }
             });
             alarmViewHolder.rowItem.setOnLongClickListener(new View.OnLongClickListener() {
@@ -109,19 +116,44 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
                     return true;
                 }
             });
-
-            alarmViewHolder.alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            alarmViewHolder.alarmSwitchRippleView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    AlarmDBHelper dataBaseHelper = new AlarmDBHelper(context);
-                    alarmList.get(position).enabled = isChecked;
-                    AlarmManagerHelper.cancelAlarms(context);
+                public void onClick(View v) {
 
-                    dataBaseHelper.updateIsEnabled(alarmList.get(position).id, isChecked);
-                    AlarmManagerHelper.setAlarms(context);
+                    if (alarmViewHolder.alarmSwitch.isChecked()) {
+                        alarmViewHolder.alarmSwitch.setChecked(false);
+                        Log.e(TAG, "On Ripple View Click setting false");
+                    } else {
+                        alarmViewHolder.alarmSwitch.setChecked(true);
+                        Log.e(TAG, "On Ripple View Click setting true");
+                    }
 
                 }
             });
+            alarmViewHolder.alarmSwitch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (alarmViewHolder.alarmSwitch.isChecked()) {
+                        alarmViewHolder.alarmSwitch.setChecked(false);
+                        Log.e(TAG, "On Switch View Click setting false");
+                    } else {
+                        alarmViewHolder.alarmSwitch.setChecked(true);
+                        Log.e(TAG, "On Switch View Click setting true");
+                    }
+                }
+            });
+            alarmViewHolder.alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.e(TAG, "alarmSwitch checkedChange to" + isChecked);
+                    AlarmDBHelper dataBaseHelper = new AlarmDBHelper(context);
+                    alarmList.get(position).enabled = isChecked;
+                    AlarmManagerHelper.cancelAlarms(context);
+                    dataBaseHelper.updateIsEnabled(alarmList.get(position).id, isChecked);
+                    AlarmManagerHelper.setAlarms(context);
+                }
+            });
+
         }
     }
 
@@ -139,13 +171,12 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
     }
 
     public Alarm turnItem(int pos) {
-        boolean isEnabled;
-        if (alarmList.get(pos).enabled) {
-            alarmList.get(pos).enabled = false;
-        } else {
-            alarmList.get(pos).enabled = true;
-        }
+        alarmList.get(pos).enabled = !alarmList.get(pos).enabled;
         notifyItemChanged(pos);
+        return alarmList.get(pos);
+    }
+
+    public Alarm getEditAlarm(int pos) {
         return alarmList.get(pos);
     }
 
@@ -154,6 +185,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         TextView titleTextView;
         TextView timeTextView;
         SwitchCompat alarmSwitch;
+        View alarmSwitchRippleView;
         LinearLayout daysLinearLayout;
         List<TextView> daysTextViewList;
         View rowItem;
@@ -165,6 +197,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
             titleTextView = (TextView) itemView.findViewById(R.id.titleTextView);
             timeTextView = (TextView) itemView.findViewById(R.id.timeTextView);
             alarmSwitch = (SwitchCompat) itemView.findViewById(R.id.alarmSwitch);
+            alarmSwitchRippleView = itemView.findViewById(R.id.more);
             daysLinearLayout = (LinearLayout) itemView.findViewById(R.id.daysLinearLayout);
 
             daysTextViewList.add(0, (TextView) daysLinearLayout.findViewById(R.id.moTextView));

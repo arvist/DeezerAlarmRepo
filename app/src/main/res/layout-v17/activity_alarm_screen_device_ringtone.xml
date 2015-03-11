@@ -109,7 +109,7 @@
 
 
     <Button
-        android:id="@+id/alarm_screen_button"
+        android:id="@+id/quoteTextView"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:minWidth="84dp"
@@ -133,9 +133,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My Alarm"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:textColor="@color/colorPrimaryText"
-        android:id="@+id/alarmTitle"
+        android:id="@+id/alarmTitleTextView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 

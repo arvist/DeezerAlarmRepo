@@ -13,5 +13,11 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorDivider">#B6B6B6</color>
     <color name="colorRippleWhiteBackground">#B6B6B6</color>
+    <color name="backgroundMist">#B6B6B6</color>
+    <color name="backgroundSun">#7DDEFF</color>
+    <color name="backgroundCloudyNight">#48484A</color>
+    <color name="backgroundClearSkyNight">#1C5C99</color>
+    <color name="backgroundBlackCloudLow">#bfbfbf</color>
+    <color name="backgroundThunderStormsNight">#48484a</color>
 
 </resources>

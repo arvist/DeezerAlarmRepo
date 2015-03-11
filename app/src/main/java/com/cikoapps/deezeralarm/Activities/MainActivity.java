@@ -15,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,8 @@ import com.cikoapps.deezeralarm.models.Alarm;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
@@ -41,10 +44,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String TAG = "MainActivity.java";
     Toolbar toolbar;
     AlarmViewAdapter alarmViewAdapter;
-    private RecyclerView alarmRecyclerView;
-    Typeface notoRegular;
-
-    boolean metricSystem = true;
+    Typeface robotoRegular;
     Context context;
     public static AlertDialog.Builder builder;
     public static int longClickedItem = -1;
@@ -53,41 +53,40 @@ public class MainActivity extends ActionBarActivity {
     RelativeLayout mainTopLayout;
     MyLocation myLocation;
     HelperClass helperClass;
+    private boolean fullTimeClock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity object = this;
+        Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         context = this;
         helperClass = new HelperClass(this);
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
-
-        weatherDataAsync = new WeatherDataAsync(mainTopLayout, true, true, -1, -1, context);
-        weatherDataAsync.setFromSharedPreferences();
-        appBarActions();
-        AlarmDBHelper alarmDBHelper = new AlarmDBHelper((getApplicationContext()));
-        if (alarmDBHelper.checkForData()) Log.e("DATABASE", "VALID");
-        else Log.e("DATABASE", "INVALID");
-        notoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
+        fullTimeClock = DateFormat.is24HourFormat(context);
 
-        alarmRecyclerView = (RecyclerView) findViewById(R.id.alarmRecyclerView);
+        weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, toolbar, context);
+        //weatherDataAsync.setFromSharedPreferences();
+        appBarActions();
+        AlarmDBHelper alarmDBHelper = new AlarmDBHelper((getApplicationContext()));
+        alarmDBHelper.checkForData();
+        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+
+        RecyclerView alarmRecyclerView = (RecyclerView) findViewById(R.id.alarmRecyclerView);
         alarmRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(
                 getApplicationContext()
         ));
         alarmRecyclerView.setHasFixedSize(true);
-        alarmViewAdapter = new AlarmViewAdapter(getApplicationContext(), getAlarmList());
+        alarmViewAdapter = new AlarmViewAdapter(getApplicationContext(), getAlarmList(), object);
         alarmRecyclerView.setAdapter(alarmViewAdapter);
 
         alarmRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         alarmRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
-
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
-
-
         findViewById(R.id.floatingActionButtonView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,22 +98,37 @@ public class MainActivity extends ActionBarActivity {
 
         longClickDialog();
         refresh();
+        updateWeatherData();
+    }
+
+    private void updateWeatherData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int refreshTime = preferences.getInt("selectedInterval", 1);
-
-        long lastUpdateTimeMillis = preferences.getLong("time", 0);
-        Calendar deleteCalendar = Calendar.getInstance();
-        deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);
-        Log.e(TAG, "Last update time - " + deleteCalendar.getTime().toString());
-        int milliSecondsRefreshTime = (refreshTime + 1) * 5 * 60000;
-        Log.e(TAG, "Refresh Time in Minutes - " + (milliSecondsRefreshTime / 60000));
-        Calendar calendar = Calendar.getInstance();
-        Log.e(TAG, "Time now - " + calendar.getTime().toString());
-        long currentMillis = calendar.getTimeInMillis();
-        if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
-            myLocation = new MyLocation(this, metricSystem, mainTopLayout);
-            myLocation.buildGoogleApiClient();
+        if (refreshTime != 12) {
+            long lastUpdateTimeMillis = preferences.getLong("time", 0);
+            boolean onlyWiFiUpdate = preferences.getBoolean("wifiSelected", false);
+            if ((onlyWiFiUpdate && new HelperClass(context).isWifiConnected()) || !onlyWiFiUpdate) {
+                Calendar deleteCalendar = Calendar.getInstance();
+                deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);
+                int milliSecondsRefreshTime = (refreshTime + 1) * 5 * 60000;
+                Calendar calendar = Calendar.getInstance();
+                long currentMillis = calendar.getTimeInMillis();
+                if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
+                    myLocation = new MyLocation(this, mainTopLayout, toolbar);
+                    myLocation.buildGoogleApiClient();
+                }
+            }
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        weatherDataAsync.setFromSharedPreferences();
+        updateWeatherData();
+        alarmViewAdapter.notifyDataSetChanged();
+
     }
 
     private void refresh() {
@@ -122,11 +136,15 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (new HelperClass(context).haveNetworkConnection()) {
-                    if (myLocation != null) {
-                        myLocation.reconnectGoogleApiClient();
+                    if (new HelperClass(context).isLocationEnabled()) {
+                        if (myLocation != null) {
+                            myLocation.reconnectGoogleApiClient();
+                        } else {
+                            myLocation = new MyLocation(context, mainTopLayout, toolbar);
+                            myLocation.buildGoogleApiClient();
+                        }
                     } else {
-                        myLocation = new MyLocation(context, metricSystem, mainTopLayout);
-                        myLocation.buildGoogleApiClient();
+                        Toast.makeText(context, "Couldn't determine current location", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(context, "No network connection", Toast.LENGTH_SHORT).show();
@@ -144,16 +162,11 @@ public class MainActivity extends ActionBarActivity {
                 if (which == 0) {
                     Alarm alarm = alarmViewAdapter.turnItem(longClickedItem);
                     AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
-
                     AlarmManagerHelper.cancelAlarms(context);
-
                     dataBaseHelper.updateIsEnabled(alarm.id, alarm.enabled);
-
                     AlarmManagerHelper.setAlarms(context);
-
                 } else if (which == 1) {
-
-                    Toast.makeText(context, "Edit", Toast.LENGTH_SHORT).show();
+                    editAlarmActivityStart(null);
                 } else if (which == 2) {
                     if (longClickedItem > -1) {
                         AlarmManagerHelper.cancelAlarms(context);
@@ -167,15 +180,37 @@ public class MainActivity extends ActionBarActivity {
         builder.create();
     }
 
+    public void editAlarmActivityStart(Alarm alarmClicked) {
+        Intent intent = new Intent(getApplicationContext(), EditAlarmActivity.class);
+        Alarm alarm;
+        if (alarmClicked == null) {
+            alarm = alarmViewAdapter.getEditAlarm(longClickedItem);
+        } else {
+            alarm = alarmClicked;
+        }
+        intent.putExtra("title", alarm.title);
+        intent.putExtra("alarmToneName", alarm.alarmToneName);
+        intent.putExtra("hour", alarm.hour);
+        intent.putExtra("minute", alarm.minute);
+        intent.putExtra("type", alarm.type);
+        intent.putExtra("repeatingDays", alarm.repeatingDays);
+        intent.putExtra("id", alarm.id);
+        intent.putExtra("partOfDay", alarm.partOfDay);
+        intent.putExtra("uri", alarm.alarmTone);
+        intent.putExtra("deezerRingtoneId", alarm.alarmid);
+        intent.putExtra("enabled", alarm.enabled);
+        intent.putExtra("artist", alarm.artist);
+        finish();
+        startActivity(intent);
+    }
+
     @Override
     public View onCreateView(String name, @NonNull Context context, @NonNull AttributeSet attrs) {
         return super.onCreateView(name, context, attrs);
     }
 
     public void appBarActions() {
-
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
-
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,14 +224,13 @@ public class MainActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
-
-            } else if (resultCode == RESULT_CANCELED) {
-
+                weatherDataAsync.setFromSharedPreferences();
             }
         }
     }
 
     public List<Alarm> getAlarmList() {
+        Log.e(TAG, "getAlarmList");
         List<Alarm> testAlarms = new ArrayList<>();
         AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
         Cursor cursor = dataBaseHelper.getAlarms();
@@ -213,7 +247,7 @@ public class MainActivity extends ActionBarActivity {
                 long alarmid = Long.parseLong("" + cursor.getInt(cursor.getColumnIndex("alarmid")));
                 int type = cursor.getInt(cursor.getColumnIndex("type"));
                 boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("isEnabled")));
-
+                String artist = cursor.getString(cursor.getColumnIndex("artist"));
                 String[] repeatingDaysStrings = days.split(",");
                 boolean[] repeatingDays = new boolean[repeatingDaysStrings.length];
                 int i = 0;
@@ -222,11 +256,71 @@ public class MainActivity extends ActionBarActivity {
                     repeatingDays[i] = value;
                     i++;
                 }
-                testAlarms.add(new Alarm(title, _id, hour, minute, isEnabled, repeatingDays, weekly, tone, alarmid, type, alarmToneName));
-            } while (cursor.moveToNext());
-        }
-        dataBaseHelper.close();
+                Alarm alarm = new Alarm(title, _id, hour, minute, isEnabled, repeatingDays, weekly, tone, artist, alarmid, type, alarmToneName);
+                testAlarms.add(alarm);
+                if (!fullTimeClock) {
+                    alarm.usClock = true;
+                    if (alarm.hour < 12) {
+                        alarm.partOfDay = "AM";
+                        if (alarm.hour == 0) {
+                            alarm.hour = 12;
+                            alarm.partOfDay = "AM";
+                        }
+                    } else if (alarm.hour == 12) {
+                        alarm.partOfDay = "PM";
+                    } else {
+                        alarm.partOfDay = "PM";
+                        alarm.hour = alarm.hour - 12;
+                    }
+                } else {
+                    alarm.usClock = false;
+                    alarm.partOfDay = null;
+                }
 
+            } while (cursor.moveToNext());
+            dataBaseHelper.close();
+        }
+        Collections.sort(testAlarms, new Comparator<Alarm>() {
+            @Override
+            public int compare(Alarm lhs, Alarm rhs) {
+                //  an integer < 0 if lhs is less than rhs, 0 if they are equal, and > 0 if lhs is greater than rhs.
+                if (DateFormat.is24HourFormat(context)) {
+                    if (lhs.hour != rhs.hour) {
+                        if (lhs.hour < rhs.hour) return -1;
+                        if (lhs.hour > rhs.hour) return 1;
+                    } else {
+                        if (lhs.minute < rhs.minute) return -1;
+                        if (lhs.minute > rhs.minute) return 1;
+                        if (lhs.minute == rhs.minute) return 0;
+                    }
+                    return 0;
+                } else {
+                    Log.e(TAG, "Sorting 12 hour clock values");
+                    if (lhs.partOfDay.equalsIgnoreCase("AM") && rhs.partOfDay.equalsIgnoreCase("PM"))
+                        return -1;
+                    else if (lhs.partOfDay.equalsIgnoreCase("PM") && rhs.partOfDay.equalsIgnoreCase("AM"))
+                        return 1;
+                    else if (lhs.partOfDay.equalsIgnoreCase(rhs.partOfDay)) {
+                        if (lhs.hour == 12 && rhs.hour > 0) return -1;
+                        else if (lhs.hour > 0 && rhs.hour == 12) return 1;
+                        if (lhs.hour != rhs.hour) {
+                            if (lhs.hour < rhs.hour) return -1;
+                            if (lhs.hour > rhs.hour) return 1;
+                        } else {
+                            if (lhs.minute < rhs.minute) return -1;
+                            if (lhs.minute > rhs.minute) return 1;
+                            if (lhs.minute == rhs.minute) return 0;
+                        }
+                    }
+                }
+                return 0;
+            }
+
+            @Override
+            public boolean equals(Object object) {
+                return false;
+            }
+        });
         return testAlarms;
     }
 

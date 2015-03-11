@@ -23,9 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by arvis.taurenis on 2/16/2015.
- */
 public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapter.DeezerArtistViewHolder> {
 
 
@@ -33,7 +30,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
     ArrayList<Artist> artistList;
     LayoutInflater inflater;
     ArrayList<Bitmap> images;
-    static Typeface notoRegular;
+    static Typeface robotoRegular;
     public static int selectedPosition = -1;
 
     public DeezerArtistAdapter(Context mContext, ArrayList<Artist> artists) {
@@ -45,7 +42,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
         for (int i = 0; i < artistList.size(); i++) {
             images.add(null);
         }
-        notoRegular = Typeface.createFromAsset(context.getAssets(), "NotoSerif-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
     }
 
     @Override
@@ -67,16 +64,16 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
             holder.artistImageView.setWillNotDraw(false);
             holder.artistTextView.setWillNotDraw(false);
             holder.artistTextView.setText(artist.name);
-            holder.artistTextView.setTypeface(notoRegular);
+            holder.artistTextView.setTypeface(robotoRegular);
             if (artist.imageUrlMedium.length() > 1) {
-                holder.artistImageView.setImageResource(R.drawable.weather_sunny);
+                holder.artistImageView.setImageResource(R.drawable.ic_artist);
                 if (artist.selected && RingtoneActivity.selectedRingtone.type == 3) {
                     holder.artistRadioButton.setChecked(true);
                 } else holder.artistRadioButton.setChecked(false);
                 if (images.get(position) != null) {
                     holder.artistImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(artist.imageUrlMedium, holder.artistImageView, position).execute();
+                    new ImageLoadTask(artist.imageUrlMedium, holder.artistImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
             holder.artistRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +84,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
                         selectedPosition = position;
                         notifyItemChanged(position);
                         DeezerArtistFragment.updateSelectedRingtone(artist.id, artist.name);
-                    } else if (selectedPosition != -1 && selectedPosition == position) {
+                    } else if (selectedPosition == position) {
                         artist.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);

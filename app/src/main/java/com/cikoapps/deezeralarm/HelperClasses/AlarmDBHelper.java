@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.cikoapps.deezeralarm.models.Alarm;
 
@@ -16,8 +15,6 @@ import java.util.List;
 public class AlarmDBHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "AlarmDBHelper.java";
-    public static final int DATABASE_VERSION = 1;
-    private static String DB_PATH = "/data/data/com.cikoapps.deezeralarm/databases/";
     private static String DB_NAME = "deezerAlarmClock";
 
     private SQLiteDatabase myDataBase;
@@ -45,8 +42,6 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
             this.getReadableDatabase();
             myDataBase = myContext.openOrCreateDatabase(DB_NAME, Context.MODE_PRIVATE, null);
             myDataBase.execSQL(SQL_CREATE_ALARM);
-            myDataBase.execSQL(SQL_CREATE_WEATHER);
-            Log.e(TAG, SQL_CREATE_WEATHER);
         }
         close();
     }
@@ -58,36 +53,27 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
         super.close();
     }
 
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
     boolean checkDataBase() {
         File dbFile = myContext.getDatabasePath(DB_NAME);
         return dbFile.exists();
     }
 
     void openDataBase() throws SQLException {
+        String DB_PATH = "/data/data/com.cikoapps.deezeralarm/databases/";
         String myPath = DB_PATH + DB_NAME;
         myDataBase = myContext.openOrCreateDatabase(myPath, SQLiteDatabase.OPEN_READONLY, null);
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
-    private static final String SQL_CREATE_WEATHER =
-            "CREATE TABLE `weather` (\n" +
-                    "\t`_id`\tINTEGER,\n" +
-                    "\t`timeStamp`\tTEXT,\n" +
-                    "\t`city`\tTEXT,\n" +
-                    "\t`tempC`\tREAL,\n" +
-                    "\t`tempF`\tREAL,\n" +
-                    "\t`windK`\tREAL,\n" +
-                    "\t`windM`\tREAL,\n" +
-                    "\t`summary`\tTEXT,\n" +
-                    "\t`icon_id`\tINTEGER,\n" +
-                    "\tPRIMARY KEY(_id)\n" +
-                    ");";
     private static final String SQL_CREATE_ALARM =
             "CREATE TABLE " + AlarmContract.TABLE_NAME + " (" + "\"" +
                     AlarmContract._ID + "\"" + " INTEGER PRIMARY KEY AUTOINCREMENT," + "\"" +
@@ -98,25 +84,13 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                     AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY + "\"" + " BOOLEAN," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_TONE_NAME + "\"" + " TEXT," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_TONE + "\"" + " TEXT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ARTIST + "\"" + " TEXT," + "\"" +
                     AlarmContract.COLUMN_NAME_ID + "\"" + " INT," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_TYPE + "\"" + " INT," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_ENABLED + "\"" + " BOOLEAN" + " )";
 
-    public void insertWeather(String timeStamp, String city, double tempC, double tempF,
-                              double windK, double windM, String summary, int icon_id ){
-        String insertQuery = "Insert into weather (timeStamp, city, tempC, tempF, windK, windM, summary, icon_Id) " +
-                "values(\""+timeStamp+"\",\""+city+"\", "+tempC+", "+tempF+", "+windK+", "+windM+", \""+summary+"\", "+icon_id+");";
-        try {
-            openDataBase();
-            myDataBase.execSQL(insertQuery);
-            Log.e("DEBUG", insertQuery);
-            close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-    }
-    public void insertAlarm(String title, int hour, int minute, String repeatDays, boolean repeatWeekly, String alarmToneName,
+    public void insertAlarm(String title, int hour, int minute, String repeatDays, boolean repeatWeekly, String alarmToneName, String artist,
                             String alarmTone, long alamrid, int type, boolean enabled) {
 
         try {
@@ -130,6 +104,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                     AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY + " , " +
                     AlarmContract.COLUMN_NAME_ALARM_TONE_NAME + " , " +
                     AlarmContract.COLUMN_NAME_ALARM_TONE + " , " +
+                    AlarmContract.COLUMN_NAME_ARTIST + " , " +
                     AlarmContract.COLUMN_NAME_ID + " , " +
                     AlarmContract.COLUMN_NAME_ALARM_TYPE + " , " +
                     AlarmContract.COLUMN_NAME_ALARM_ENABLED + " ) values ( " +
@@ -140,21 +115,18 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                     "\"" + repeatWeekly + "\"" + " , " +
                     "\"" + alarmToneName + "\"" + " , " +
                     "\"" + alarmTone + "\"" + " , " +
+                    "\"" + artist + "\"" + " , " +
                     alamrid + " , " +
                     type + " , " +
                     "\"" + enabled + "\"" + " ); ";
 
             myDataBase.execSQL(insertQuery);
-            Log.e("DEBUG", insertQuery);
             close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
-
-    private static final String SQL_DELETE_ALARM =
-            "DROP TABLE IF EXISTS " + AlarmContract.TABLE_NAME;
 
     public Cursor getAlarms() {
         try {
@@ -171,14 +143,12 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
             openDataBase();
             String updateQuery = "UPDATE alarm SET isEnabled=\"" + isEnabled + "\" WHERE _id=" + id + ";";
             myDataBase.execSQL(updateQuery);
-            Log.e(TAG, updateQuery);
             close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    //DELETE FROM alarm WHERE _id=1;
     public void deleteAlarm(int id) {
         try {
             openDataBase();
@@ -204,6 +174,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                     String days = cursor.getString(cursor.getColumnIndex("days"));
                     boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("weekly")));
                     String alarmToneName = cursor.getString(cursor.getColumnIndex("alarmToneName"));
+                    String artist = cursor.getString(cursor.getColumnIndex("artist"));
                     String tone = cursor.getString(cursor.getColumnIndex("tone"));
                     long alarmid = cursor.getInt(cursor.getColumnIndex("alarmid"));
                     int type = cursor.getInt(cursor.getColumnIndex("type"));
@@ -217,11 +188,10 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                         repeatingDays[i] = value;
                         i++;
                     }
-                    alarmList.add(new Alarm(title, _id, hour, minute, isEnabled, repeatingDays, weekly, tone, alarmid, type, alarmToneName));
+                    alarmList.add(new Alarm(title, _id, hour, minute, isEnabled, repeatingDays, weekly, tone, artist, alarmid, type, alarmToneName));
                 } while (cursor.moveToNext());
+                close();
             }
-            close();
-
             return alarmList;
         } catch (SQLException e) {
             e.printStackTrace();

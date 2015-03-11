@@ -1,7 +1,6 @@
 package com.cikoapps.deezeralarm.Fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,14 +8,19 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.adapters.DeezerArtistAdapter;
+import com.cikoapps.deezeralarm.models.Artist;
 import com.deezer.sdk.model.AImageOwner;
 import com.deezer.sdk.network.request.DeezerRequest;
 import com.deezer.sdk.network.request.DeezerRequestFactory;
@@ -24,33 +28,29 @@ import com.deezer.sdk.network.request.event.JsonRequestListener;
 import com.deezer.sdk.network.request.event.RequestListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
-/**
- * Created by arvis.taurenis on 2/16/2015.
- */
 public class DeezerArtistFragment extends Fragment {
 
+    private static final String TAG = "DeezerArtistFragment";
     static Activity callingActivity;
-    private static final String ARG_POSITION = "position";
     private static Context context;
-    private static ProgressDialog progress;
+    private static ProgressBar progress;
+    private static boolean onlyWiFi;
     DeezerArtistAdapter mAdapter;
-    private int position;
     ArrayList<com.deezer.sdk.model.Artist> artistArrayList;
 
     RecyclerView recyclerView;
+    private boolean enableNoWiFiTextView = false;
+    private TextView noWifiTextView;
 
-    public static Fragment newInstance(int position, Context mContext, Activity activity) {
-        DeezerArtistFragment f = new DeezerArtistFragment();
+    public static Fragment newInstance(int position, Context mContext, Activity activity, boolean onlyWifiConnection) {
+        DeezerArtistFragment fragment = new DeezerArtistFragment();
         callingActivity = activity;
         context = mContext;
-        Bundle b = new Bundle();
-        b.putInt(ARG_POSITION, position);
-        f.setArguments(b);
-        progress = new ProgressDialog(activity);
-        progress.setTitle("Loading");
-        progress.setMessage("Please wait...");
-        return f;
+        onlyWiFi = onlyWifiConnection;
+        return fragment;
     }
 
     @Override
@@ -59,17 +59,14 @@ public class DeezerArtistFragment extends Fragment {
         if (this.isVisible()) {
             if (!isVisibleToUser) {
                 if (mAdapter != null) {
-                    if (mAdapter.selectedPosition >= 0) {
-                        mAdapter.notifyItemChanged(mAdapter.selectedPosition);
+                    if (DeezerArtistAdapter.selectedPosition >= 0) {
+                        mAdapter.notifyItemChanged(DeezerArtistAdapter.selectedPosition);
                     }
                 }
-            } else if (isVisibleToUser) {
-                if (artistArrayList == null) {
-                    progress.show();
-                }
+            } else {
                 if (mAdapter != null) {
-                    if (mAdapter.selectedPosition >= 0) {
-                        mAdapter.notifyItemChanged(mAdapter.selectedPosition);
+                    if (DeezerArtistAdapter.selectedPosition >= 0) {
+                        mAdapter.notifyItemChanged(DeezerArtistAdapter.selectedPosition);
                     }
                 }
             }
@@ -79,12 +76,16 @@ public class DeezerArtistFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        position = getArguments().getInt(ARG_POSITION);
-        getUserArtists();
+        boolean WiFiConnected = (new HelperClass(context)).isWifiConnected();
+        if ((onlyWiFi && WiFiConnected) || !onlyWiFi) {
+            getUserArtists();
+        } else {
+            enableNoWiFiTextView = true;
+        }
     }
 
     public static void updateSelectedRingtone(long id, String name) {
-        RingtoneActivity.selectedRingtone.updateDeezerRingtone(3, id, name);
+        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ARTIST_ID, id, name, "");
     }
 
     public void getUserArtists() {
@@ -93,7 +94,9 @@ public class DeezerArtistFragment extends Fragment {
         RequestListener requestListener = new JsonRequestListener() {
 
             public void onResult(Object result, Object requestId) {
-                progress.dismiss();
+                recyclerView.setVisibility(View.VISIBLE);
+                progress.setVisibility(View.GONE);
+                //noinspection unchecked
                 artistArrayList = (ArrayList<com.deezer.sdk.model.Artist>) result;
                 for (com.deezer.sdk.model.Artist artist : artistArrayList) {
                     com.cikoapps.deezeralarm.models.Artist artistLocal = new com.cikoapps.deezeralarm.models.Artist(artist.getId(), artist.getName()
@@ -104,6 +107,12 @@ public class DeezerArtistFragment extends Fragment {
                 if (localArtistList.size() < 1) {
                     localArtistList.add(new com.cikoapps.deezeralarm.models.Artist(-1, "No artists found", "", "", "", "", false));
                 }
+                Collections.sort(localArtistList, new Comparator<Artist>() {
+                    @Override
+                    public int compare(Artist lhs, Artist rhs) {
+                        return lhs.name.compareTo(rhs.name);
+                    }
+                });
                 mAdapter = new DeezerArtistAdapter(context, localArtistList);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(mLayoutManager);
@@ -113,14 +122,16 @@ public class DeezerArtistFragment extends Fragment {
             }
 
             public void onUnparsedResult(String requestResponse, Object requestId) {
+                Log.e(TAG, "Unparsed Result");
             }
 
             public void onException(Exception e, Object requestId) {
+                Log.e(TAG, "Error getting favorite artists " + e.getMessage());
             }
         };
 
         DeezerRequest currUserArtistRequest = DeezerRequestFactory.requestCurrentUserArtists();
-        currUserArtistRequest.setId("currUserArtistRequest");
+        currUserArtistRequest.setId(TAG);
         ((RingtoneActivity) getActivity()).deezerConnect.requestAsync(currUserArtistRequest, requestListener);
     }
 
@@ -130,6 +141,15 @@ public class DeezerArtistFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.artistRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setVisibility(View.GONE);
+        progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
+        progress.setVisibility(View.VISIBLE);
+        noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        if (enableNoWiFiTextView) {
+            noWifiTextView.setVisibility(View.VISIBLE);
+        } else {
+            noWifiTextView.setVisibility(View.GONE);
+        }
         return rootView;
     }
 }

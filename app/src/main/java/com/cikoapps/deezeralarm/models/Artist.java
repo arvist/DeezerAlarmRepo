@@ -1,12 +1,6 @@
 package com.cikoapps.deezeralarm.models;
 
-
-/*
-(artist.getId(), artist.getName()
-                            , artist.getPictureUrl(), artist.getImageUrl(AImageOwner.ImageSize.small), artist.getImageUrl(AImageOwner.ImageSize.medium),
-                            artist.getImageUrl(AImageOwner.ImageSize.big), artist.hasRadio());
- */
-public class Artist implements java.io.Serializable {
+public class Artist {
     public long id;
     public String name;
     String pictureUrl;

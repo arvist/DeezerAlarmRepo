@@ -2,8 +2,14 @@
 <resources>
 
     <string name="app_name">DeezerAlarm</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="ArtistTextView">Artist</string>
+    <string name="agoText"> ago</string>
+    <string name="defaultRefreshString">0 minutes</string>
+    <string name="defaultDateWeatherString">January 1, 1970</string>
+    <string name="refreshButtonContentDesc">Button to refresh weather data</string>
+    <string name="weatherImageContentDesc">weather image</string>
+    <string name="tempImageContentDesc">weatherIconImage</string>
+    <string name="windImageIconDesc">windImageIcon</string>
 
 </resources>
