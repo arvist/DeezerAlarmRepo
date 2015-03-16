@@ -1,6 +1,7 @@
 package com.cikoapps.deezeralarm.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.app.Fragment;
 import android.content.Context;
@@ -98,6 +99,7 @@ public class DeezerListAlarmFragment extends Fragment {
     private int reconnect = 0;
     //private Toast toast;
     private Application myApp;
+    private Activity mActivity;
 
     @SuppressLint("ValidFragment")
     public DeezerListAlarmFragment(long id, int type, boolean wiFiBool, Context context, Application application) {
@@ -162,7 +164,7 @@ public class DeezerListAlarmFragment extends Fragment {
                 }
             };
             // Launches the authentication process
-            deezerConnect.authorize(getActivity(), permissions, listener);
+            deezerConnect.authorize((AlarmScreenActivity)context, permissions, listener);
         }
 
     }
@@ -171,7 +173,11 @@ public class DeezerListAlarmFragment extends Fragment {
     public DeezerListAlarmFragment() {
         super();
     }
-
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
