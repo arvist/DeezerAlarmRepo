@@ -25,28 +25,26 @@ import com.cikoapps.deezeralarm.models.Alarm;
 
 public class AddAlarmActivity extends DeezerBase {
 
+    public static final String RESTART_ACTIVITY = "restartActivity";
     private static final String TAG = "AddAlarmActivity";
-    Toolbar toolbar;
-    Typeface robotoRegular;
-    Context context;
-    boolean fullTimeClock = true;
-    final boolean selected[] = {false, false, false, false, false, false, false};
-    final String elements[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    int type;
-    String uri = null;
-    long deezerRingtoneId;
-    String ringtoneName = "";
-    String artist = "";
-    HelperClass helperClass;
+    private final String elements[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    boolean[] selected = {false, false, false, false, false, false, false};
+    private Context context;
+    private int type;
+    private String uri = null;
+    private long deezerRingtoneId;
+    private String ringtoneName = "";
+    private String artist = "";
+    private HelperClass helperClass;
+    private boolean[] tempSelection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate AddAlarmActivity.java");
         context = getApplicationContext();
         setContentView(R.layout.add_alarm_layout);
-        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-        toolbar = (Toolbar) findViewById(R.id.appBar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         repeatNoButtonClick();
         repeatYesButtonClick();
@@ -55,7 +53,7 @@ public class AddAlarmActivity extends DeezerBase {
         ringtoneEdit();
         appBarActions();
         TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-        fullTimeClock = DateFormat.is24HourFormat(context);
+        boolean fullTimeClock = DateFormat.is24HourFormat(context);
         timePicker.setIs24HourView(fullTimeClock);
         helperClass = new HelperClass(this);
     }
@@ -68,7 +66,7 @@ public class AddAlarmActivity extends DeezerBase {
         startActivity(intent);
     }
 
-    public void appBarActions() {
+    void appBarActions() {
         ImageButton backButton = (ImageButton) findViewById(R.id.app_bar_back_btn);
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +86,7 @@ public class AddAlarmActivity extends DeezerBase {
         });
     }
 
-    public void repeatNoButtonClick() {
+    void repeatNoButtonClick() {
         findViewById(R.id.radioButtonNo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,37 +97,54 @@ public class AddAlarmActivity extends DeezerBase {
         });
     }
 
-    public void repeatYesButtonClick() {
+    void repeatYesButtonClick() {
         findViewById(R.id.radioButtonYes).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (((RadioButton) v).isChecked()) {
                     AlertDialog.Builder repeatingDaysDialog = new AlertDialog.Builder(AddAlarmActivity.this);
-                    repeatingDaysDialog.setMultiChoiceItems(elements, selected, new DialogInterface.OnMultiChoiceClickListener() {
+                    tempSelection = selected.clone();
+                    repeatingDaysDialog.setMultiChoiceItems(elements, tempSelection, new DialogInterface.OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int position, boolean isChecked) {
-                            if (isChecked) {
-                                selected[position] = true;
-                            }
                         }
                     });
                     repeatingDaysDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (helperClass.allFalse(selected)) {
-                                findViewById(R.id.radioButtonYes).setActivated(false);
-                                findViewById(R.id.radioButtonNo).setActivated(true);
+                            selected = tempSelection.clone();
+                            if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                                ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
+                                ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
                             }
                         }
                     });
-                    repeatingDaysDialog.show();
+                    repeatingDaysDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            tempSelection = selected.clone();
+                            dialog.cancel();
+                        }
+                    });
+                    repeatingDaysDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                                ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
+                                ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
+                            }
+                        }
+                    });
+                    AlertDialog dialog = repeatingDaysDialog.create();
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.show();
                 }
             }
 
         });
     }
 
-    public void cancelAddingAlarm() {
+    void cancelAddingAlarm() {
         findViewById(R.id.cancelAlarmAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +155,7 @@ public class AddAlarmActivity extends DeezerBase {
         });
     }
 
-    public void addAlarm() {
+    void addAlarm() {
         findViewById(R.id.confirmAlarmAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,6 +173,7 @@ public class AddAlarmActivity extends DeezerBase {
                 if (artist == null) artist = "";
                 Alarm alarm = new Alarm(alarmTitleString, hour, minute, true, selected,
                         repeatWeekly, uri, deezerRingtoneId, type, ringtoneName, artist);
+                Log.e(TAG, alarmTitleString + " " + hour + ":" + minute + " " + deezerRingtoneId + " " + type + " " + ringtoneName);
                 AlarmManagerHelper.cancelAlarms(context);
                 alarm.insertIntoDataBase(context);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -168,7 +184,7 @@ public class AddAlarmActivity extends DeezerBase {
         });
     }
 
-    public void ringtoneEdit() {
+    void ringtoneEdit() {
         findViewById(R.id.editRingtoneButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,17 +209,17 @@ public class AddAlarmActivity extends DeezerBase {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 try {
-                    if (data.getStringExtra("restartActivity").equalsIgnoreCase("true")) {
+                    if (data.getStringExtra(RESTART_ACTIVITY).equalsIgnoreCase("true")) {
                         Intent intent = new Intent(AddAlarmActivity.this, RingtoneActivity.class);
                         startActivityForResult(intent, 1);
                     }
                 } catch (NullPointerException ignored) {
                 }
-                type = data.getIntExtra("type", -1);
-                uri = data.getStringExtra("uri");
-                deezerRingtoneId = data.getLongExtra("id", -1);
-                ringtoneName = data.getStringExtra("name");
-                artist = data.getStringExtra("artist");
+                type = data.getIntExtra(RingtoneActivity.RINGTONE_TYPE, -1);
+                uri = data.getStringExtra(RingtoneActivity.RINGTONE_URI);
+                deezerRingtoneId = data.getLongExtra(RingtoneActivity.RINGTONE_ID_STRING, -1);
+                ringtoneName = data.getStringExtra(RingtoneActivity.RINGTONE_NAME);
+                artist = data.getStringExtra(RingtoneActivity.RINGTONE_ARTIST);
                 if (artist == null) {
                     artist = "";
                 }
@@ -225,6 +241,7 @@ public class AddAlarmActivity extends DeezerBase {
                         }
                     }
                     ((TextView) findViewById(R.id.ringtone)).setText(ringtoneName);
+                    ((TextView) findViewById(R.id.ringtone)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
                 }
             }
         }

@@ -15,11 +15,23 @@ import java.util.List;
 public class AlarmDBHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "AlarmDBHelper.java";
+    private static final String SQL_CREATE_ALARM =
+            "CREATE TABLE " + AlarmContract.TABLE_NAME + " (" + "\"" +
+                    AlarmContract._ID + "\"" + " INTEGER PRIMARY KEY AUTOINCREMENT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_NAME + "\"" + " TEXT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_TIME_HOUR + "\"" + " INT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_TIME_MINUTE + "\"" + " INT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_REPEAT_DAYS + "\"" + " TEXT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY + "\"" + " BOOLEAN," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_TONE_NAME + "\"" + " TEXT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_TONE + "\"" + " TEXT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ARTIST + "\"" + " TEXT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ID + "\"" + " INT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_TYPE + "\"" + " INT," + "\"" +
+                    AlarmContract.COLUMN_NAME_ALARM_ENABLED + "\"" + " BOOLEAN" + " )";
     private static String DB_NAME = "deezerAlarmClock";
-
-    private SQLiteDatabase myDataBase;
-
     private final Context myContext;
+    private SQLiteDatabase myDataBase;
 
     public AlarmDBHelper(Context context) {
         super(context, DB_NAME, null, 1);
@@ -73,22 +85,6 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
         String myPath = DB_PATH + DB_NAME;
         myDataBase = myContext.openOrCreateDatabase(myPath, SQLiteDatabase.OPEN_READONLY, null);
     }
-
-    private static final String SQL_CREATE_ALARM =
-            "CREATE TABLE " + AlarmContract.TABLE_NAME + " (" + "\"" +
-                    AlarmContract._ID + "\"" + " INTEGER PRIMARY KEY AUTOINCREMENT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_NAME + "\"" + " TEXT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_TIME_HOUR + "\"" + " INT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_TIME_MINUTE + "\"" + " INT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_REPEAT_DAYS + "\"" + " TEXT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY + "\"" + " BOOLEAN," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_TONE_NAME + "\"" + " TEXT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_TONE + "\"" + " TEXT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ARTIST + "\"" + " TEXT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ID + "\"" + " INT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_TYPE + "\"" + " INT," + "\"" +
-                    AlarmContract.COLUMN_NAME_ALARM_ENABLED + "\"" + " BOOLEAN" + " )";
-
 
     public void insertAlarm(String title, int hour, int minute, String repeatDays, boolean repeatWeekly, String alarmToneName, String artist,
                             String alarmTone, long alamrid, int type, boolean enabled) {
@@ -165,20 +161,21 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
         try {
             openDataBase();
             Cursor cursor = myDataBase.rawQuery("select * from alarm", null);
+
             if (cursor.moveToFirst()) {
                 do {
-                    int _id = cursor.getInt(cursor.getColumnIndex("_id"));
-                    String title = cursor.getString(cursor.getColumnIndex("title"));
-                    int hour = cursor.getInt(cursor.getColumnIndex("hour"));
-                    int minute = cursor.getInt(cursor.getColumnIndex("minute"));
-                    String days = cursor.getString(cursor.getColumnIndex("days"));
-                    boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("weekly")));
-                    String alarmToneName = cursor.getString(cursor.getColumnIndex("alarmToneName"));
-                    String artist = cursor.getString(cursor.getColumnIndex("artist"));
-                    String tone = cursor.getString(cursor.getColumnIndex("tone"));
-                    long alarmid = cursor.getInt(cursor.getColumnIndex("alarmid"));
-                    int type = cursor.getInt(cursor.getColumnIndex("type"));
-                    boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("isEnabled")));
+                    int _id = cursor.getInt(cursor.getColumnIndex(AlarmContract._ID));
+                    String title = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_NAME));
+                    int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TIME_HOUR));
+                    int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TIME_MINUTE));
+                    String days = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_REPEAT_DAYS));
+                    boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY)));
+                    String alarmToneName = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TONE_NAME));
+                    String artist = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ARTIST));
+                    String tone = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TONE));
+                    long alarmid = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ID));
+                    int type = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TYPE));
+                    boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_ENABLED)));
 
                     String[] repeatingDaysStrings = days.split(",");
                     boolean[] repeatingDays = new boolean[repeatingDaysStrings.length];

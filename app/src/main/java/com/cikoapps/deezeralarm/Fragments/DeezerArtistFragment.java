@@ -1,6 +1,5 @@
 package com.cikoapps.deezeralarm.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,23 +33,24 @@ import java.util.Comparator;
 public class DeezerArtistFragment extends Fragment {
 
     private static final String TAG = "DeezerArtistFragment";
-    static Activity callingActivity;
     private static Context context;
     private static ProgressBar progress;
     private static boolean onlyWiFi;
-    DeezerArtistAdapter mAdapter;
-    ArrayList<com.deezer.sdk.model.Artist> artistArrayList;
+    private DeezerArtistAdapter mAdapter;
+    private ArrayList<com.deezer.sdk.model.Artist> artistArrayList;
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private boolean enableNoWiFiTextView = false;
-    private TextView noWifiTextView;
 
-    public static Fragment newInstance(int position, Context mContext, Activity activity, boolean onlyWifiConnection) {
+    public static Fragment newInstance(Context mContext, boolean onlyWifiConnection) {
         DeezerArtistFragment fragment = new DeezerArtistFragment();
-        callingActivity = activity;
         context = mContext;
         onlyWiFi = onlyWifiConnection;
         return fragment;
+    }
+
+    public static void updateSelectedRingtone(long id, String name) {
+        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ARTIST_ID, id, name, "");
     }
 
     @Override
@@ -82,10 +82,6 @@ public class DeezerArtistFragment extends Fragment {
         } else {
             enableNoWiFiTextView = true;
         }
-    }
-
-    public static void updateSelectedRingtone(long id, String name) {
-        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ARTIST_ID, id, name, "");
     }
 
     public void getUserArtists() {
@@ -144,7 +140,7 @@ public class DeezerArtistFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
         progress.setVisibility(View.VISIBLE);
-        noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        TextView noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
         if (enableNoWiFiTextView) {
             noWifiTextView.setVisibility(View.VISIBLE);
         } else {

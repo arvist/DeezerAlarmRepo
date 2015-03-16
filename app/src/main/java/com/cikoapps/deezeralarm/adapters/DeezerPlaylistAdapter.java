@@ -26,15 +26,14 @@ import java.util.ArrayList;
 
 public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAdapter.DeezerPlaylistViewHolder> {
 
-    Context context;
-    ArrayList<Playlist> playlistList;
-    LayoutInflater inflater;
-    ArrayList<Bitmap> images;
-    static Typeface robotoRegular;
     public static int selectedPosition = -1;
+    private static Typeface robotoRegular;
+    private final ArrayList<Playlist> playlistList;
+    private final LayoutInflater inflater;
+    private final ArrayList<Bitmap> images;
 
     public DeezerPlaylistAdapter(Context mContext, ArrayList<Playlist> playlist) {
-        context = mContext;
+        Context context = mContext;
         playlistList = playlist;
         if (playlistList.size() > 0) {
             if (playlistList.get(playlist.size() - 1) != null)

@@ -24,11 +24,12 @@ import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.Alarm;
 
 public class EditAlarmActivity extends DeezerBase {
-    String title;
-    String alarmToneName;
-    int hour;
-    int minute;
-    int id;
+    private final String[] elements = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private String title;
+    private String alarmToneName;
+    private int hour;
+    private int minute;
+    private int id;
     private TextView alarmTitleTextView;
     private TextView timeTextView;
     private TextView setRingtoneTextView;
@@ -43,10 +44,9 @@ public class EditAlarmActivity extends DeezerBase {
     private ImageButton editRingtoneImageButton;
     private String uri;
     private long deezerRingtoneId;
-    boolean[] selected;
-    final String elements[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private boolean[] selected;
     private boolean enabled;
-    boolean[] tempSelection;
+    private boolean[] tempSelection;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -56,22 +56,21 @@ public class EditAlarmActivity extends DeezerBase {
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(this);
-        title = getIntent().getStringExtra("title");
-        alarmToneName = getIntent().getStringExtra("alarmToneName");
-        id = getIntent().getIntExtra("id", -1);
-        deezerRingtoneId = getIntent().getLongExtra("deezerRingtoneId", -1);
-        uri = getIntent().getStringExtra("uri");
-        hour = getIntent().getIntExtra("hour", -1);
-        minute = getIntent().getIntExtra("minute", -1);
-        selected = getIntent().getBooleanArrayExtra("repeatingDays");
-        partOfDay = getIntent().getStringExtra("partOfDay");
-        artist = getIntent().getStringExtra("artist");
-        type = getIntent().getIntExtra("type", -1);
-        enabled = getIntent().getBooleanExtra("enabled", false);
+        title = getIntent().getStringExtra(Alarm.TITLE);
+        alarmToneName = getIntent().getStringExtra(Alarm.TONE_NAME);
+        id = getIntent().getIntExtra(Alarm.ALARM_ID, -1);
+        deezerRingtoneId = getIntent().getLongExtra(Alarm.DEEZER_RINGTONE_ID, -1);
+        uri = getIntent().getStringExtra(Alarm.ALARM_URI);
+        hour = getIntent().getIntExtra(Alarm.HOUR, -1);
+        minute = getIntent().getIntExtra(Alarm.MINUTE, -1);
+        selected = getIntent().getBooleanArrayExtra(Alarm.REPEATING_DAYS);
+        partOfDay = getIntent().getStringExtra(Alarm.PART_OF_DAY);
+        artist = getIntent().getStringExtra(Alarm.ARTIST);
+        type = getIntent().getIntExtra(Alarm.TYPE, -1);
+        enabled = getIntent().getBooleanExtra(Alarm.ENABLED, false);
         if (partOfDay == null) {
             partOfDay = "";
         }
-        id = getIntent().getIntExtra("id", -1);
         initViews();
         setViewValues();
         timePickerClick();
@@ -84,7 +83,7 @@ public class EditAlarmActivity extends DeezerBase {
         appBarActions();
     }
 
-    public void ringtoneEditClick() {
+    void ringtoneEditClick() {
         editRingtoneImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,22 +94,21 @@ public class EditAlarmActivity extends DeezerBase {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         // RequestCode is 1 for RingtoneActivity
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 try {
-                    if (data.getStringExtra("restartActivity").equalsIgnoreCase("true")) {
+                    if (data.getStringExtra(AddAlarmActivity.RESTART_ACTIVITY).equalsIgnoreCase("true")) {
                         Intent intent = new Intent(EditAlarmActivity.this, RingtoneActivity.class);
                         startActivityForResult(intent, 1);
                     }
                 } catch (NullPointerException ignored) {
                 }
-                type = data.getIntExtra("type", -1);
-                uri = data.getStringExtra("uri");
-                deezerRingtoneId = data.getLongExtra("id", -1);
-                alarmToneName = data.getStringExtra("name");
-                artist = data.getStringExtra("artist");
+                type = data.getIntExtra(RingtoneActivity.RINGTONE_TYPE, -1);
+                uri = data.getStringExtra(RingtoneActivity.RINGTONE_URI);
+                deezerRingtoneId = data.getLongExtra(RingtoneActivity.RINGTONE_ID_STRING, -1);
+                alarmToneName = data.getStringExtra(RingtoneActivity.RINGTONE_NAME);
+                artist = data.getStringExtra(RingtoneActivity.RINGTONE_ARTIST);
                 if (artist != null) {
                     if (artist.equalsIgnoreCase("null")) {
                         artist = "";
@@ -119,6 +117,13 @@ public class EditAlarmActivity extends DeezerBase {
                 setRingtoneName(alarmToneName);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        finish();
+        startActivity(intent);
     }
 
     private void setRingtoneName(String alarmToneName) {
@@ -136,12 +141,10 @@ public class EditAlarmActivity extends DeezerBase {
                 ringtoneName = ringtoneName.concat(" by " + artist);
         }
         if (alarmToneName.length() < 1) ringtoneName = "Default ringtone";
-
         setRingtoneTextView.setText(ringtoneName);
     }
 
     private void setViewValues() {
-
         setRingtoneName(alarmToneName);
         String timeString;
         if (partOfDay.length() < 1) {
@@ -160,13 +163,13 @@ public class EditAlarmActivity extends DeezerBase {
             }
         } else {
             minuteOfDay = minute;
-            if (partOfDay.equalsIgnoreCase("PM")) {
+            if (partOfDay.equalsIgnoreCase(MainActivity.PART_OF_DAY_PM)) {
                 if (hour == 12) {
                     hourOfDay = 12;
                 } else {
                     hourOfDay = hour + 12;
                 }
-            } else if (partOfDay.equalsIgnoreCase("AM")) {
+            } else if (partOfDay.equalsIgnoreCase(MainActivity.PART_OF_DAY_AM)) {
                 if (hour == 12) {
                     hourOfDay = 0;
                 } else {
@@ -210,16 +213,16 @@ public class EditAlarmActivity extends DeezerBase {
             int minute;
             if (hourOfDay < 12) {
                 hour = hourOfDay;
-                partOfDay = "AM";
+                partOfDay = MainActivity.PART_OF_DAY_AM;
                 if (hourOfDay == 0) {
                     hour = 12;
-                    partOfDay = "AM";
+                    partOfDay = MainActivity.PART_OF_DAY_AM;
                 }
             } else if (hourOfDay == 12) {
-                partOfDay = "PM";
+                partOfDay = MainActivity.PART_OF_DAY_PM;
                 hour = hourOfDay;
             } else {
-                partOfDay = "PM";
+                partOfDay = MainActivity.PART_OF_DAY_PM;
                 hour = hourOfDay - 12;
             }
             minute = minuteOfDay;
@@ -230,7 +233,6 @@ public class EditAlarmActivity extends DeezerBase {
             }
         }
         timeTextView.setText(timeString);
-
     }
 
     private void initViews() {
@@ -247,7 +249,6 @@ public class EditAlarmActivity extends DeezerBase {
                 View promptView = layoutInflater.inflate(R.layout.title_input_dialog, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(EditAlarmActivity.this);
                 alertDialogBuilder.setView(promptView);
-
                 final EditText editText = (EditText) promptView.findViewById(R.id.titleEditText);
                 editText.setText(title);
                 // setup a dialog window
@@ -256,7 +257,6 @@ public class EditAlarmActivity extends DeezerBase {
                             public void onClick(DialogInterface dialog, int id) {
                                 alarmTitleTextView.setText("" + editText.getText());
                                 title = "" + editText.getText();
-
                             }
                         })
                         .setNegativeButton("Cancel",
@@ -286,6 +286,7 @@ public class EditAlarmActivity extends DeezerBase {
                         minutes = minute;
                     }
                 }, hourOfDay, minuteOfDay, fullTimeClock);
+                timePickerDialog.setTitle("Edit alarm time");
                 timePickerDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -301,7 +302,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
-    public void repeatNoButtonClick() {
+    void repeatNoButtonClick() {
         findViewById(R.id.radioButtonNo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -312,7 +313,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
-    public void repeatYesButtonClick() {
+    void repeatYesButtonClick() {
         findViewById(R.id.radioButtonYes).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -328,6 +329,10 @@ public class EditAlarmActivity extends DeezerBase {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             selected = tempSelection.clone();
+                            if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                                ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
+                                ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
+                            }
                         }
                     });
                     repeatingDaysDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -337,15 +342,24 @@ public class EditAlarmActivity extends DeezerBase {
                             dialog.cancel();
                         }
                     });
-                    repeatingDaysDialog.show();
-                    repeatingDaysDialog.setCancelable(false);
+                    repeatingDaysDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                                ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
+                                ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
+                            }
+                        }
+                    });
+                    AlertDialog dialog = repeatingDaysDialog.create();
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.show();
                 }
             }
         });
-
     }
 
-    public void cancelAddingAlarm() {
+    void cancelAddingAlarm() {
         findViewById(R.id.cancelAlarmAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -356,7 +370,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
-    public void addAlarm() {
+    void addAlarm() {
         findViewById(R.id.confirmAlarmAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,7 +398,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
-    public void appBarActions() {
+    void appBarActions() {
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
         ImageButton backButton = (ImageButton) findViewById(R.id.app_bar_back_btn);
         settingsButton.setOnClickListener(new View.OnClickListener() {

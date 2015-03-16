@@ -24,15 +24,8 @@ public class AlarmManagerHelper extends BroadcastReceiver {
     public static final String TYPE = "type";
     public static final String ALARM_ID = "alarmid";
     public static final String ONE_TIME_ALARM = "turnOff";
-    private static boolean notRepeatedAlarm = false;
 
     private static final String TAG = "AlarmManagerHelper.java";
-
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        setAlarms(context);
-    }
 
     public static void setAlarms(Context context) {
         cancelAlarms(context);
@@ -61,7 +54,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                     } else {
                         calendar.add(Calendar.DAY_OF_YEAR, 1);
                     }
-                    notRepeatedAlarm = true;
                     setAlarm(context, calendar, pIntent);
 
                 } else {
@@ -177,5 +169,10 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         intent.putExtra(ALARM_ID, alarm.alarmid);
         intent.putExtra(ONE_TIME_ALARM, alarm.repeatWeekly);
         return PendingIntent.getService(context, alarm.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        setAlarms(context);
     }
 }

@@ -29,84 +29,115 @@
 
     </android.support.v7.widget.CardView>
 
-    <ImageButton
+    <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/controlRipple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/controlButton"
         android:layout_above="@+id/quoteTextView"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_av_pause"
-        android:background="@color/colorTransparent" />
+        ripple:rv_centered="true"
+        ripple:rv_color="@color/colorRippleWhiteBackground"
+        ripple:rv_rippleDuration="150">
 
-    <ImageButton
+        <ImageButton
+            android:id="@+id/controlButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:background="@color/colorTransparent"
+            android:src="@drawable/ic_av_pause" />
+    </com.andexert.library.RippleView>
+
+    <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nextSongRipple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/nextSongButton"
-        android:layout_alignBottom="@+id/controlButton"
-        android:layout_toRightOf="@+id/quoteTextView"
+        android:layout_alignBottom="@+id/controlRipple"
         android:layout_toEndOf="@+id/quoteTextView"
-        android:src="@drawable/ic_av_skip_next"
-        android:background="@color/colorTransparent" />
+        android:layout_toRightOf="@+id/quoteTextView"
+        ripple:rv_centered="true"
+        ripple:rv_color="@color/colorRippleWhiteBackground"
+        ripple:rv_rippleDuration="150">
 
-    <ImageButton
+        <ImageButton
+            android:id="@+id/nextSongButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorTransparent"
+            android:src="@drawable/ic_av_skip_next" />
+    </com.andexert.library.RippleView>
+
+    <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/prevSongRipple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/prevSongButton"
-        android:layout_alignBottom="@+id/controlButton"
+        android:layout_alignBottom="@+id/controlRipple"
         android:layout_toLeftOf="@+id/quoteTextView"
         android:layout_toStartOf="@+id/quoteTextView"
-        android:src="@drawable/ic_av_skip_previous"
-        android:background="@color/colorTransparent" />
+        ripple:rv_centered="true"
+        ripple:rv_color="@color/colorRippleWhiteBackground"
+        ripple:rv_rippleDuration="150">
+
+        <ImageButton
+            android:id="@+id/prevSongButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorTransparent"
+            android:src="@drawable/ic_av_skip_previous" />
+    </com.andexert.library.RippleView>
 
     <SeekBar
+        android:id="@+id/seekBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:layout_above="@+id/controlButton"
-        android:layout_alignRight="@+id/nextSongButton"
-        android:layout_alignEnd="@+id/nextSongButton"
-        android:layout_alignLeft="@+id/prevSongButton"
-        android:layout_alignStart="@+id/prevSongButton" />
+        android:layout_above="@+id/controlRipple"
+        android:layout_alignEnd="@+id/nextSongRipple"
+        android:layout_alignLeft="@+id/prevSongRipple"
+        android:layout_alignRight="@+id/nextSongRipple"
+        android:layout_alignStart="@+id/prevSongRipple" />
 
     <TextView
+        android:id="@+id/artistTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/artistTextView"
         android:layout_above="@+id/seekBar"
         android:layout_centerHorizontal="true"
-        android:textSize="16sp"
-        android:singleLine="true"
-        android:layout_marginRight="32dp"
         android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:maxWidth="200dp"
+        android:singleLine="true"
         android:textColor="@color/colorSecondaryText"
-        android:maxWidth="200dp" />
+        android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/songTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="..."
-        android:textSize="20sp"
-        android:id="@+id/songTextView"
-        android:textColor="@color/colorPrimaryText"
         android:layout_above="@+id/artistTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="4dp"
-        android:singleLine="true"
-        android:layout_marginRight="32dp"
         android:layout_marginLeft="32dp"
-        android:maxWidth="250dp" />
+        android:layout_marginRight="32dp"
+        android:maxWidth="250dp"
+        android:singleLine="true"
+        android:text="..."
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
 
     <ImageView
+        android:id="@+id/songImage"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:id="@+id/songImage"
-        android:src="@drawable/ic_no_song_image"
-        android:background="@drawable/image_shadow"
-        android:paddingLeft="2dp"
-        android:paddingTop="2dp"
-        android:paddingRight="6dp"
-        android:paddingBottom="6dp"
         android:layout_above="@+id/songTextView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/image_shadow"
+        android:paddingBottom="4dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="4dp"
+        android:paddingTop="2dp"
+        android:src="@drawable/ic_no_song_image" />
 
 </RelativeLayout>

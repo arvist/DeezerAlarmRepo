@@ -6,23 +6,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.cikoapps.deezeralarm.HelperClasses.AlarmContract;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
@@ -38,43 +35,40 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
 
+    public static final String PART_OF_DAY_PM = "PM";
+    public static final String PART_OF_DAY_AM = "AM";
     private static final String TAG = "MainActivity.java";
-    Toolbar toolbar;
-    AlarmViewAdapter alarmViewAdapter;
-    Typeface robotoRegular;
-    Context context;
     public static AlertDialog.Builder builder;
     public static int longClickedItem = -1;
-    ImageButton refreshButton;
-    WeatherDataAsync weatherDataAsync;
-    RelativeLayout mainTopLayout;
-    MyLocation myLocation;
-    HelperClass helperClass;
+    private Toolbar toolbar;
+    private AlarmViewAdapter alarmViewAdapter;
+    private Context context;
+    private ImageButton refreshButton;
+    private WeatherDataAsync weatherDataAsync;
+    private RelativeLayout mainTopLayout;
+    private MyLocation myLocation;
     private boolean fullTimeClock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainActivity object = this;
-        Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         context = this;
-        helperClass = new HelperClass(this);
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
         toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(context);
-
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, toolbar, context);
         //weatherDataAsync.setFromSharedPreferences();
-        appBarActions();
+        initializeAppBarActions();
         AlarmDBHelper alarmDBHelper = new AlarmDBHelper((getApplicationContext()));
         alarmDBHelper.checkForData();
-        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-
         RecyclerView alarmRecyclerView = (RecyclerView) findViewById(R.id.alarmRecyclerView);
         alarmRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(
                 getApplicationContext()
@@ -82,10 +76,8 @@ public class MainActivity extends ActionBarActivity {
         alarmRecyclerView.setHasFixedSize(true);
         alarmViewAdapter = new AlarmViewAdapter(getApplicationContext(), getAlarmList(), object);
         alarmRecyclerView.setAdapter(alarmViewAdapter);
-
         alarmRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         alarmRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
         findViewById(R.id.floatingActionButtonView).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,18 +87,53 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
         longClickDialog();
-        refresh();
+        refreshWeatherButton();
         updateWeatherData();
+        updateDisplay();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        weatherDataAsync.setFromSharedPreferences();
+        updateWeatherData();
+        alarmViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                weatherDataAsync.setFromSharedPreferences();
+            }
+        }
+    }
+
+    private void updateDisplay() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        weatherDataAsync.setFromSharedPreferences();
+                        updateWeatherData();
+                    }
+                });
+
+
+            }
+        }, 0, 1 * 60 * 1000);
+    }
     private void updateWeatherData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int refreshTime = preferences.getInt("selectedInterval", 1);
+        int refreshTime = preferences.getInt(SettingsActivity.SELECTED_INTERVAL, 1);
         if (refreshTime != 12) {
-            long lastUpdateTimeMillis = preferences.getLong("time", 0);
-            boolean onlyWiFiUpdate = preferences.getBoolean("wifiSelected", false);
+            long lastUpdateTimeMillis = preferences.getLong(WeatherDataAsync.TIME_UPDATED, 0);
+            boolean onlyWiFiUpdate = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
             if ((onlyWiFiUpdate && new HelperClass(context).isWifiConnected()) || !onlyWiFiUpdate) {
                 Calendar deleteCalendar = Calendar.getInstance();
                 deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);
@@ -122,16 +149,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        weatherDataAsync.setFromSharedPreferences();
-        updateWeatherData();
-        alarmViewAdapter.notifyDataSetChanged();
-
-    }
-
-    private void refresh() {
+    private void refreshWeatherButton() {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    public void longClickDialog() {
+    void longClickDialog() {
         final String[] longClickArray = {"Turn On/Off", "Edit", "Delete"};
         builder = new AlertDialog.Builder(this);
         builder.setItems(longClickArray, new DialogInterface.OnClickListener() {
@@ -188,28 +206,24 @@ public class MainActivity extends ActionBarActivity {
         } else {
             alarm = alarmClicked;
         }
-        intent.putExtra("title", alarm.title);
-        intent.putExtra("alarmToneName", alarm.alarmToneName);
-        intent.putExtra("hour", alarm.hour);
-        intent.putExtra("minute", alarm.minute);
-        intent.putExtra("type", alarm.type);
-        intent.putExtra("repeatingDays", alarm.repeatingDays);
-        intent.putExtra("id", alarm.id);
-        intent.putExtra("partOfDay", alarm.partOfDay);
-        intent.putExtra("uri", alarm.alarmTone);
-        intent.putExtra("deezerRingtoneId", alarm.alarmid);
-        intent.putExtra("enabled", alarm.enabled);
-        intent.putExtra("artist", alarm.artist);
+        intent.putExtra(Alarm.TITLE, alarm.title);
+        intent.putExtra(Alarm.TONE_NAME, alarm.alarmToneName);
+        intent.putExtra(Alarm.HOUR, alarm.hour);
+        intent.putExtra(Alarm.MINUTE, alarm.minute);
+        intent.putExtra(Alarm.TYPE, alarm.type);
+        intent.putExtra(Alarm.REPEATING_DAYS, alarm.repeatingDays);
+        intent.putExtra(Alarm.ALARM_ID, alarm.id);
+        intent.putExtra(Alarm.PART_OF_DAY, alarm.partOfDay);
+        intent.putExtra(Alarm.ALARM_URI, alarm.alarmTone);
+        intent.putExtra(Alarm.DEEZER_RINGTONE_ID, alarm.alarmid);
+        intent.putExtra(Alarm.ENABLED, alarm.enabled);
+        intent.putExtra(Alarm.ARTIST, alarm.artist);
         finish();
         startActivity(intent);
     }
 
-    @Override
-    public View onCreateView(String name, @NonNull Context context, @NonNull AttributeSet attrs) {
-        return super.onCreateView(name, context, attrs);
-    }
 
-    public void appBarActions() {
+    void initializeAppBarActions() {
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,34 +234,25 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 2) {
-            if (resultCode == RESULT_OK) {
-                weatherDataAsync.setFromSharedPreferences();
-            }
-        }
-    }
 
-    public List<Alarm> getAlarmList() {
-        Log.e(TAG, "getAlarmList");
+    List<Alarm> getAlarmList() {
         List<Alarm> testAlarms = new ArrayList<>();
         AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
         Cursor cursor = dataBaseHelper.getAlarms();
         if (cursor.moveToFirst()) {
             do {
-                int _id = cursor.getInt(cursor.getColumnIndex("_id"));
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                int hour = cursor.getInt(cursor.getColumnIndex("hour"));
-                int minute = cursor.getInt(cursor.getColumnIndex("minute"));
-                String days = cursor.getString(cursor.getColumnIndex("days"));
-                boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("weekly")));
-                String alarmToneName = cursor.getString(cursor.getColumnIndex("alarmToneName"));
-                String tone = cursor.getString(cursor.getColumnIndex("tone"));
-                long alarmid = Long.parseLong("" + cursor.getInt(cursor.getColumnIndex("alarmid")));
-                int type = cursor.getInt(cursor.getColumnIndex("type"));
-                boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex("isEnabled")));
-                String artist = cursor.getString(cursor.getColumnIndex("artist"));
+                int _id = cursor.getInt(cursor.getColumnIndex(AlarmContract._ID));
+                String title = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_NAME));
+                int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TIME_HOUR));
+                int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TIME_MINUTE));
+                String days = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_REPEAT_DAYS));
+                boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY)));
+                String alarmToneName = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TONE_NAME));
+                String tone = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TONE));
+                long alarmid = Long.parseLong("" + cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ID)));
+                int type = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TYPE));
+                boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_ENABLED)));
+                String artist = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ARTIST));
                 String[] repeatingDaysStrings = days.split(",");
                 boolean[] repeatingDays = new boolean[repeatingDaysStrings.length];
                 int i = 0;
@@ -261,15 +266,15 @@ public class MainActivity extends ActionBarActivity {
                 if (!fullTimeClock) {
                     alarm.usClock = true;
                     if (alarm.hour < 12) {
-                        alarm.partOfDay = "AM";
+                        alarm.partOfDay = PART_OF_DAY_AM;
                         if (alarm.hour == 0) {
                             alarm.hour = 12;
-                            alarm.partOfDay = "AM";
+                            alarm.partOfDay = PART_OF_DAY_AM;
                         }
                     } else if (alarm.hour == 12) {
-                        alarm.partOfDay = "PM";
+                        alarm.partOfDay = PART_OF_DAY_PM;
                     } else {
-                        alarm.partOfDay = "PM";
+                        alarm.partOfDay = PART_OF_DAY_PM;
                         alarm.hour = alarm.hour - 12;
                     }
                 } else {
@@ -295,10 +300,9 @@ public class MainActivity extends ActionBarActivity {
                     }
                     return 0;
                 } else {
-                    Log.e(TAG, "Sorting 12 hour clock values");
-                    if (lhs.partOfDay.equalsIgnoreCase("AM") && rhs.partOfDay.equalsIgnoreCase("PM"))
+                    if (lhs.partOfDay.equalsIgnoreCase(PART_OF_DAY_AM) && rhs.partOfDay.equalsIgnoreCase(PART_OF_DAY_PM))
                         return -1;
-                    else if (lhs.partOfDay.equalsIgnoreCase("PM") && rhs.partOfDay.equalsIgnoreCase("AM"))
+                    else if (lhs.partOfDay.equalsIgnoreCase(PART_OF_DAY_PM) && rhs.partOfDay.equalsIgnoreCase(PART_OF_DAY_AM))
                         return 1;
                     else if (lhs.partOfDay.equalsIgnoreCase(rhs.partOfDay)) {
                         if (lhs.hour == 12 && rhs.hour > 0) return -1;

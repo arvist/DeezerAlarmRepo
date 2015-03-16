@@ -1,6 +1,5 @@
 package com.cikoapps.deezeralarm.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,25 +34,25 @@ import java.util.Comparator;
 public class DeezerRadioFragment extends Fragment {
 
     private static final String TAG = "DeezerRadioFragment";
-    static Activity callingActivity;
     private static Context context;
-    DeezerRadioAdapter mAdapter;
-    ArrayList<com.deezer.sdk.model.Radio> radioArrayList;
-    ArrayList<com.cikoapps.deezeralarm.models.Radio> localRadioList;
-    RecyclerView recyclerView;
-    private ProgressBar progress;
     private static boolean onlyWiFi;
-    private TextView noWifiTextView;
+    private DeezerRadioAdapter mAdapter;
+    private ArrayList<com.deezer.sdk.model.Radio> radioArrayList;
+    private ArrayList<com.cikoapps.deezeralarm.models.Radio> localRadioList;
+    private RecyclerView recyclerView;
+    private ProgressBar progress;
     private boolean enableNoWiFiTextView = false;
 
-    public static Fragment newInstance(Context mContext, Activity activity, boolean onlyWifiConnection) {
+    public static Fragment newInstance(Context mContext, boolean onlyWifiConnection) {
         DeezerRadioFragment f = new DeezerRadioFragment();
-        callingActivity = activity;
         context = mContext;
         onlyWiFi = onlyWifiConnection;
         return f;
     }
 
+    public static void updateSelectedRingtone(long id, String name) {
+        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.RADIO_ID, id, name, "");
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,6 @@ public class DeezerRadioFragment extends Fragment {
             enableNoWiFiTextView = true;
         }
     }
-
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -142,10 +140,6 @@ public class DeezerRadioFragment extends Fragment {
         ((RingtoneActivity) getActivity()).deezerConnect.requestAsync(currUserRadioRequest, requestListener);
     }
 
-    public static void updateSelectedRingtone(long id, String name) {
-        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.RADIO_ID, id, name, "");
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.deezer_radio_fragment_layout, container, false);
@@ -155,7 +149,7 @@ public class DeezerRadioFragment extends Fragment {
         recyclerView.setVisibility(View.INVISIBLE);
         progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
         progress.setVisibility(View.VISIBLE);
-        noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        TextView noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
         if (enableNoWiFiTextView) {
             noWifiTextView.setVisibility(View.VISIBLE);
         } else {

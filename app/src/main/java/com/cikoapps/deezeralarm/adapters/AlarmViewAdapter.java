@@ -5,7 +5,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +23,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.AlarmViewHolder> {
-    private LayoutInflater inflater;
-    List<Alarm> alarmList = Collections.emptyList();
-    Context context;
-    static Typeface robotoRegular;
-    static Typeface robotoBold;
-    MainActivity mainActivityObject;
-    private String TAG = "AlarmViewAdapter";
+    private static Typeface robotoRegular;
+    private static Typeface robotoBold;
+    private final LayoutInflater inflater;
+    private final Context context;
+    private final MainActivity mainActivityObject;
+    private final String TAG = "AlarmViewAdapter";
+    private List<Alarm> alarmList = Collections.emptyList();
 
     public AlarmViewAdapter(Context context, List<Alarm> alarmList, MainActivity mainActivity) {
         this.context = context;
@@ -122,10 +121,8 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
 
                     if (alarmViewHolder.alarmSwitch.isChecked()) {
                         alarmViewHolder.alarmSwitch.setChecked(false);
-                        Log.e(TAG, "On Ripple View Click setting false");
                     } else {
                         alarmViewHolder.alarmSwitch.setChecked(true);
-                        Log.e(TAG, "On Ripple View Click setting true");
                     }
 
                 }
@@ -135,17 +132,14 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
                 public void onClick(View v) {
                     if (alarmViewHolder.alarmSwitch.isChecked()) {
                         alarmViewHolder.alarmSwitch.setChecked(false);
-                        Log.e(TAG, "On Switch View Click setting false");
                     } else {
                         alarmViewHolder.alarmSwitch.setChecked(true);
-                        Log.e(TAG, "On Switch View Click setting true");
                     }
                 }
             });
             alarmViewHolder.alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.e(TAG, "alarmSwitch checkedChange to" + isChecked);
                     AlarmDBHelper dataBaseHelper = new AlarmDBHelper(context);
                     alarmList.get(position).enabled = isChecked;
                     AlarmManagerHelper.cancelAlarms(context);
@@ -182,13 +176,13 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
 
 
     class AlarmViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
-        TextView timeTextView;
-        SwitchCompat alarmSwitch;
-        View alarmSwitchRippleView;
-        LinearLayout daysLinearLayout;
-        List<TextView> daysTextViewList;
-        View rowItem;
+        final TextView titleTextView;
+        final TextView timeTextView;
+        final SwitchCompat alarmSwitch;
+        final View alarmSwitchRippleView;
+        final LinearLayout daysLinearLayout;
+        final List<TextView> daysTextViewList;
+        final View rowItem;
 
         public AlarmViewHolder(View itemView) {
             super(itemView);

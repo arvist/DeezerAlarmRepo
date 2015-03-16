@@ -19,18 +19,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
+import com.cikoapps.deezeralarm.Activities.SettingsActivity;
 import com.cikoapps.deezeralarm.HelperClasses.Quotes;
 import com.cikoapps.deezeralarm.R;
 
 public class RingtoneAlarmFragment extends Fragment {
 
 
-    TextView alarmTitleTextView;
-    Typeface robotoRegular;
-    Typeface robotoItalic;
-    String name;
-    String tone;
-    MediaPlayer mPlayer;
+    private final String name;
+    private String tone;
+    private MediaPlayer mPlayer;
 
     @SuppressLint("ValidFragment")
     public RingtoneAlarmFragment(String name, String tone) {
@@ -48,12 +46,12 @@ public class RingtoneAlarmFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ringtone_alarm_fragment_layout,
                 container, false);
-        robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Regular.ttf");
-        robotoItalic = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
-        alarmTitleTextView = (TextView) view.findViewById(R.id.alarmTitleTextView);
+        Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Regular.ttf");
+        Typeface robotoItalic = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
+        TextView alarmTitleTextView = (TextView) view.findViewById(R.id.alarmTitleTextView);
         alarmTitleTextView.setText(name);
         alarmTitleTextView.setTypeface(robotoRegular);
-        CardView dismissButton = (CardView) view.findViewById(R.id.quoteTextView);
+        CardView dismissButton = (CardView) view.findViewById(R.id.stopButton);
         TextView buttonText = (TextView) dismissButton.findViewById(R.id.buttonText);
         TextView quoteTextView = (TextView) view.findViewById(R.id.quoteTextView);
         TextView quoteAuthorTextView = (TextView) view.findViewById(R.id.quoteAuthorTextView);
@@ -79,7 +77,7 @@ public class RingtoneAlarmFragment extends Fragment {
         try {
             if (tone.equalsIgnoreCase("null") || tone.length() < 2 || tone.equalsIgnoreCase("") || tone == null) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                tone = preferences.getString("selectedRingtoneUri", "");
+                tone = preferences.getString(SettingsActivity.SELECTED_RINGTONE_URI, "");
                 if (tone.equalsIgnoreCase("")) {
                     RingtoneManager ringtoneMgr = new RingtoneManager(getActivity());
                     ringtoneMgr.setType(RingtoneManager.TYPE_ALARM);
@@ -88,15 +86,14 @@ public class RingtoneAlarmFragment extends Fragment {
                     if (alarmsCount == 0 && !alarmsCursor.moveToFirst()) {
                         alarmsCursor.close();
                     } else {
-                        while (!alarmsCursor.isAfterLast() && alarmsCursor.moveToNext()) {
-                            int currentPosition = alarmsCursor.getPosition();
-                            tone = ringtoneMgr.getRingtoneUri(currentPosition).toString();
-                            break;
-                        }
-                        alarmsCursor.close();
+                        int currentPosition = alarmsCursor.getPosition();
+                        tone = ringtoneMgr.getRingtoneUri(currentPosition).toString();
+
                     }
+                    alarmsCursor.close();
                 }
             }
+
             Uri toneUri = Uri.parse(tone);
             mPlayer.setDataSource(getActivity(), toneUri);
             mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
@@ -107,8 +104,6 @@ public class RingtoneAlarmFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return view;
     }
 }

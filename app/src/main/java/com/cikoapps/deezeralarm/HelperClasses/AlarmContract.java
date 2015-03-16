@@ -1,6 +1,6 @@
 package com.cikoapps.deezeralarm.HelperClasses;
 
-public final class AlarmContract {
+public class AlarmContract {
 
 
     public static final String TABLE_NAME = "alarm";

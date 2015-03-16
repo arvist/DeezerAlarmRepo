@@ -1,15 +1,10 @@
 package com.cikoapps.deezeralarm.HelperClasses;
 
-import java.util.Random;
-
 /**
  * Created by arvis.taurenis on 3/8/2015.
  */
 public class Quotes {
-    public String quote;
-    public String author;
-
-    private static String[] quotes = {
+    private static final String[] quotes = {
             "Life isn’t about getting and having, it’s about giving and being.",
             "We can do anything we want to do if we stick to it long enough.",
             "Your time is limited, so don’t waste it living someone else’s life.",
@@ -25,7 +20,7 @@ public class Quotes {
             "In order to succeed, your desire for success should be greater than your fear of failure.",
             "Don’t worry about failures, worry about the chances you miss when you don’t even try.",
             "The only thing that stands between you and your dream is the will to try and the belief that it is actually possible."};
-    private static String[] authors = {
+    private static final String[] authors = {
             "Kevin Kruse",
             "Helen Keller",
             "Steve Jobs",
@@ -41,29 +36,17 @@ public class Quotes {
             "Bill Cosby",
             "Jack Canfield",
             "Joel Brown"};
+    public final String quote;
+    public final String author;
 
-    public Quotes(String author, String quote) {
+    private Quotes(String author, String quote) {
         this.author = author;
         this.quote = quote;
     }
 
     public static Quotes getQuote() {
-        int number = randInt(0, quotes.length);
+        int number = HelperClass.randomInteger(0, quotes.length);
         return new Quotes(authors[number], quotes[number]);
     }
 
-    ;
-
-    public static int randInt(int min, int max) {
-
-        // NOTE: Usually this should be a field rather than a method
-        // variable so that it is not re-seeded every call.
-        Random rand = new Random();
-
-        // nextInt is normally exclusive of the top value,
-        // so add 1 to make it inclusive
-        int randomNum = rand.nextInt((max - min)) + min;
-
-        return randomNum;
-    }
 }

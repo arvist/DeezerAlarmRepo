@@ -26,15 +26,14 @@ import java.util.ArrayList;
 public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapter.DeezerArtistViewHolder> {
 
 
-    Context context;
-    ArrayList<Artist> artistList;
-    LayoutInflater inflater;
-    ArrayList<Bitmap> images;
-    static Typeface robotoRegular;
     public static int selectedPosition = -1;
+    private static Typeface robotoRegular;
+    private final ArrayList<Artist> artistList;
+    private final LayoutInflater inflater;
+    private final ArrayList<Bitmap> images;
 
     public DeezerArtistAdapter(Context mContext, ArrayList<Artist> artists) {
-        context = mContext;
+        Context context = mContext;
         artistList = artists;
         artistList.add(null);
         inflater = LayoutInflater.from(context);

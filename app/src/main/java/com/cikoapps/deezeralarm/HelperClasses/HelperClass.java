@@ -9,11 +9,12 @@ import android.text.TextUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Random;
 
 
 public class HelperClass {
     private static final String TAG = "HelperClass.java";
-    Context context;
+    private final Context context;
 
     public HelperClass(Context context) {
         this.context = context;
@@ -25,21 +26,38 @@ public class HelperClass {
         return monthNames[month];
     }
 
-    public boolean isWifiConnected() {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (mWifi.isConnected()) {
-            return true;
-        }
-        return false;
-    }
-
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    public static String timeConversion(int totalSeconds) {
+
+        final int MINUTES_IN_AN_HOUR = 60;
+        final int SECONDS_IN_A_MINUTE = 60;
+
+        int seconds = totalSeconds % SECONDS_IN_A_MINUTE;
+        int totalMinutes = totalSeconds / SECONDS_IN_A_MINUTE;
+        int minutes = totalMinutes % MINUTES_IN_AN_HOUR;
+        int hours = totalMinutes / MINUTES_IN_AN_HOUR;
+        if (hours > 0) {
+            return hours + " h " + minutes + " min " + seconds + " sec";
+        } else {
+            return minutes + " min " + seconds + " sec";
+        }
+    }
+
+    public static int randomInteger(int min, int max) {
+        Random rand = new Random();
+        return rand.nextInt((max - min)) + min;
+    }
+
+    public boolean isWifiConnected() {
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return mWifi.isConnected();
     }
 
     public boolean haveNetworkConnection() {
@@ -59,7 +77,6 @@ public class HelperClass {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-
     public boolean allFalse(boolean[] values) {
         for (boolean value : values) {
             if (value)
@@ -74,22 +91,6 @@ public class HelperClass {
                 return true;
         }
         return false;
-    }
-
-    public static String timeConversion(int totalSeconds) {
-
-        final int MINUTES_IN_AN_HOUR = 60;
-        final int SECONDS_IN_A_MINUTE = 60;
-
-        int seconds = totalSeconds % SECONDS_IN_A_MINUTE;
-        int totalMinutes = totalSeconds / SECONDS_IN_A_MINUTE;
-        int minutes = totalMinutes % MINUTES_IN_AN_HOUR;
-        int hours = totalMinutes / MINUTES_IN_AN_HOUR;
-        if (hours > 0) {
-            return hours + " h " + minutes + " min " + seconds + " sec";
-        } else {
-            return minutes + " min " + seconds + " sec";
-        }
     }
 
     public boolean isLocationEnabled() {

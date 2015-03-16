@@ -9,6 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/deezer-sdk" />
+            <option value="$PROJECT_DIR$/deezer-sdk-0.10.17" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -22,8 +22,8 @@ public class ImageArtworkDownload {
 
     private static final String TAG = "ImageArtworkDownload";
     private static final String APP_ID = "151831";
-    public ImageLoadTask imageLoadTask;
-    Context context;
+    final Context context;
+    private ImageLoadTask imageLoadTask;
 
     public ImageArtworkDownload(Context context) {
         this.context = context;
@@ -68,8 +68,8 @@ public class ImageArtworkDownload {
     }
 
     private class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
-        String url;
-        ImageView imageView;
+        final String url;
+        final ImageView imageView;
 
         public ImageLoadTask(String url, ImageView imageView) {
             this.url = url;

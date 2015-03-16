@@ -24,7 +24,6 @@ dependencies {
     compile 'com.android.support:palette-v7:+'
     compile 'com.android.support:support-v4:+'
     compile "com.android.support:appcompat-v7:21.0.+"
-    compile files('src/main/libs/deezer-sdk-0.10.16.jar')
     compile 'com.shamanland:fab:0.0.7'
     compile 'com.android.support:recyclerview-v7:+'
     compile 'org.lucasr.dspec:dspec:0.1.1'
@@ -32,4 +31,5 @@ dependencies {
     compile 'com.github.traex.rippleeffect:library:1.2.3'
     compile 'com.jpardogo.materialtabstrip:library:1.0.8'
     compile 'com.google.android.gms:play-services:6.5.87'
+    compile project(':deezer-sdk')
 }

@@ -28,13 +28,13 @@ public class DeviceRingtoneFragment extends Fragment {
 
     private static final String TAG = "DeviceRingtoneFragment";
     private static Context context;
-    RecyclerView recyclerView;
-    ArrayList<DeviceRingtone> ringtoneList;
-    static MediaPlayer mediaPlayer;
-    DeviceRingtoneAdapter mAdapter;
+    private static MediaPlayer mediaPlayer;
+    private RecyclerView recyclerView;
+    private ArrayList<DeviceRingtone> ringtoneList;
+    private DeviceRingtoneAdapter mAdapter;
     private ProgressBar progress;
 
-    public static Fragment newInstance(int position, Context mContext) {
+    public static Fragment newInstance(Context mContext) {
         DeviceRingtoneFragment fragment = new DeviceRingtoneFragment();
         context = mContext;
         return fragment;
@@ -86,7 +86,7 @@ public class DeviceRingtoneFragment extends Fragment {
     }
 
 
-    public void initializeRecyclerView() {
+    void initializeRecyclerView() {
 
         mAdapter = new DeviceRingtoneAdapter(context, ringtoneList, mediaPlayer);
         try {

@@ -1,6 +1,5 @@
 package com.cikoapps.deezeralarm.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,24 +35,25 @@ public class DeezerPlaylistsFragment extends Fragment {
 
     private static final String TAG = "DeezerPlaylistsFragment";
     private static Context context;
-    ArrayList<com.deezer.sdk.model.Playlist> playlistList;
-    Long playListId;
-    RecyclerView recyclerView;
-    static Activity thisActivity;
-    ArrayList<com.cikoapps.deezeralarm.models.Playlist> playlistsArrayList;
-    com.cikoapps.deezeralarm.models.Playlist playlistLocal;
-    DeezerPlaylistAdapter mAdapter;
-    private ProgressBar progress;
     private static boolean onlyWiFi;
-    private TextView noWifiTextView;
+    private ArrayList<com.deezer.sdk.model.Playlist> playlistList;
+    private Long playListId;
+    private RecyclerView recyclerView;
+    private ArrayList<com.cikoapps.deezeralarm.models.Playlist> playlistsArrayList;
+    private com.cikoapps.deezeralarm.models.Playlist playlistLocal;
+    private DeezerPlaylistAdapter mAdapter;
+    private ProgressBar progress;
     private boolean enableNoWiFiTextView = false;
 
-    public static Fragment newInstance(Context mContext, Activity activity, boolean onlyWifiConnection) {
+    public static Fragment newInstance(Context mContext, boolean onlyWifiConnection) {
         DeezerPlaylistsFragment fragment = new DeezerPlaylistsFragment();
-        thisActivity = activity;
         context = mContext;
         onlyWiFi = onlyWifiConnection;
         return fragment;
+    }
+
+    public static void updateSelectedRingtone(long id, String name) {
+        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.PLAYLIST_ID, id, name, "");
     }
 
     @Override
@@ -86,10 +86,6 @@ public class DeezerPlaylistsFragment extends Fragment {
         } else {
             enableNoWiFiTextView = true;
         }
-    }
-
-    public static void updateSelectedRingtone(long id, String name) {
-        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.PLAYLIST_ID, id, name, "");
     }
 
     public void getUserPlayLists() {
@@ -149,7 +145,7 @@ public class DeezerPlaylistsFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
         progress.setVisibility(View.VISIBLE);
-        noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        TextView noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
         if (enableNoWiFiTextView) {
             noWifiTextView.setVisibility(View.VISIBLE);
         } else {

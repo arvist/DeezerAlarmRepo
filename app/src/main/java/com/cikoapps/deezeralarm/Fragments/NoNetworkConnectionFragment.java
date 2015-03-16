@@ -9,14 +9,10 @@ import android.view.ViewGroup;
 import com.cikoapps.deezeralarm.R;
 
 public class NoNetworkConnectionFragment extends Fragment {
-    private static final String ARG_POSITION = "position";
 
-    public static Fragment newInstance(int position) {
-        NoNetworkConnectionFragment f = new NoNetworkConnectionFragment();
-        Bundle b = new Bundle();
-        b.putInt(ARG_POSITION, position);
-        f.setArguments(b);
-        return f;
+    public static Fragment newInstance() {
+        NoNetworkConnectionFragment fragment = new NoNetworkConnectionFragment();
+        return fragment;
     }
 
     @Override

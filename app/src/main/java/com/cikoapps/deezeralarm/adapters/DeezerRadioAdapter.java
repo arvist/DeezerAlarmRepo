@@ -25,15 +25,14 @@ import java.util.ArrayList;
 
 public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.DeezerRadioViewHolder> {
     private static final String TAG = "DeezerRadioAdapter";
-    Context context;
-    ArrayList<Radio> radioList;
-    LayoutInflater inflater;
-    ArrayList<Bitmap> images;
-    static Typeface robotoRegular;
     public static int selectedPosition = -1;
+    private static Typeface robotoRegular;
+    private final ArrayList<Radio> radioList;
+    private final LayoutInflater inflater;
+    private final ArrayList<Bitmap> images;
 
     public DeezerRadioAdapter(Context mContext, ArrayList<Radio> radio) {
-        context = mContext;
+        Context context = mContext;
         radioList = new ArrayList<>(radio);
         radioList.add(null);
         inflater = LayoutInflater.from(context);

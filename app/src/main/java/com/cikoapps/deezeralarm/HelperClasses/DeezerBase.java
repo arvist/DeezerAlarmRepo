@@ -12,11 +12,11 @@ import com.deezer.sdk.network.connect.event.DialogListener;
 
 public class DeezerBase extends ActionBarActivity {
 
+    public static final String APP_ID = "151831";
     private static final String TAG = "DeezerBase.java";
     public DeezerConnect deezerConnect;
-    SessionStore sessionStore;
-    Context context;
-    public static final String APP_ID = "151831";
+    private SessionStore sessionStore;
+    private Context context;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -45,8 +45,10 @@ public class DeezerBase extends ActionBarActivity {
                 sessionStore.save(deezerConnect, context);
                 deezerConnect.getRadioToken();
             }
+
             public void onCancel() {
             }
+
             public void onException(Exception e) {
             }
         };
@@ -62,7 +64,7 @@ public class DeezerBase extends ActionBarActivity {
         Log.e(TAG, deezerConnect.getRadioToken());
     }
 
-    public boolean logoutDeezer() {
+    protected boolean logoutDeezer() {
         sessionStore.clear(this);
         deezerConnect.logout(this);
         return true;

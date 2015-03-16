@@ -1,5 +1,6 @@
 package com.cikoapps.deezeralarm.HelperClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -15,7 +16,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.cikoapps.deezeralarm.Activities.SettingsActivity;
 import com.cikoapps.deezeralarm.R;
 
 import org.apache.http.HttpEntity;
@@ -33,35 +36,38 @@ import java.util.Calendar;
 
 @SuppressWarnings("deprecation")
 public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
+    public static final String TEMP_FAHRENHEIT = "tempF";
+    public static final String WIND_KM = "windKmh";
+    public static final String WIND_MI = "windMph";
+    public static final String CITY = "city";
+    public static final String TIME_UPDATED = "time";
+    public static final String WEATHER_CODE = "weather";
+    public static final String SUMMARY = "summary";
+    public static String TEMP_CELSIUS = "tempC";
+    private static String TAG = "WeatherDataAsync.java";
+    private final ImageButton refreshButton;
+    private final TextView cityTextView;
+    private final TextView dateTextView;
+    private final ImageView weatherImageView;
+    private final ImageView tempImageView;
+    private final ImageView windImageView;
+    private final TextView summaryTextView;
+    private final TextView windTextView;
+    private final TextView tempTextView;
+    private final TextView textAgo;
+    private final DigitalClock digitalClock;
+    private final TextView timeTextView;
+    private final boolean windMilesBool;
+    private final boolean tempFBool;
+    private final RelativeLayout weatherLayout;
+    private final Toolbar toolbar;
+    private final Typeface robotoRegular;
+    private JSONObject weatherJson;
+    private double latitude;
+    private double longitude;
+    private Animation refreshAnimation;
+    private Context context;
 
-    ImageButton refreshButton;
-    TextView cityTextView;
-    JSONObject weatherJson;
-    TextView dateTextView;
-    ImageView weatherImageView;
-    ImageView tempImageView;
-    ImageView windImageView;
-    TextView summaryTextView;
-    TextView windTextView;
-    TextView tempTextView;
-    TextView textAgo;
-    DigitalClock digitalClock;
-
-    double latitude;
-    double longitude;
-    HelperClass helperClass;
-
-    TextView timeTextView;
-    private String TAG = "WeatherDataAsync.java";
-
-    private Animation a;
-    boolean windMilesBool;
-    boolean tempFBool;
-    boolean clock12Hours;
-    RelativeLayout weatherLayout;
-    Context context;
-    Toolbar toolbar;
-    private Typeface robotoRegular;
 
     public WeatherDataAsync(RelativeLayout weatherLayout, double latitude, double longitude, Toolbar toolbar, Context context) {
 
@@ -82,22 +88,17 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         this.toolbar = toolbar;
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        windMilesBool = preferences.getBoolean("windMilesBool", false);
-        tempFBool = preferences.getBoolean("tempFBool", false);
-        clock12Hours = preferences.getBoolean("clock12HoursBool", false);
-
+        windMilesBool = preferences.getBoolean(SettingsActivity.WIND_MILES_BOOLEAN, false);
+        tempFBool = preferences.getBoolean(SettingsActivity.TEMP_FAHRENHEIT_BOOLEAN, false);
         this.latitude = latitude;
         this.longitude = longitude;
         setDate();
-
         this.context = context;
         robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
-        helperClass = new HelperClass(context);
-
-        a = AnimationUtils.loadAnimation(context, R.anim.progress_anim);
-        a.setDuration(700);
-        refreshButton.startAnimation(a);
-        a.setInterpolator(new Interpolator() {
+        refreshAnimation = AnimationUtils.loadAnimation(context, R.anim.progress_anim);
+        refreshAnimation.setDuration(700);
+        refreshButton.startAnimation(refreshAnimation);
+        refreshAnimation.setInterpolator(new Interpolator() {
             private final int frameCount = 16;
 
             @Override
@@ -108,7 +109,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     }
 
-    public void setDate() {
+    void setDate() {
         Calendar currentTime = Calendar.getInstance();
         int month = currentTime.get(Calendar.MONTH);
         int day = currentTime.get(Calendar.DAY_OF_MONTH);
@@ -120,15 +121,12 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     }
 
     protected String doInBackground(Void... arg0) {
-
-        Log.e(TAG, "doInBackground Weather");
-        final String apiKey = "0a6bad312fb111db3c658e0250965";
+        final String API_KEY = "0a6bad312fb111db3c658e0250965";
         latitude = HelperClass.round(latitude, 3);
         longitude = HelperClass.round(longitude, 3);
-        String url = "http://api.worldweatheronline.com/premium/v1/weather.ashx?q=" +
+        String url = "http://api2.worldweatheronline.com/premium/v1/weather.ashx?q=" +
                 "" + latitude + "%2C" + longitude + "" +
-                "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&show_comments=no&showlocaltime=no&" +
-                "key=" + apiKey + "";
+                "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&showlocaltime=no&key=" + API_KEY + "";
         Log.e(TAG, url);
         weatherJson = getJSONFromUrl(url);
         return "You are at PostExecute";
@@ -168,14 +166,14 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             } catch (JSONException ignored) {
             }
         }
-        a.cancel();
-        a = null;
+        refreshAnimation.cancel();
+        refreshAnimation = null;
     }
 
 
-    public JSONObject getJSONFromUrl(String url) {
+    JSONObject getJSONFromUrl(String url) {
         InputStream is = null;
-        JSONObject jObj = null;
+        JSONObject jsonObject = null;
         String json;
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -196,62 +194,76 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
             is.close();
             json = sb.toString();
-            jObj = new JSONObject(json);
-        } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
+            jsonObject = new JSONObject(json);
+        } catch (final Exception e) {
+            ((Activity) context).runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(context, "Error connecting to weather data provider", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-
         // return JSON String
-        return jObj;
+        return jsonObject;
     }
 
     private void saveWeatherToSharedPreferences(String summary, float tempC, float tempF, float windKmh, float windMph,
                                                 String city, String weatherImage) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("summary", summary);
-        editor.putFloat("tempC", tempC);
-        editor.putFloat("tempF", tempF);
-        editor.putFloat("windKmh", windKmh);
-        editor.putFloat("windMph", windMph);
-        editor.putString("city", city);
-        editor.putLong("time", Calendar.getInstance().getTimeInMillis());
-        editor.putString("weather", weatherImage);
+        editor.putString(SUMMARY, summary);
+        editor.putFloat(TEMP_CELSIUS, tempC);
+        editor.putFloat(TEMP_FAHRENHEIT, tempF);
+        editor.putFloat(WIND_KM, windKmh);
+        editor.putFloat(WIND_MI, windMph);
+        editor.putString(CITY, city);
+        editor.putLong(TIME_UPDATED, Calendar.getInstance().getTimeInMillis());
+        editor.putString(WEATHER_CODE, weatherImage);
         editor.apply();
-        Log.e(TAG, "Saved to shared preferences");
     }
 
     public void setFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Calendar calendar = Calendar.getInstance();
         long timeNow = calendar.getTimeInMillis();
-        boolean windMilesBool = sharedPreferences.getBoolean("windMilesBool", true);
-        Log.e(TAG, "WindMilesBool" + windMilesBool);
-        boolean tempFBool = sharedPreferences.getBoolean("tempFBool", false);
-        String summary = sharedPreferences.getString("summary", "");
-
-        float tempC = sharedPreferences.getFloat("tempC", -1);
-        float tempF = sharedPreferences.getFloat("tempF", -1);
-        float windKmh = sharedPreferences.getFloat("windKmh", -1);
-        float windMph = sharedPreferences.getFloat("windMph", -1);
-
-        String city = sharedPreferences.getString("city", "");
-        long updateTime = sharedPreferences.getLong("time", -1);
+        boolean windMilesBool = sharedPreferences.getBoolean(SettingsActivity.WIND_MILES_BOOLEAN, true);
+        boolean tempFBool = sharedPreferences.getBoolean(SettingsActivity.TEMP_FAHRENHEIT_BOOLEAN, false);
+        String summary = sharedPreferences.getString(SUMMARY, "");
+        float tempC = sharedPreferences.getFloat(TEMP_CELSIUS, -1);
+        float tempF = sharedPreferences.getFloat(TEMP_FAHRENHEIT, -1);
+        float windKmh = sharedPreferences.getFloat(WIND_KM, -1);
+        float windMph = sharedPreferences.getFloat(WIND_MI, -1);
+        String city = sharedPreferences.getString(CITY, "");
+        long updateTime = sharedPreferences.getLong(TIME_UPDATED, -1);
         try {
-            String weatherImage = sharedPreferences.getString("weather", "");
+            String weatherImage = sharedPreferences.getString(WEATHER_CODE, "");
             setWeatherImage(weatherImage);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
         long timeFromUpdateLong = timeNow - updateTime;
         int minutes = (int) (timeFromUpdateLong / 60000);
         if (minutes < 60) {
-            timeTextView.setText(minutes + " minutes ");
+            if (minutes == 1) {
+                timeTextView.setText(minutes + " minute ");
+
+            } else {
+                timeTextView.setText(minutes + " minutes ");
+                Log.e(TAG, minutes + " minutes ");
+            }
         } else if (minutes > 60 && minutes < 1439) {
             int hours = minutes / 60;
-            timeTextView.setText(hours + " hours ");
+            if (hours == 1) {
+                timeTextView.setText(hours + " hour ");
+            } else {
+                timeTextView.setText(hours + " hours ");
+            }
         } else if (minutes > 1439) {
             int days = minutes / 1440;
-            timeTextView.setText(days + " days ");
+            if (days == 1) {
+                timeTextView.setText(days + " day ");
+            } else {
+                timeTextView.setText(days + " days ");
+            }
         }
         cityTextView.setText(city);
 
@@ -268,11 +280,10 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         }
 
         summaryTextView.setText(summary);
-        Log.e(TAG, "data loaded from shared preferences");
-        a.cancel();
+        refreshAnimation.cancel();
     }
 
-    public void setTextColorLight() {
+    void setTextColorLight() {
         dateTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
         summaryTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
         windTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
@@ -284,7 +295,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         refreshButton.setImageResource(R.drawable.ic_action_cached_white);
     }
 
-    public void setTextColorDark() {
+    void setTextColorDark() {
         dateTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         summaryTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         windTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
@@ -296,7 +307,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         refreshButton.setImageResource(R.drawable.ic_action_cached);
     }
 
-    public void setWeatherImage(String icon) {
+    void setWeatherImage(String icon) {
         Calendar calendar = Calendar.getInstance();
         int weatherCode = Integer.parseInt(icon);
         if (weatherCode == 248 || weatherCode == 260 || weatherCode == 122 || weatherCode == 143) {

@@ -1,12 +1,12 @@
 package com.cikoapps.deezeralarm.models;
 
 public class Radio {
-    public long id;
-    public String title;
-    String pictureUrl;
-    String imageUrlSmall;
+    public final long id;
+    public final String title;
+    private final String pictureUrl;
+    private final String imageUrlSmall;
+    private final String imageUrlLarge;
     public String imageUrlMedium;
-    String imageUrlLarge;
     public boolean selected;
 
 

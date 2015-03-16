@@ -51,8 +51,6 @@ public class MyLocation implements
             String lng = String.valueOf(mLastLocation.getLongitude());
             double latitude = Double.parseDouble(lat);
             double longitude = Double.parseDouble(lng);
-            Log.e(TAG, lat + " - LAT");
-            Log.e(TAG, lng + " - LNG");
             new WeatherDataAsync(mainTopLayout, latitude, longitude, toolbar, context).execute();
         }
     }

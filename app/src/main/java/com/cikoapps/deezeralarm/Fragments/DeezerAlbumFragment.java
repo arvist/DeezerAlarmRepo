@@ -1,6 +1,5 @@
 package com.cikoapps.deezeralarm.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,22 +33,23 @@ import java.util.Comparator;
 public class DeezerAlbumFragment extends Fragment {
 
     private static final String TAG = "DeezerAlbumFragment";
-    static Activity callingActivity;
     private static Context context;
     private static ProgressBar progress;
-    DeezerAlbumAdapter mAdapter;
-    private ArrayList<Album> albumsArrayList;
-    RecyclerView recyclerView;
-    private TextView noWifiTextView;
-    private boolean enableNoWiFiTextView = false;
     private static boolean onlyWiFi;
+    private DeezerAlbumAdapter mAdapter;
+    private ArrayList<Album> albumsArrayList;
+    private RecyclerView recyclerView;
+    private boolean enableNoWiFiTextView = false;
 
-    public static Fragment newInstance(Context mContext, Activity activity, boolean onlyWifiConnection) {
+    public static Fragment newInstance(Context mContext, boolean onlyWifiConnection) {
         DeezerAlbumFragment fragment = new DeezerAlbumFragment();
-        callingActivity = activity;
         context = mContext;
         onlyWiFi = onlyWifiConnection;
         return fragment;
+    }
+
+    public static void updateSelectedRingtone(long id, String name, String artist) {
+        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ALBUM_ID, id, name, artist);
     }
 
     @Override
@@ -82,10 +82,6 @@ public class DeezerAlbumFragment extends Fragment {
         } else {
             enableNoWiFiTextView = true;
         }
-    }
-
-    public static void updateSelectedRingtone(long id, String name, String artist) {
-        RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ALBUM_ID, id, name, artist);
     }
 
     public void getUserAlbums() {
@@ -143,7 +139,7 @@ public class DeezerAlbumFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
         progress.setVisibility(View.VISIBLE);
-        noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        TextView noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
         if (enableNoWiFiTextView) {
             noWifiTextView.setVisibility(View.VISIBLE);
         } else {

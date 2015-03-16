@@ -91,7 +91,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="24dp"
             android:textColor="@color/colorPrimaryText"
-            android:textSize="42dp" />
+            android:textSize="42sp" />
 
         <TextView
             android:id="@+id/dateTextView"
@@ -112,31 +112,31 @@
         android:id="@+id/quoteTextView"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
-        android:minWidth="84dp"
-        android:paddingTop="0dp"
-        android:paddingBottom="0dp"
-        android:text="Dismiss"
-        android:textSize="16sp"
-        android:textAllCaps="false"
-        android:background="@color/colorAccent"
-        android:textColor="@color/colorWhite"
-
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
         android:layout_alignParentTop="false"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorAccent"
         android:clickable="true"
+        android:minWidth="84dp"
+        android:paddingBottom="0dp"
+
         android:paddingEnd="4dp"
-        android:paddingLeft="4dp" />
+        android:paddingLeft="4dp"
+        android:paddingTop="0dp"
+        android:text="Dismiss"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/alarmTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Alarm"
-        android:textSize="32sp"
-        android:textColor="@color/colorPrimaryText"
-        android:id="@+id/alarmTitleTextView"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:text="My Alarm"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="32sp" />
 
 </RelativeLayout>

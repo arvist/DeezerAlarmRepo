@@ -1,10 +1,10 @@
 package com.cikoapps.deezeralarm.Activities;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -21,26 +21,33 @@ import com.cikoapps.deezeralarm.Fragments.DeezerRadioAlarmFragment;
 import com.cikoapps.deezeralarm.Fragments.RingtoneAlarmFragment;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
 import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
 import com.cikoapps.deezeralarm.R;
 
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
-public class AlarmScreenActivity extends DeezerBase {
+public class AlarmScreenActivity extends Activity {
 
+    private static final int WAKELOCK_TIMEOUT = 3 * 60 * 1000;
+    private static final String TAG = "AlarmScreen.java";
     private WakeLock mWakeLock;
-    private static final int WAKELOCK_TIMEOUT = 60 * 1000;
-    Typeface robotoRegular;
-    Typeface robotoItalic;
-    public static final String TAG = "AlarmScreen.java";
-    WeatherDataAsync weatherDataAsync;
-    Context context;
-    MyLocation myLocation;
+    private Context context;
+    private MyLocation myLocation;
     private ImageButton refreshButton;
-    RelativeLayout mainTopLayout;
+    private RelativeLayout mainTopLayout;
+    private long alarmid;
+    private String name;
+    private String tone;
+    private int type;
+    private boolean wifiBool;
+    private WeatherDataAsync weatherDataAsync;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +56,11 @@ public class AlarmScreenActivity extends DeezerBase {
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
         /* Initialize local variables needed by fragments*/
         int databaseId = getIntent().getIntExtra(AlarmManagerHelper.ID, -1);
-        String name = getIntent().getStringExtra(AlarmManagerHelper.NAME);
-        String tone = getIntent().getStringExtra(AlarmManagerHelper.TONE);
-        int type = getIntent().getIntExtra(AlarmManagerHelper.TYPE, 0);
-        long alarmid = getIntent().getLongExtra(AlarmManagerHelper.ALARM_ID, -1);
+        name = getIntent().getStringExtra(AlarmManagerHelper.NAME);
+        tone = getIntent().getStringExtra(AlarmManagerHelper.TONE);
+        type = getIntent().getIntExtra(AlarmManagerHelper.TYPE, 0);
+        alarmid = getIntent().getLongExtra(AlarmManagerHelper.ALARM_ID, -1);
         boolean turnOff = getIntent().getBooleanExtra(AlarmManagerHelper.ONE_TIME_ALARM, true);
-        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-        robotoItalic = Typeface.createFromAsset(getAssets(), "Roboto-Italic.ttf");
         this.context = this;
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
         refresh();
@@ -63,7 +68,7 @@ public class AlarmScreenActivity extends DeezerBase {
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, null, context);
         weatherDataAsync.setFromSharedPreferences();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean wifiBool = preferences.getBoolean("wifiSelected", false);
+        wifiBool = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
         /* Turn off not Repeating alarm in Database */
         if (!turnOff && databaseId != -1) {
             AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
@@ -71,18 +76,39 @@ public class AlarmScreenActivity extends DeezerBase {
             dataBaseHelper.updateIsEnabled(databaseId, false);
             AlarmManagerHelper.setAlarms(this);
         }
-        /* Replace fragment by alarm appropriate fragment depending on alarm type */
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if ((type == 1 || type == 2) && alarmid != -1) {
-            ft.add(R.id.alarm_bottom_fragment, new DeezerListAlarmFragment(alarmid, type, wifiBool, context));
-        } else if ((type == 3 || type == 4) && alarmid != -1) {
-            ft.add(R.id.alarm_bottom_fragment, new DeezerRadioAlarmFragment(alarmid, type, wifiBool, context));
-        } else {
-            ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone));
-        }
-        ft.commit();
-        /* Ensure wakelock release */
+        releaseWakeLock();
+        updateWeatherData();
+        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+
+        // Update weather information  minute
+
+
+        updateDisplay();
+        // Apply either list player, radio player of device ringtone alarm fragment
+        applyAlarmFragment();
+    }
+
+    private void updateDisplay() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        weatherDataAsync.setFromSharedPreferences();
+                        updateWeatherData();
+                    }
+                });
+
+
+            }
+        }, 0, 1 * 60 * 1000);
+    }
+
+    private void releaseWakeLock() {
+    /* Ensure wakelock release */
         Runnable releaseWakelock = new Runnable() {
             @Override
             public void run() {
@@ -96,15 +122,30 @@ public class AlarmScreenActivity extends DeezerBase {
             }
         };
         new Handler().postDelayed(releaseWakelock, WAKELOCK_TIMEOUT);
-        updateWeatherData();
+    }
+
+    private void applyAlarmFragment() {
+
+
+    /* Replace fragment by alarm appropriate fragment depending on alarm type */
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        if ((type == 1 || type == 2) && alarmid != -1) {
+            ft.add(R.id.alarm_bottom_fragment, new DeezerListAlarmFragment(alarmid, type, wifiBool, context, getApplication()));
+        } else if ((type == 3 || type == 4) && alarmid != -1) {
+            ft.add(R.id.alarm_bottom_fragment, new DeezerRadioAlarmFragment(alarmid, type, wifiBool, context, getApplication()));
+        } else {
+            ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone));
+        }
+        ft.commit();
     }
 
     private void updateWeatherData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int refreshTime = preferences.getInt("selectedInterval", 1);
+        int refreshTime = preferences.getInt(SettingsActivity.SELECTED_INTERVAL, 1);
         if (refreshTime != 12) {
-            long lastUpdateTimeMillis = preferences.getLong("time", 0);
-            boolean onlyWiFiUpdate = preferences.getBoolean("wifiSelected", false);
+            long lastUpdateTimeMillis = preferences.getLong(WeatherDataAsync.TIME_UPDATED, 0);
+            boolean onlyWiFiUpdate = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
             if ((onlyWiFiUpdate && new HelperClass(context).isWifiConnected()) || !onlyWiFiUpdate) {
                 Calendar deleteCalendar = Calendar.getInstance();
                 deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);

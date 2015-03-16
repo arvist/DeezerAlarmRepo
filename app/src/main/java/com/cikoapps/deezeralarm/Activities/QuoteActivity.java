@@ -19,28 +19,26 @@ import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
 import com.cikoapps.deezeralarm.R;
 
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class QuoteActivity extends Activity {
     private static final String TAG = "QuoteActivity";
     private RelativeLayout mainTopLayout;
-    private Typeface robotoItalic;
-    private Typeface robotoRegular;
     private Context context;
     private ImageButton refreshButton;
-    private WeatherDataAsync weatherDataAsync;
     private MyLocation myLocation;
-    private TextView quoteTextView;
-    private TextView authorTextView;
+    private WeatherDataAsync weatherDataAsync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.quote_activity_layout);
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
-        quoteTextView = (TextView) findViewById(R.id.quoteTextView);
-        authorTextView = (TextView) findViewById(R.id.authorTextView);
-        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-        robotoItalic = Typeface.createFromAsset(getAssets(), "Roboto-Italic.ttf");
+        TextView quoteTextView = (TextView) findViewById(R.id.quoteTextView);
+        TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
+        Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        Typeface robotoItalic = Typeface.createFromAsset(getAssets(), "Roboto-Italic.ttf");
         Quotes quote = Quotes.getQuote();
         quoteTextView.setText(quote.quote);
         authorTextView.setText(quote.author);
@@ -48,18 +46,26 @@ public class QuoteActivity extends Activity {
         authorTextView.setTypeface(robotoRegular);
         this.context = this;
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
-        refresh();
+        refreshWeatherButton();
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, null, context);
         weatherDataAsync.setFromSharedPreferences();
         updateWeatherData();
+        updateDisplay();
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        finish();
+        System.exit(0);
     }
 
     private void updateWeatherData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int refreshTime = preferences.getInt("selectedInterval", 1);
+        int refreshTime = preferences.getInt(SettingsActivity.SELECTED_INTERVAL, 1);
         if (refreshTime != 12) {
-            long lastUpdateTimeMillis = preferences.getLong("time", 0);
-            boolean onlyWiFiUpdate = preferences.getBoolean("wifiSelected", false);
+            long lastUpdateTimeMillis = preferences.getLong(WeatherDataAsync.TIME_UPDATED, 0);
+            boolean onlyWiFiUpdate = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
             if ((onlyWiFiUpdate && new HelperClass(context).isWifiConnected()) || !onlyWiFiUpdate) {
                 Calendar deleteCalendar = Calendar.getInstance();
                 deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);
@@ -74,14 +80,26 @@ public class QuoteActivity extends Activity {
         }
     }
 
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        finish();
-        System.exit(0);
+    private void updateDisplay() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        weatherDataAsync.setFromSharedPreferences();
+                        updateWeatherData();
+                    }
+                });
+
+
+            }
+        }, 0, 1 * 60 * 1000);
     }
 
-    private void refresh() {
+    private void refreshWeatherButton() {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

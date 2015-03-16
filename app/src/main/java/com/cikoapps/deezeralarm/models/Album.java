@@ -2,14 +2,14 @@ package com.cikoapps.deezeralarm.models;
 
 
 public class Album {
-    public long id;
-    public String title;
-    public String artist;
-    String coverURL;
-    String duration;
-    String imageUrlSmall;
+    public final long id;
+    public final String title;
+    public final String artist;
+    public final String coverURL;
+    public final String duration;
+    public final String imageUrlSmall;
+    private final String imageUrlLarge;
     public String imageUrlMedium;
-    String imageUrlLarge;
     public boolean selected;
 
     public Album(long id, String title, String artist, String coverURL, String duration, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge) {

@@ -24,12 +24,12 @@ import java.util.ArrayList;
 
 
 public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAdapter.DeviceRingtoneViewHolder> {
-    private LayoutInflater inflater;
-    ArrayList<DeviceRingtone> deviceRingtones = new ArrayList<>();
-    Context context;
-    static Typeface robotoRegular;
-    MediaPlayer mediaPlayer;
+    private static Typeface robotoRegular;
+    private final LayoutInflater inflater;
+    private final Context context;
     public int selectedPosition = -1;
+    private ArrayList<DeviceRingtone> deviceRingtones = new ArrayList<>();
+    private MediaPlayer mediaPlayer;
 
 
     public DeviceRingtoneAdapter(Context context, ArrayList<DeviceRingtone> deviceRingtones, MediaPlayer media) {
