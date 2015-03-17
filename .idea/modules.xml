@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DeezerAlarm.iml" filepath="$PROJECT_DIR$/DeezerAlarm.iml" />
       <module fileurl="file://$PROJECT_DIR$/DeezerHome.iml" filepath="$PROJECT_DIR$/DeezerHome.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/deezer-sdk/deezer-sdk.iml" filepath="$PROJECT_DIR$/deezer-sdk/deezer-sdk.iml" />

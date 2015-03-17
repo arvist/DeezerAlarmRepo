@@ -29,6 +29,7 @@ public class QuoteActivity extends Activity {
     private ImageButton refreshButton;
     private MyLocation myLocation;
     private WeatherDataAsync weatherDataAsync;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,13 @@ public class QuoteActivity extends Activity {
         System.exit(0);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+    }
+
     private void updateWeatherData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int refreshTime = preferences.getInt(SettingsActivity.SELECTED_INTERVAL, 1);
@@ -81,7 +89,7 @@ public class QuoteActivity extends Activity {
     }
 
     private void updateDisplay() {
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
 
             @Override

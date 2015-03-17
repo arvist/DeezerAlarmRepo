@@ -40,13 +40,25 @@
         ripple:rv_color="@color/colorRippleWhiteBackground"
         ripple:rv_rippleDuration="150">
 
-        <ImageButton
-            android:id="@+id/controlButton"
+        <FrameLayout
+            android:id="@+id/controlButtonLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/colorTransparent">
 
-            android:background="@color/colorTransparent"
-            android:src="@drawable/ic_av_pause" />
+            <ImageButton
+                android:id="@+id/controlButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorTransparent"
+                android:src="@drawable/ic_av_pause" />
+
+            <ProgressBar
+                android:id="@+id/control_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
     </com.andexert.library.RippleView>
 
     <com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"

@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
     private RelativeLayout mainTopLayout;
     private MyLocation myLocation;
     private boolean fullTimeClock;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,7 @@ public class MainActivity extends ActionBarActivity {
         super.onResume();
         weatherDataAsync.setFromSharedPreferences();
         updateWeatherData();
+        updateDisplay();
         alarmViewAdapter.notifyDataSetChanged();
     }
 
@@ -110,10 +112,16 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void updateDisplay() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+    }
 
+    private void updateDisplay() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {

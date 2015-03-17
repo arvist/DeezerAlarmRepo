@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,6 +78,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
     AudioManager audioManager;
     NetworkStateChecker networkStateChecker;
     Toast toast;
+    private Context context;
     private Application myApp;
     private Animation a;
     private Handler mHandler = new Handler();
@@ -92,6 +94,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
             mHandler.postDelayed(this, 100);
         }
     };
+    private ProgressBar controlProgress;
 
     public DeezerRadioAlarmFragment() {
         super();
@@ -103,9 +106,10 @@ public class DeezerRadioAlarmFragment extends Fragment {
         this.id = id;
         this.type = type;
         this.myApp = application;
+        this.context = context;
         boolean wiFiBool = WifiBool;
-        audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
-        imageArtworkDownload = new ImageArtworkDownload(getActivity());
+        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        imageArtworkDownload = new ImageArtworkDownload(((AlarmScreenActivity) context));
         if (wiFiBool) {
             WiFiConnected = (new HelperClass(context)).isWifiConnected();
             if (!WiFiConnected) {
@@ -159,7 +163,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 }
             };
             // Launches the authentication process
-            deezerConnect.authorize(getActivity(), permissions, listener);
+            deezerConnect.authorize(((AlarmScreenActivity) context), permissions, listener);
         }
     }
 
@@ -184,7 +188,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
 
     private void playRadioRingtone() {
         try {
-            radioPlayer = new RadioPlayer(getActivity().getApplication(), deezerConnect, networkStateChecker);
+            radioPlayer = new RadioPlayer(myApp, deezerConnect, networkStateChecker);
             initArtistRadioPlayer();
         } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
             tooManyPlayersExceptions.printStackTrace();
@@ -214,8 +218,8 @@ public class DeezerRadioAlarmFragment extends Fragment {
                     mPlayer.stop();
                     mPlayer.release();
                 }
-                Intent intent = new Intent((getActivity()), QuoteActivity.class);
-                ((AlarmScreenActivity) getActivity()).finishApp();
+                Intent intent = new Intent(((AlarmScreenActivity) context), QuoteActivity.class);
+                (((AlarmScreenActivity) context)).finishApp();
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
@@ -227,10 +231,10 @@ public class DeezerRadioAlarmFragment extends Fragment {
         mPlayer.setVolume(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         String tone;
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((AlarmScreenActivity) context));
             tone = preferences.getString("selectedRingtoneUri", "");
             if (tone.equalsIgnoreCase("")) {
-                RingtoneManager ringtoneMgr = new RingtoneManager(getActivity());
+                RingtoneManager ringtoneMgr = new RingtoneManager(((AlarmScreenActivity) context));
                 ringtoneMgr.setType(RingtoneManager.TYPE_ALARM);
                 Cursor alarmsCursor = ringtoneMgr.getCursor();
                 int alarmsCount = alarmsCursor.getCount();
@@ -246,7 +250,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 }
             }
             Uri toneUri = Uri.parse(tone);
-            mPlayer.setDataSource(getActivity(), toneUri);
+            mPlayer.setDataSource(((AlarmScreenActivity) context), toneUri);
             mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
             mPlayer.setLooping(true);
             mPlayer.prepare();
@@ -266,15 +270,12 @@ public class DeezerRadioAlarmFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (playing == 0 || playing == 2) {
-                    controlButton.setImageResource(R.drawable.ic_av_play_arrow);
                     radioPlayer.pause();
                     playing = 1;
                 } else if (playing == 1) {
-                    controlButton.setImageResource(R.drawable.ic_av_pause);
                     radioPlayer.play();
                     playing = 0;
                 } else if (playing == 4) {
-                    controlButton.setImageResource(R.drawable.ic_av_pause);
                     if (type == 3) {
                         radioPlayer.playRadio(RadioPlayer.RadioType.ARTIST, id);
                     } else if (type == 4) {
@@ -304,7 +305,6 @@ public class DeezerRadioAlarmFragment extends Fragment {
                     }
                 }.start();
                 if (canSkip) {
-                    controlButton.setImageResource(R.drawable.ic_av_pause);
                     playing = 0;
                 }
             }
@@ -317,7 +317,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
     }
 
     void initializeLayoutViews(View view) {
-        robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(((AlarmScreenActivity) context).getAssets(), "Roboto-Regular.ttf");
         artistTextView = (TextView) view.findViewById(R.id.artistTextView);
         songTextView = (TextView) view.findViewById(R.id.songTextView);
         artistTextView.setTypeface(robotoRegular);
@@ -325,6 +325,9 @@ public class DeezerRadioAlarmFragment extends Fragment {
         songImageView = (ImageView) view.findViewById(R.id.songImage);
         songImageView.setImageResource(R.drawable.ic_no_song_image);
         controlButton = (ImageButton) view.findViewById(R.id.controlButton);
+        controlProgress = (ProgressBar) (view.findViewById(R.id.controlButtonLayout)).findViewById(R.id.control_progress);
+        controlButton.setVisibility(View.INVISIBLE);
+        controlProgress.setVisibility(View.VISIBLE);
         nextSongButton = (ImageButton) view.findViewById(R.id.nextSongButton);
         prevSongButton = (ImageButton) view.findViewById(R.id.prevSongButton);
         dismissButton = (CardView) view.findViewById(R.id.quoteTextView);
@@ -341,16 +344,55 @@ public class DeezerRadioAlarmFragment extends Fragment {
         radioPlayer.addOnPlayerStateChangeListener(new OnPlayerStateChangeListener() {
             @Override
             public void onPlayerStateChange(PlayerState playerState, long l) {
-                Log.e(TAG, "Player state is " + playerState.toString());
+                Log.e(TAG, "PlayerStateChanged to - " + playerState.name());
                 if (playerState.compareTo(PlayerState.valueOf("PLAYING")) == 0) {
+                    ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            controlButton.setVisibility(View.VISIBLE);
+                            controlProgress.setVisibility(View.INVISIBLE);
+                            controlButton.setImageResource(R.drawable.ic_av_pause);
+                        }
+                    });
                     updateProgressBar();
                     seekBar.setMax((int) radioPlayer.getTrackDuration());
-                    toast.cancel();
+                    playing = 0;
                 } else if (playerState.compareTo(PlayerState.valueOf("WAITING_FOR_DATA")) == 0) {
-                    //TODO in player layout implement framelayout, when buffering replace control button with loading button
+                    ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            controlButton.setVisibility(View.INVISIBLE);
+                            controlProgress.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    playing = 2;
+                } else if (playerState.compareTo(PlayerState.valueOf("INITIALIZING")) == 0) {
+                    playing = 2;
+                } else if (playerState.compareTo(PlayerState.valueOf("PAUSED")) == 0) {
+                    ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            controlButton.setImageResource(R.drawable.ic_av_play_arrow);
+                        }
+                    });
+                    playing = 1;
+                } else if (playerState.compareTo(PlayerState.valueOf("PLAYBACK_COMPLETED")) == 0) {
+
+                    playing = 3;
+                } else if (playerState.compareTo(PlayerState.valueOf("READY")) == 0) {
+                    playing = 2;
+                } else if (playerState.compareTo(PlayerState.valueOf("RELEASED")) == 0) {
+                } else if (playerState.compareTo(PlayerState.valueOf("STARTED")) == 0) {
+                    playing = 2;
+                } else if (playerState.compareTo(PlayerState.valueOf("STOPPED")) == 0) {
+                    ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            controlButton.setImageResource(R.drawable.ic_av_play_arrow);
+                        }
+                    });
+                    playing = 3;
                 }
-
-
             }
         });
 
@@ -389,9 +431,9 @@ public class DeezerRadioAlarmFragment extends Fragment {
 
             @Override
             public void onTooManySkipsException() {
-                getActivity().runOnUiThread(new Runnable() {
+                ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getActivity(), "Error! Too many Skips", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(((AlarmScreenActivity) context), "Error! Too many Skips", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

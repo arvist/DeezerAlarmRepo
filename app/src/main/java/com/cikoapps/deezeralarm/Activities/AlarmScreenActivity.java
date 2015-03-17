@@ -47,6 +47,7 @@ public class AlarmScreenActivity extends Activity {
     private int type;
     private boolean wifiBool;
     private WeatherDataAsync weatherDataAsync;
+    private Timer timer;
 
 
     @Override
@@ -79,17 +80,15 @@ public class AlarmScreenActivity extends Activity {
         releaseWakeLock();
         updateWeatherData();
         ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
-
         // Update weather information  minute
-
-
         updateDisplay();
         // Apply either list player, radio player of device ringtone alarm fragment
         applyAlarmFragment();
     }
 
+
     private void updateDisplay() {
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
 
             @Override
@@ -183,6 +182,7 @@ public class AlarmScreenActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateWeatherData();
+        updateDisplay();
         // Set the window to keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -205,6 +205,8 @@ public class AlarmScreenActivity extends Activity {
         if (mWakeLock != null && mWakeLock.isHeld()) {
             mWakeLock.release();
         }
+        timer.cancel();
+        timer.purge();
     }
 
 
