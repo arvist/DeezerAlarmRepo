@@ -54,6 +54,7 @@ import com.deezer.sdk.player.event.PlayerState;
 import com.deezer.sdk.player.event.PlayerWrapperListener;
 import com.deezer.sdk.player.exception.TooManyPlayersExceptions;
 import com.deezer.sdk.player.networkcheck.NetworkStateChecker;
+import com.deezer.sdk.player.networkcheck.NetworkStateListener;
 import com.deezer.sdk.player.networkcheck.WifiAndMobileNetworkStateChecker;
 import com.deezer.sdk.player.networkcheck.WifiOnlyNetworkStateChecker;
 
@@ -117,6 +118,12 @@ public class DeezerListAlarmFragment extends Fragment {
             } else {
                 Log.e(TAG, "Playing only on WiFi, WiFi is Connected");
                 networkStateChecker = new WifiOnlyNetworkStateChecker();
+                networkStateChecker.setNetworkStateListener(new NetworkStateListener() {
+                    @Override
+                    public void networkStateChanged(boolean b) {
+                        Log.e(TAG, "NetworkStateChanged, network is enabled " + b);
+                    }
+                });
                 allowToConnect = true;
             }
         } else {
@@ -168,9 +175,10 @@ public class DeezerListAlarmFragment extends Fragment {
 
     }
 
-   /* private void initializeNetworkChecker(final boolean wiFiBool, final Context context) {
+    /*private void initializeNetworkChecker(final boolean wiFiBool, final Context context) {
         networkStateChecker = new NetworkStateChecker() {
             String TAG = "MyNetworkStateChecker";
+
             @Override
             public void setNetworkStateListener(NetworkStateListener networkStateListener) {
                 Log.e(TAG, "setNetworkStateListener method call");
@@ -191,7 +199,7 @@ public class DeezerListAlarmFragment extends Fragment {
                 boolean isNetwork = new HelperClass(context).haveNetworkConnection();
                 Log.e(TAG, "Network is enabled " + isNetwork);
                 Log.e(TAG, "WiFi is enabled " + isWiFi);
-                if(wiFiBool) return isWiFi;
+                if (wiFiBool) return isWiFi;
                 else return isNetwork;
             }
         };

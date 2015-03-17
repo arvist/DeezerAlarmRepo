@@ -7,16 +7,28 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
 import com.cikoapps.deezeralarm.R;
+import com.deezer.sdk.model.Permissions;
+import com.deezer.sdk.network.connect.DeezerConnect;
+import com.deezer.sdk.network.connect.SessionStore;
+import com.deezer.sdk.network.connect.event.DialogListener;
+import com.deezer.sdk.network.request.event.DeezerError;
+import com.deezer.sdk.player.AlbumPlayer;
+import com.deezer.sdk.player.exception.TooManyPlayersExceptions;
+import com.deezer.sdk.player.networkcheck.WifiAndMobileNetworkStateChecker;
 
 import org.w3c.dom.Text;
 
 
 public class AboutActivity extends Activity {
+
+    private DeezerConnect deezerConnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +60,45 @@ public class AboutActivity extends Activity {
                 openDeezerApplication(getApplicationContext());
             }
         });
+
+
+
+        // Restore or Login Deezer Account
+        SessionStore sessionStore = new SessionStore();
+        deezerConnect = new DeezerConnect(getApplicationContext(), DeezerBase.APP_ID);
+        if (sessionStore.restore(deezerConnect,getApplicationContext())) {
+            try {
+                AlbumPlayer albumPlayer = new AlbumPlayer(getApplication(),deezerConnect,new WifiAndMobileNetworkStateChecker());
+                albumPlayer.playAlbum(5943680);
+            } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
+                tooManyPlayersExceptions.printStackTrace();
+            } catch (DeezerError deezerError) {
+                deezerError.printStackTrace();
+            }
+
+        } else {
+            String[] permissions = new String[]{
+                    Permissions.BASIC_ACCESS,
+                    Permissions.MANAGE_LIBRARY,
+                    Permissions.LISTENING_HISTORY};
+            // The listener for authentication events
+            DialogListener listener = new DialogListener() {
+                public void onComplete(Bundle values) {
+                    SessionStore sessionStore = new SessionStore();
+                    sessionStore.save(deezerConnect, getApplication());
+                }
+
+                public void onCancel() {
+
+                }
+
+                public void onException(Exception e) {
+
+                }
+            };
+            // Launches the authentication process
+            deezerConnect.authorize(AboutActivity.this, permissions, listener);
+        }
     }
 
     public void openDeezerApplication(final Context context) {

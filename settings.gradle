@@ -1,1 +1,1 @@
-include ':app', ':deezer-sdk-0.10.17', ':deezer-sdk'
+include ':app', ':deezer-sdk', ':deezer-sdk-0.10.17'
