@@ -7,12 +7,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
+import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.R;
 import com.deezer.sdk.model.Permissions;
 import com.deezer.sdk.network.connect.DeezerConnect;
@@ -22,8 +21,6 @@ import com.deezer.sdk.network.request.event.DeezerError;
 import com.deezer.sdk.player.AlbumPlayer;
 import com.deezer.sdk.player.exception.TooManyPlayersExceptions;
 import com.deezer.sdk.player.networkcheck.WifiAndMobileNetworkStateChecker;
-
-import org.w3c.dom.Text;
 
 
 public class AboutActivity extends Activity {

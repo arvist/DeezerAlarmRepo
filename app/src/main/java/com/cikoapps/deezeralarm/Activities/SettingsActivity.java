@@ -22,7 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
+import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 

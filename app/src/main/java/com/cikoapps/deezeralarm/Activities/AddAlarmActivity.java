@@ -1,27 +1,28 @@
-package com.cikoapps.deezeralarm.Activities;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import android.widget.TimePicker;
+        package com.cikoapps.deezeralarm.Activities;
 
-import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.models.Alarm;
+        import android.app.AlertDialog;
+        import android.content.Context;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.graphics.Typeface;
+        import android.os.Bundle;
+        import android.os.CountDownTimer;
+        import android.support.v7.widget.Toolbar;
+        import android.text.format.DateFormat;
+        import android.util.Log;
+        import android.view.View;
+        import android.widget.EditText;
+        import android.widget.ImageButton;
+        import android.widget.RadioButton;
+        import android.widget.TextView;
+        import android.widget.TimePicker;
+
+        import com.cikoapps.deezeralarm.DeezerBase;
+        import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
+        import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
+        import com.cikoapps.deezeralarm.R;
+        import com.cikoapps.deezeralarm.models.Alarm;
 
 public class AddAlarmActivity extends DeezerBase {
 
@@ -247,4 +248,5 @@ public class AddAlarmActivity extends DeezerBase {
         }
     }
 }
+
 

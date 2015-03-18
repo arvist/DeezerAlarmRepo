@@ -4,39 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:background="@color/colorPrimary"
-    app:theme="@style/AppTheme.Toolbar"
-    app:contentInsetLeft="0dp"
-    app:contentInsetStart="0dp"
     app:contentInsetEnd="0dp"
+    app:contentInsetLeft="0dp"
     app:contentInsetRight="0dp"
+    app:contentInsetStart="0dp"
+    app:theme="@style/AppTheme.Toolbar"
     app:titleTextAppearance="@style/AppTheme.Toolbar.Title">
 
     <RelativeLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/app_bar_title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/app_bar_title"
-            android:text="Deezer Alarm"
-            android:textSize="20sp"
-            android:textColor="@color/colorWhite"
-            android:gravity="left|center"
-            android:layout_marginLeft="16dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="16dp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:gravity="left|center"
+            android:text="@string/app_name"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp" />
 
         <ImageButton
+            android:id="@+id/app_bar_settings"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:id="@+id/app_bar_settings"
-            android:src="@drawable/ic_action_settings"
-            android:background="@color/colorTransparent"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@color/colorTransparent"
+            android:src="@drawable/ic_action_settings" />
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>
