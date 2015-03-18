@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -52,6 +52,7 @@ public class DeezerBase extends ActionBarActivity {
             public void onException(Exception e) {
             }
         };
+
         if (sessionStore.restore(deezerConnect, getApplicationContext())) {
             if (deezerConnect.isSessionValid()) {
                 deezerConnect.getRadioToken();

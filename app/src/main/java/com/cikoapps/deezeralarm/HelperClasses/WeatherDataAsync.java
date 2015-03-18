@@ -145,10 +145,11 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 String windSpeedMph = currentConditionJsonObj.getString("windspeedMiles");
                 String windSpeedKmph = currentConditionJsonObj.getString("windspeedKmph");
                 String city = dataJsonObj.getJSONArray("nearest_area").getJSONObject(0).getJSONArray("areaName").getJSONObject(0).getString("value");
-                setWeatherImage(weatherCode);
+
                 cityTextView.setText(city);
                 summaryTextView.setText(summary);
                 summaryTextView.setMaxLines(2);
+                setWeatherImage(weatherCode);
                 timeTextView.setText("0 minutes ");
                 if (windMilesBool) {
                     windTextView.setText(Float.parseFloat(windSpeedMph) + " mph");
@@ -234,12 +235,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         float windMph = sharedPreferences.getFloat(WIND_MI, -1);
         String city = sharedPreferences.getString(CITY, "");
         long updateTime = sharedPreferences.getLong(TIME_UPDATED, -1);
-        try {
-            String weatherImage = sharedPreferences.getString(WEATHER_CODE, "");
-            setWeatherImage(weatherImage);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
+
         long timeFromUpdateLong = timeNow - updateTime;
         int minutes = (int) (timeFromUpdateLong / 60000);
         if (minutes < 60) {
@@ -248,7 +244,6 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
             } else {
                 timeTextView.setText(minutes + " minutes ");
-                Log.e(TAG, minutes + " minutes ");
             }
         } else if (minutes > 60 && minutes < 1439) {
             int hours = minutes / 60;
@@ -262,24 +257,51 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             if (days == 1) {
                 timeTextView.setText(days + " day ");
             } else {
-                timeTextView.setText(days + " days ");
+                if (days > 366) {
+                    timeTextView.setText(" Never ");
+                    textAgo.setText("");
+                } else {
+                    timeTextView.setText(days + " days ");
+                }
             }
         }
         cityTextView.setText(city);
 
         if (windMilesBool) {
-            windTextView.setText(windMph + " mph");
+            if (windMph == -1) {
+                windTextView.setText("?" + " mph");
+            } else {
+                windTextView.setText(windMph + " mph");
+            }
         } else {
-            windTextView.setText(windKmh + " kph");
+            if (windKmh == -1) {
+                windTextView.setText("?" + " kph");
+            } else {
+                windTextView.setText(windKmh + " kph");
+            }
         }
         if (tempFBool) {
-            tempTextView.setText(tempF + " ℉");
+            if (tempF == -1) {
+                tempTextView.setText("?" + " ℉");
+            } else {
+                tempTextView.setText(tempF + " ℉");
+            }
 
         } else {
-            tempTextView.setText(tempC + " ℃");
+            if (tempC == -1) {
+                tempTextView.setText("?" + " ℃");
+            } else {
+                tempTextView.setText(tempC + " ℃");
+            }
         }
 
         summaryTextView.setText(summary);
+        try {
+            String weatherImage = sharedPreferences.getString(WEATHER_CODE, "");
+            setWeatherImage(weatherImage);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
         refreshAnimation.cancel();
     }
 
@@ -310,6 +332,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     void setWeatherImage(String icon) {
         Calendar calendar = Calendar.getInstance();
         int weatherCode = Integer.parseInt(icon);
+
         if (weatherCode == 248 || weatherCode == 260 || weatherCode == 122 || weatherCode == 143) {
             setTextColorDark();
             weatherImageView.setImageResource(R.drawable.ic_fog);
@@ -338,13 +361,13 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 setTextColorLight();
                 weatherImageView.setImageResource(R.drawable.ic_clear_sky_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
+                summaryTextView.setText("Clear");
                 if (toolbar != null) {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                     ((TextView) toolbar.findViewById(R.id.app_bar_title)).setTextColor(context.getResources().getColor(R.color.colorWhite));
                     ((ImageButton) toolbar.findViewById(R.id.app_bar_settings)).setImageResource(R.drawable.ic_action_settings);
                     windImageView.setImageResource(R.drawable.ic_wind_light);
                     tempImageView.setImageResource(R.drawable.ic_temperature_light);
-
                 }
             }
         } else if (weatherCode == 116) {

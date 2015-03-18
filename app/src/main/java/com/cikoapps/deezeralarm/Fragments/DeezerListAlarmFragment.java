@@ -31,7 +31,7 @@ import android.widget.TextView;
 import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
 import com.cikoapps.deezeralarm.Activities.QuoteActivity;
 import com.cikoapps.deezeralarm.Activities.SettingsActivity;
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
+import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.ImageArtworkDownload;
 import com.cikoapps.deezeralarm.R;
@@ -61,7 +61,6 @@ import com.deezer.sdk.player.networkcheck.WifiOnlyNetworkStateChecker;
 public class DeezerListAlarmFragment extends Fragment {
 
     private static final String TAG = "AlarmFragment";
-    private final AlbumPlayer albumPlayer = null;
     private final Handler mHandler = new Handler();
     private final Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
@@ -74,6 +73,7 @@ public class DeezerListAlarmFragment extends Fragment {
             mHandler.postDelayed(this, 100);
         }
     };
+    private int maxVolume;
     private Context context;
     private DeezerConnect deezerConnect = null;
     private long id;
@@ -88,16 +88,15 @@ public class DeezerListAlarmFragment extends Fragment {
     private ImageButton prevSongButton;
     private ImageArtworkDownload imageArtworkDownload;
     private CardView dismissButton;
-    private int playing; // 0 - playing, 1 - paused, 2 - loading, 3 - playlist finished
     private int playlistSize = 0;
-    private int type;  /*  0 - device Ringtone , 1 - Playlist, 2 - Album, 3 - Artist Radio, 4 - Radio */
+    private int type;  /*  1 - Playlist, 2 - Album*/
     private int trackPos = 1;
     private boolean imageSet = false;
     private NetworkStateChecker networkStateChecker;
-    private boolean allowToConnect = false;
     private AudioManager audioManager;
     private Application myApp;
     private ProgressBar controlProgress;
+    private String currentPlayerState;
 
     @SuppressLint("ValidFragment")
     public DeezerListAlarmFragment(long id, int type, final boolean wiFiBool, final Context context, Application application) {
@@ -105,11 +104,12 @@ public class DeezerListAlarmFragment extends Fragment {
         this.type = type;
         this.context = context;
         this.myApp = application;
-        boolean wiFiBool1 = wiFiBool;
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_SHOW_UI);
         imageArtworkDownload = new ImageArtworkDownload(((AlarmScreenActivity) context));
-        //initializeNetworkChecker(wiFiBool, context);
-        if (wiFiBool1) {
+        boolean allowToConnect;
+        if (wiFiBool) {
             boolean wiFiConnected = (new HelperClass(context)).isWifiConnected();
             if (!wiFiConnected) {
                 Log.e(TAG, "Default ringtone, Wifi not Connected");
@@ -168,36 +168,6 @@ public class DeezerListAlarmFragment extends Fragment {
 
     }
 
-   /* private void initializeNetworkChecker(final boolean wiFiBool, final Context context) {
-        networkStateChecker = new NetworkStateChecker() {
-            String TAG = "MyNetworkStateChecker";
-            @Override
-            public void setNetworkStateListener(NetworkStateListener networkStateListener) {
-                Log.e(TAG, "setNetworkStateListener method call");
-            }
-
-            @Override
-            public void checkNetworkState(Context context) {
-                boolean isWiFi = new HelperClass(context).isWifiConnected();
-                boolean isNetwork = new HelperClass(context).haveNetworkConnection();
-                Log.e(TAG, "Network is enabled in checkNetworkState method " + isNetwork);
-                Log.e(TAG, "WiFi is enabled in checkNetworkState method " + isWiFi);
-            }
-
-            @Override
-            public boolean isNetworkAvailable() {
-                Log.e(TAG, "isNetworkAvailable method ");
-                boolean isWiFi = new HelperClass(context).isWifiConnected();
-                boolean isNetwork = new HelperClass(context).haveNetworkConnection();
-                Log.e(TAG, "Network is enabled " + isNetwork);
-                Log.e(TAG, "WiFi is enabled " + isWiFi);
-                if(wiFiBool) return isWiFi;
-                else return isNetwork;
-            }
-        };
-    }*/
-
-
     public DeezerListAlarmFragment() {
         super();
     }
@@ -233,7 +203,6 @@ public class DeezerListAlarmFragment extends Fragment {
             mPlayer.release();
         }
     }
-
 
     private void initializeDismissButton() {
         dismissButton.setOnClickListener(new View.OnClickListener() {
@@ -271,19 +240,15 @@ public class DeezerListAlarmFragment extends Fragment {
             try {
                 player = new PlaylistPlayer(myApp, deezerConnect, networkStateChecker);
                 //initPlaylistPlayer();
-            } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
+            } catch (TooManyPlayersExceptions | DeezerError tooManyPlayersExceptions) {
                 Log.e(TAG, "Deezer Error " + tooManyPlayersExceptions.getMessage());
                 tooManyPlayersExceptions.printStackTrace();
-                playDefaultRingtone(audioManager);
-            } catch (DeezerError deezerError) {
-                Log.e(TAG, "Deezer Error " + deezerError.getMessage());
-                deezerError.printStackTrace();
                 playDefaultRingtone(audioManager);
             }
             // Play playlist
             ((PlaylistPlayer) player).playPlaylist(id);
             Log.e(TAG, "Play playlist with id " + id);
-            player.setStereoVolume(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+            player.setStereoVolume(maxVolume, maxVolume);
         } else if (type == 2) {
             try {
                 player = new AlbumPlayer(myApp, deezerConnect, networkStateChecker);
@@ -298,6 +263,7 @@ public class DeezerListAlarmFragment extends Fragment {
                 playDefaultRingtone(audioManager);
             }
             // Play album
+            player.setStereoVolume(maxVolume, maxVolume);
             ((AlbumPlayer) player).playAlbum(id, 0);
         }
     }
@@ -342,18 +308,16 @@ public class DeezerListAlarmFragment extends Fragment {
         controlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "playing " + playing);
-                if (playing == 0 || playing == 2) {
+                if (currentPlayerState.equalsIgnoreCase("PLAYING") || currentPlayerState.equalsIgnoreCase("LOADING")) {
                     player.pause();
-                } else if (playing == 1) {
+                } else if (currentPlayerState.equalsIgnoreCase("PAUSED")) {
                     player.play();
-                    playing = 0;
-                } else if (playing == 3) {
-                    player.seek(0);
-                    player.play();
-                    playing = 0;
-                } else if (playing == 4) {
+                } else if (currentPlayerState.equalsIgnoreCase("RELEASED")) {
+                    playAlarm();
+                    trackPos = 1;
+                } else if (currentPlayerState.equalsIgnoreCase("STOPPED")) {
                     repeatListAlarm();
+                    trackPos = 1;
                 }
             }
         });
@@ -424,7 +388,6 @@ public class DeezerListAlarmFragment extends Fragment {
                 songTextView.setText("");
                 artistTextView.setText("");
                 controlButton.setImageResource(R.drawable.ic_av_play_arrow);
-                Log.e(TAG, "Player Wrapper Listener All Tracks Ended");
             }
 
             @Override
@@ -493,22 +456,22 @@ public class DeezerListAlarmFragment extends Fragment {
                             controlButton.setVisibility(View.VISIBLE);
                             controlProgress.setVisibility(View.INVISIBLE);
                             controlButton.setImageResource(R.drawable.ic_av_pause);
+                            currentPlayerState = "PLAYING";
                         }
                     });
                     updateProgressBar();
                     seekBar.setMax((int) player.getTrackDuration());
-                    playing = 0;
                 } else if (playerState.compareTo(PlayerState.valueOf("WAITING_FOR_DATA")) == 0) {
                     ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             controlButton.setVisibility(View.INVISIBLE);
                             controlProgress.setVisibility(View.VISIBLE);
+                            currentPlayerState = "LOADING";
                         }
                     });
-                    playing = 2;
                 } else if (playerState.compareTo(PlayerState.valueOf("INITIALIZING")) == 0) {
-                    playing = 2;
+                    currentPlayerState = "LOADING";
                 } else if (playerState.compareTo(PlayerState.valueOf("PAUSED")) == 0) {
                     ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                         @Override
@@ -516,23 +479,31 @@ public class DeezerListAlarmFragment extends Fragment {
                             controlButton.setImageResource(R.drawable.ic_av_play_arrow);
                         }
                     });
-                    playing = 1;
+                    currentPlayerState = "PAUSED";
                 } else if (playerState.compareTo(PlayerState.valueOf("PLAYBACK_COMPLETED")) == 0) {
-
-                    playing = 3;
+                    currentPlayerState = "STOPPED";
                 } else if (playerState.compareTo(PlayerState.valueOf("READY")) == 0) {
-                    playing = 2;
+                    currentPlayerState = "LOADING";
                 } else if (playerState.compareTo(PlayerState.valueOf("RELEASED")) == 0) {
+                    ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            controlButton.setVisibility(View.VISIBLE);
+                            controlProgress.setVisibility(View.INVISIBLE);
+                            controlButton.setImageResource(R.drawable.ic_av_play_arrow);
+                            currentPlayerState = "RELEASED";
+                        }
+                    });
                 } else if (playerState.compareTo(PlayerState.valueOf("STARTED")) == 0) {
-                    playing = 2;
+                    currentPlayerState = "LOADING";
                 } else if (playerState.compareTo(PlayerState.valueOf("STOPPED")) == 0) {
                     ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             controlButton.setImageResource(R.drawable.ic_av_play_arrow);
+                            currentPlayerState = "STOPPED";
                         }
                     });
-                    playing = 3;
                 }
             }
         });
@@ -552,7 +523,7 @@ public class DeezerListAlarmFragment extends Fragment {
         controlProgress.setVisibility(View.VISIBLE);
         nextSongButton = (ImageButton) view.findViewById(R.id.nextSongButton);
         prevSongButton = (ImageButton) view.findViewById(R.id.prevSongButton);
-        dismissButton = (CardView) view.findViewById(R.id.quoteTextView);
+        dismissButton = (CardView) view.findViewById(R.id.stopAlarmButton);
         TextView buttonText = (TextView) dismissButton.findViewById(R.id.buttonText);
         buttonText.setTypeface(robotoRegular);
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);

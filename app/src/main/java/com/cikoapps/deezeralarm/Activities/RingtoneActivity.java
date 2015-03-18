@@ -16,15 +16,17 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.Fragments.DeezerAlbumFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerArtistFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerPlaylistsFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerRadioFragment;
 import com.cikoapps.deezeralarm.Fragments.DeviceRingtoneFragment;
 import com.cikoapps.deezeralarm.Fragments.NoNetworkConnectionFragment;
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 
 public class RingtoneActivity extends DeezerBase {
@@ -45,6 +47,7 @@ public class RingtoneActivity extends DeezerBase {
     private Activity activity;
     private Context context;
     private ViewPager pager;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,7 @@ public class RingtoneActivity extends DeezerBase {
 
         pager.setPageMargin(pageMargin);
         selectedRingtone = new SelectedRingtone();
-
+        showAds();
         findViewById(R.id.confirmRingtone).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,11 +88,44 @@ public class RingtoneActivity extends DeezerBase {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         Intent returnIntent = new Intent();
         setResult(RESULT_CANCELED, returnIntent);
         finish();
+    }
+
+    private void showAds() {
+        adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("abc")
+                .build();
+        adView.loadAd(adRequest);
     }
 
     void initializeAppBarActions() {

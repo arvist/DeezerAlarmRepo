@@ -25,12 +25,12 @@ import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
 import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
 import com.cikoapps.deezeralarm.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class AlarmScreenActivity extends Activity {
 
@@ -48,6 +48,7 @@ public class AlarmScreenActivity extends Activity {
     private boolean wifiBool;
     private WeatherDataAsync weatherDataAsync;
     private Timer timer;
+    private AdView adView;
 
 
     @Override
@@ -79,11 +80,20 @@ public class AlarmScreenActivity extends Activity {
         }
         releaseWakeLock();
         updateWeatherData();
-        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         // Update weather information  minute
         updateDisplay();
         // Apply either list player, radio player of device ringtone alarm fragment
         applyAlarmFragment();
+        showAds();
+    }
+
+    private void showAds() {
+        adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("abc")
+                .build();
+        adView.loadAd(adRequest);
     }
 
 
@@ -181,6 +191,9 @@ public class AlarmScreenActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
         updateWeatherData();
         updateDisplay();
         // Set the window to keep screen on
@@ -207,10 +220,21 @@ public class AlarmScreenActivity extends Activity {
         }
         timer.cancel();
         timer.purge();
+        if (adView != null) {
+            adView.pause();
+        }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+    }
 
     public void finishApp() {
         finish();
     }
+
 }

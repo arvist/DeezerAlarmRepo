@@ -16,9 +16,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
 import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.Alarm;

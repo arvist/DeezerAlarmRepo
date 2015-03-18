@@ -31,8 +31,8 @@
         android:layout_marginRight="16dp"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:singleLine="true"
-        android:maxLength="30" />
+        android:maxLength="30"
+        android:singleLine="true" />
 
     <com.shamanland.fab.FloatingActionButton
         android:id="@+id/confirmAlarmAdd"
@@ -62,15 +62,15 @@
     <TextView
         android:id="@+id/ringtone"
         android:layout_width="wrap_content"
-        android:maxWidth="250dp"
         android:layout_height="48dp"
         android:layout_alignBottom="@+id/textView"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignStart="@+id/textView2"
         android:layout_marginBottom="38dp"
+        android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:ellipsize="end"
+        android:maxWidth="250dp"
         android:singleLine="true"
         android:text="Default ringtone"
         android:textColor="@color/colorPrimaryText"
@@ -92,12 +92,12 @@
         android:id="@+id/more_ringtone"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignBottom="@+id/ringtone"
+        android:layout_toEndOf="@+id/ringtone"
+        android:layout_toRightOf="@+id/ringtone"
         ripple:rv_centered="true"
         ripple:rv_color="@color/colorRippleWhiteBackground"
-        ripple:rv_rippleDuration="175"
-        android:layout_alignBottom="@+id/ringtone"
-        android:layout_toRightOf="@+id/ringtone"
-        android:layout_toEndOf="@+id/ringtone">
+        ripple:rv_rippleDuration="175">
 
         <ImageButton
             android:id="@+id/editRingtoneButton"
@@ -144,7 +144,8 @@
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
-            android:text="Yes" />
+            android:text="Yes"
+            android:textSize="14sp" />
 
         <RadioButton
             android:id="@+id/radioButtonNo"
@@ -157,7 +158,8 @@
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
-            android:text="No" />
+            android:text="No"
+            android:textSize="14sp" />
     </RadioGroup>
 
     <TimePicker
