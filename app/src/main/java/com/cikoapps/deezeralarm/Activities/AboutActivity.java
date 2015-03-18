@@ -65,6 +65,7 @@ public class AboutActivity extends Activity {
         deezerConnect = new DeezerConnect(getApplicationContext(), DeezerBase.APP_ID);
         if (sessionStore.restore(deezerConnect,getApplicationContext())) {
             try {
+
                 AlbumPlayer albumPlayer = new AlbumPlayer(getApplication(),deezerConnect,new WifiAndMobileNetworkStateChecker());
                 albumPlayer.playAlbum(5943680);
             } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
