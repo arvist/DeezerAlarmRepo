@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/D-Alarm.iml" filepath="$PROJECT_DIR$/D-Alarm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/DeezerHome.iml" filepath="$PROJECT_DIR$/DeezerHome.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WakeD.iml" filepath="$PROJECT_DIR$/WakeD.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/deezer-sdk/deezer-sdk.iml" filepath="$PROJECT_DIR$/deezer-sdk/deezer-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/deezer-sdk-0.10.17/deezer-sdk-0.10.17.iml" filepath="$PROJECT_DIR$/deezer-sdk-0.10.17/deezer-sdk-0.10.17.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wakeD.iml" filepath="$PROJECT_DIR$/wakeD.iml" />
     </modules>
   </component>
 </project>

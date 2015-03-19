@@ -265,7 +265,7 @@ public class DeezerListAlarmFragment extends Fragment {
             }
             // Play album
             player.setStereoVolume(maxVolume, maxVolume);
-            ((AlbumPlayer) player).playAlbum(id, 0);
+            ((AlbumPlayer) player).playAlbum(id);
         }
     }
 
