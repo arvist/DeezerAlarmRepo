@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,10 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 
@@ -36,6 +37,7 @@ public class SettingsActivity extends DeezerBase {
     public final static String WIND_MILES_BOOLEAN = "windMilesBool";
     public final static String TEMP_FAHRENHEIT_BOOLEAN = "tempFBool";
     public final static String ONLY_WIFI_SELECTED = "wifiSelected";
+    public final static String MAX_ALARM_VOLUME = "maxVolume";
     static final String TAG = "SettingsActivity";
     private final String[] elements = {"5 minutes ", "10 minutes", "15 minutes ", "20 minutes", "25 minutes", "30 minutes",
             "35 minutes", "40 minutes", "45 minutes", "50 minutes", "55 minutes", "60 minutes", "Do not refresh automatically"};
@@ -63,6 +65,8 @@ public class SettingsActivity extends DeezerBase {
     private ProgressBar ringtoneProgress;
     private ProgressBar refreshProgress;
     private RelativeLayout aboutLayout;
+    private SeekBar volumeSeekBar;
+    private int selectedVolume = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class SettingsActivity extends DeezerBase {
         finish();
     }
 
+
     private void initializeActivityViews() {
         tempRadioButton = (RadioButton) findViewById(R.id.layoutTemp).findViewById(R.id.radioButtonTemp);
         windRadioButton = (RadioButton) findViewById(R.id.layoutWind).findViewById(R.id.radioButtonWind);
@@ -105,6 +110,7 @@ public class SettingsActivity extends DeezerBase {
         refreshWeatherDataEditButton = (ImageButton) findViewById(R.id.layoutRefresh).findViewById(R.id.buttonRate);
         refreshProgress = (ProgressBar) findViewById(R.id.layoutRefresh).findViewById(R.id.cover_progress_refresh);
         aboutLayout = (RelativeLayout) findViewById(R.id.about);
+        volumeSeekBar = (SeekBar) findViewById(R.id.layoutVolume).findViewById(R.id.volumeSeekBar);
         refreshProgress.setVisibility(View.GONE);
         setSavedValuesFromSharedPreferences();
         createOnClickListeners();
@@ -180,6 +186,9 @@ public class SettingsActivity extends DeezerBase {
         refreshTime = preferences.getInt(SELECTED_INTERVAL, 1);
         textRingtoneInfo.setText(preferences.getString(SELECTED_RINGTONE_TITLE, "Not Selected"));
         selectedRingtone = preferences.getInt(SELECTED_RINGTONE, 1);
+        selectedVolume = preferences.getInt(MAX_ALARM_VOLUME,8);
+        volumeSeekBar.setMax(((AudioManager) context.getSystemService(Context.AUDIO_SERVICE)).getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        volumeSeekBar.setProgress(selectedVolume);
     }
 
     private void createOnClickListeners() {
@@ -318,6 +327,25 @@ public class SettingsActivity extends DeezerBase {
                 }.start();
             }
         });
+
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                selectedVolume = progress;
+                sharedPreferencesEditor.putInt(MAX_ALARM_VOLUME, selectedVolume);
+                Log.e(TAG, " Selected Volume " + selectedVolume);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     private void initializeAppBarActions() {
@@ -326,6 +354,7 @@ public class SettingsActivity extends DeezerBase {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onBackPressed();
                 Intent returnIntent = new Intent();
                 setResult(RESULT_CANCELED, returnIntent);
                 finish();

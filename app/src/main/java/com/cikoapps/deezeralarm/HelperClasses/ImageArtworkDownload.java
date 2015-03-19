@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.cikoapps.deezeralarm.Activities.DeezerBase;
 import com.deezer.sdk.network.connect.DeezerConnect;
 import com.deezer.sdk.network.request.DeezerRequest;
 import com.deezer.sdk.network.request.DeezerRequestFactory;
@@ -21,7 +22,7 @@ import java.net.URL;
 public class ImageArtworkDownload {
 
     private static final String TAG = "ImageArtworkDownload";
-    private static final String APP_ID = "151831";
+    private static final String APP_ID = DeezerBase.APP_ID;
     final Context context;
     private ImageLoadTask imageLoadTask;
 

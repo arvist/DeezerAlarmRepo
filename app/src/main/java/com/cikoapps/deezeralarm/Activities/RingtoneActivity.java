@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.cikoapps.deezeralarm.DeezerBase;
 import com.cikoapps.deezeralarm.Fragments.DeezerAlbumFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerArtistFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerPlaylistsFragment;

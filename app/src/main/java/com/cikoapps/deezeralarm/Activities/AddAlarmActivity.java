@@ -18,7 +18,6 @@
         import android.widget.TextView;
         import android.widget.TimePicker;
 
-        import com.cikoapps.deezeralarm.DeezerBase;
         import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
         import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
         import com.cikoapps.deezeralarm.R;

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+     >
 
     <include
         android:id="@+id/appBar"
         layout="@layout/app_bar_settings" />
-
     <RelativeLayout
         android:id="@+id/layoutTemp"
         android:layout_width="match_parent"
@@ -368,14 +371,52 @@
             android:layout_gravity="center_horizontal|bottom"
             android:background="@color/colorDivider" />
     </FrameLayout>
+<RelativeLayout
+    android:id="@+id/layoutVolume"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/layoutRefresh" >
 
+    <SeekBar
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/volumeSeekBar"
+        android:layout_marginRight="16dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:indeterminate="false" />
+
+    <TextView
+        android:id="@+id/textAlarmVolume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alarm Volume"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp" />
+    <View
+        android:id="@+id/horizontalLineViewVolume"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorDivider" />
+</RelativeLayout>
     <RelativeLayout
         android:id="@+id/layoutAccount"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/layoutRefresh">
+        android:layout_below="@+id/layoutVolume">
 
         <TextView
             android:id="@+id/deezerAccountText"
@@ -458,3 +499,4 @@
     </RelativeLayout>
 
 </RelativeLayout>
+</ScrollView>

@@ -10,10 +10,10 @@
     <View
         android:id="@+id/horizontalLineView"
         android:layout_width="fill_parent"
-        android:layout_height="1dip"
+        android:layout_height="1dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@color/colorPrimaryText" />
+        android:background="@color/colorSecondaryText" />
 
     <ImageView
         android:id="@+id/tempImageView"

@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
 import com.cikoapps.deezeralarm.Activities.QuoteActivity;
-import com.cikoapps.deezeralarm.DeezerBase;
+import com.cikoapps.deezeralarm.Activities.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.ImageArtworkDownload;
 import com.cikoapps.deezeralarm.R;
@@ -410,7 +410,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 artistTextView.setText(track.getArtist().getName());
                 songImageView.setImageResource(R.drawable.ic_no_song_image);
                 imageArtworkDownload.cancelImageLoadTask();
-                imageArtworkDownload.getPlaylistImage(track.getAlbum().getImageUrl(AImageOwner.ImageSize.medium), songImageView);
+                imageArtworkDownload.getPlaylistImage(track.getAlbum().getImageUrl(AImageOwner.ImageSize.big), songImageView);
             }
 
             @Override

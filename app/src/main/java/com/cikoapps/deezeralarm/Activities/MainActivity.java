@@ -63,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
         context = this;
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
         toolbar = (Toolbar) findViewById(R.id.appBar);
+
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(context);
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, toolbar, context);

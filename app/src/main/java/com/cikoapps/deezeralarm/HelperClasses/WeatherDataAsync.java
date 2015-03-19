@@ -262,6 +262,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     textAgo.setText("");
                 } else {
                     timeTextView.setText(days + " days ");
+                    textAgo.setText("ago");
                 }
             }
         }

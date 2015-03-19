@@ -31,7 +31,7 @@ import android.widget.TextView;
 import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
 import com.cikoapps.deezeralarm.Activities.QuoteActivity;
 import com.cikoapps.deezeralarm.Activities.SettingsActivity;
-import com.cikoapps.deezeralarm.DeezerBase;
+import com.cikoapps.deezeralarm.Activities.DeezerBase;
 import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.HelperClasses.ImageArtworkDownload;
 import com.cikoapps.deezeralarm.R;
@@ -104,8 +104,9 @@ public class DeezerListAlarmFragment extends Fragment {
         this.type = type;
         this.context = context;
         this.myApp = application;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((AlarmScreenActivity) context));
+        maxVolume = preferences.getInt(SettingsActivity.MAX_ALARM_VOLUME, 8);
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_SHOW_UI);
         imageArtworkDownload = new ImageArtworkDownload(((AlarmScreenActivity) context));
         boolean allowToConnect;
@@ -415,7 +416,7 @@ public class DeezerListAlarmFragment extends Fragment {
                     imageSet = true;
                 } else if (type == 1) {
                     imageArtworkDownload.cancelImageLoadTask();
-                    imageArtworkDownload.getPlaylistImage(track.getAlbum().getImageUrl(AImageOwner.ImageSize.medium), songImageView);
+                    imageArtworkDownload.getPlaylistImage(track.getAlbum().getImageUrl(AImageOwner.ImageSize.big), songImageView);
                 }
             }
 

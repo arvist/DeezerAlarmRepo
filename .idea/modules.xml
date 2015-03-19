@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/D-Alarm.iml" filepath="$PROJECT_DIR$/D-Alarm.iml" />
       <module fileurl="file://$PROJECT_DIR$/DeezerHome.iml" filepath="$PROJECT_DIR$/DeezerHome.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WakeD.iml" filepath="$PROJECT_DIR$/WakeD.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/deezer-sdk/deezer-sdk.iml" filepath="$PROJECT_DIR$/deezer-sdk/deezer-sdk.iml" />
