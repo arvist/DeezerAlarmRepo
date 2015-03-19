@@ -5,7 +5,8 @@
     android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
     android:layout_below="@+id/appBar"
-    android:layout_gravity="top">
+    android:layout_gravity="top"
+    android:padding="6dp">
 
     <View
         android:id="@+id/horizontalLineView"
@@ -17,15 +18,17 @@
 
     <ImageView
         android:id="@+id/tempImageView"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_above="@+id/windImageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/tempImageContentDesc"
-        android:src="@drawable/ic_temperature_dark" />
+        android:src="@drawable/ic_temperature_dark"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp" />
 
     <TextView
         android:id="@+id/tempTextView"
@@ -40,13 +43,15 @@
 
     <ImageView
         android:id="@+id/windImageView"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignLeft="@+id/tempImageView"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/tempImageView"
         android:contentDescription="@string/windImageIconDesc"
-        android:src="@drawable/ic_wind_dark" />
+        android:src="@drawable/ic_wind_dark"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp" />
 
     <TextView
         android:id="@+id/windTextView"

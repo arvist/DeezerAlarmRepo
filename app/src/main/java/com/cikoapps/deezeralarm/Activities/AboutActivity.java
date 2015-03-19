@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -30,8 +31,12 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_activity_layout);
+        Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+
         TextView contactTextView = (TextView)findViewById(R.id.contact);
+        contactTextView.setTypeface(robotoRegular);
         TextView rateTextView = (TextView) findViewById(R.id.rate);
+        rateTextView.setTypeface(robotoRegular);
         ImageView deezerImage = (ImageView) findViewById(R.id.deezerLogoImage);
         contactTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +47,7 @@ public class AboutActivity extends Activity {
                 startActivity(Intent.createChooser(emailIntent, ""));
             }
         });
-        rateTextView.setOnClickListener(new View.OnClickListener() {
+         rateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW,

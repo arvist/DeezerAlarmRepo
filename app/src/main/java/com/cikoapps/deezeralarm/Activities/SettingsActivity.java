@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
@@ -67,11 +68,14 @@ public class SettingsActivity extends DeezerBase {
     private RelativeLayout aboutLayout;
     private SeekBar volumeSeekBar;
     private int selectedVolume = 0;
+    private Typeface robotoRegular;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
+        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+
         setContentView(R.layout.settings_activity_layout);
         initializeActivityViews();
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
@@ -101,8 +105,11 @@ public class SettingsActivity extends DeezerBase {
         windRadioButton = (RadioButton) findViewById(R.id.layoutWind).findViewById(R.id.radioButtonWind);
         useOnlyWiFiButton = (RadioButton) findViewById(R.id.layoutWiFi).findViewById(R.id.radioButtonWifi);
         disconnectDeezerAccountTextView = (TextView) findViewById(R.id.layoutAccount).findViewById(R.id.disconnect);
+        disconnectDeezerAccountTextView.setTypeface(robotoRegular);
         textTimeSelected = (TextView) findViewById(R.id.layoutRefresh).findViewById(R.id.textTimeSelected);
+        textTimeSelected.setTypeface(robotoRegular);
         textRingtoneInfo = (TextView) findViewById(R.id.layoutRingtone).findViewById(R.id.textRingtoneInfo);
+        textRingtoneInfo.setTypeface(robotoRegular);
         editDefaultRingtoneButton = (ImageButton) findViewById(R.id.layoutRingtone).findViewById(R.id.buttonRingtone);
         ringtoneProgress = (ProgressBar) findViewById(R.id.layoutRingtone).findViewById(R.id.cover_progress);
         ringtoneProgress.setVisibility(View.GONE);

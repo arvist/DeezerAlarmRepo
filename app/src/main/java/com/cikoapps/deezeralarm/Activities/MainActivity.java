@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -17,6 +18,7 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cikoapps.deezeralarm.HelperClasses.AlarmContract;
@@ -61,9 +63,10 @@ public class MainActivity extends ActionBarActivity {
         MainActivity object = this;
         setContentView(R.layout.activity_main);
         context = this;
+        Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
         toolbar = (Toolbar) findViewById(R.id.appBar);
-
+        ((TextView)toolbar.findViewById(R.id.app_bar_title)).setTypeface(robotoRegular);
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(context);
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, toolbar, context);

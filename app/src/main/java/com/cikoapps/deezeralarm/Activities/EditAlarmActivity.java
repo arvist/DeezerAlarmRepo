@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -46,12 +47,14 @@ public class EditAlarmActivity extends DeezerBase {
     private boolean[] selected;
     private boolean enabled;
     private boolean[] tempSelection;
+    private Typeface robotoRegular;
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.edit_alarm_activity);
         layoutInflater = LayoutInflater.from(this);
+        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(this);
@@ -231,13 +234,16 @@ public class EditAlarmActivity extends DeezerBase {
                 timeString = hour + " : 0" + minute + " " + partOfDay;
             }
         }
-        timeTextView.setText(timeString);
+         timeTextView.setText(timeString);
     }
 
     private void initViews() {
         alarmTitleTextView = (TextView) findViewById(R.id.alarmTitleTextView);
+        alarmTitleTextView.setTypeface(robotoRegular);
         timeTextView = (TextView) findViewById(R.id.timeTextView);
+        timeTextView.setTypeface(robotoRegular);
         setRingtoneTextView = (TextView) findViewById(R.id.setRingtoneTextView);
+        setRingtoneTextView.setTypeface(robotoRegular);
         editRingtoneImageButton = (ImageButton) findViewById(R.id.editRingtone);
     }
 
