@@ -18,8 +18,8 @@ public class MyLocation implements
     private static final String TAG = "MyLocation";
     private final Context context;
     private GoogleApiClient mGoogleApiClient;
-    private Toolbar toolbar;
-    private RelativeLayout mainTopLayout;
+    private final Toolbar toolbar;
+    private final RelativeLayout mainTopLayout;
 
     public MyLocation(Context context, RelativeLayout mainTopLayout, Toolbar toolbar) {
         this.context = context;
@@ -28,6 +28,7 @@ public class MyLocation implements
     }
 
     public synchronized void buildGoogleApiClient() {
+
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -38,6 +39,7 @@ public class MyLocation implements
 
     public synchronized void reconnectGoogleApiClient() {
         mGoogleApiClient.disconnect();
+
         mGoogleApiClient.connect();
 
     }

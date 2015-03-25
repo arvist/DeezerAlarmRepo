@@ -29,7 +29,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                     AlarmContract.COLUMN_NAME_ID + "\"" + " INT," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_TYPE + "\"" + " INT," + "\"" +
                     AlarmContract.COLUMN_NAME_ALARM_ENABLED + "\"" + " BOOLEAN" + " )";
-    private static String DB_NAME = "deezerAlarmClock";
+    private static final String DB_NAME = "deezerAlarmClock";
     private final Context myContext;
     private SQLiteDatabase myDataBase;
 
@@ -80,7 +80,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
         return dbFile.exists();
     }
 
-    void openDataBase() throws SQLException {
+    void openDataBase() {
         String DB_PATH = "/data/data/com.cikoapps.deezeralarm/databases/";
         String myPath = DB_PATH + DB_NAME;
         myDataBase = myContext.openOrCreateDatabase(myPath, SQLiteDatabase.OPEN_READONLY, null);
@@ -89,7 +89,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
     public void insertAlarm(String title, int hour, int minute, String repeatDays, boolean repeatWeekly, String alarmToneName, String artist,
                             String alarmTone, long alamrid, int type, boolean enabled) {
 
-        try {
+
             openDataBase();
 
             String insertQuery = "Insert into " + AlarmContract.TABLE_NAME + " ( " +
@@ -118,47 +118,37 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
 
             myDataBase.execSQL(insertQuery);
             close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
 
     }
 
     public Cursor getAlarms() {
-        try {
+
             openDataBase();
             return myDataBase.rawQuery("select * from alarm", null);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+
     }
 
     public void updateIsEnabled(int id, boolean isEnabled) {
-        try {
+
             openDataBase();
             String updateQuery = "UPDATE alarm SET isEnabled=\"" + isEnabled + "\" WHERE _id=" + id + ";";
             myDataBase.execSQL(updateQuery);
             close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void deleteAlarm(int id) {
-        try {
+
             openDataBase();
             myDataBase.delete("alarm", "_id" + "=" + id, null);
             close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
     }
 
 
     public List<Alarm> getAlarmList() {
         List<Alarm> alarmList = new ArrayList<>();
-        try {
             openDataBase();
             Cursor cursor = myDataBase.rawQuery("select * from alarm", null);
 
@@ -190,9 +180,5 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                 close();
             }
             return alarmList;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return alarmList;
     }
 }

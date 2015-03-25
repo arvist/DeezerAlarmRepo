@@ -33,15 +33,14 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
     private final ArrayList<Bitmap> images;
 
     public DeezerAlbumAdapter(Context mContext, ArrayList<Album> albums) {
-        Context context = mContext;
         albumsList = albums;
         albums.add(null);
-        inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();
         for (int i = 0; i < albumsList.size(); i++) {
             images.add(null);
         }
-        robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
+        robotoRegular = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Regular.ttf");
     }
 
     @Override
@@ -116,10 +115,10 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
     class DeezerAlbumViewHolder extends RecyclerView.ViewHolder {
 
 
-        ImageView albumImageView;
-        TextView albumTitleTextView;
-        TextView albumArtistTextView;
-        RadioButton albumRadioButton;
+        final ImageView albumImageView;
+        final TextView albumTitleTextView;
+        final TextView albumArtistTextView;
+        final RadioButton albumRadioButton;
 
         public DeezerAlbumViewHolder(View itemView) {
             super(itemView);
@@ -133,9 +132,9 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
 
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
-        private String url;
-        private ImageView imageView;
-        private int position;
+        private final String url;
+        private final ImageView imageView;
+        private final int position;
 
         public ImageLoadTask(String url, ImageView imageView, int position) {
             this.url = url;

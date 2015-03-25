@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
@@ -36,14 +35,14 @@ import java.util.Calendar;
 
 @SuppressWarnings("deprecation")
 public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
-    public static final String TEMP_FAHRENHEIT = "tempF";
-    public static final String WIND_KM = "windKmh";
-    public static final String WIND_MI = "windMph";
-    public static final String CITY = "city";
+    private static final String TEMP_FAHRENHEIT = "tempF";
+    private static final String WIND_KM = "windKmh";
+    private static final String WIND_MI = "windMph";
+    private static final String CITY = "city";
     public static final String TIME_UPDATED = "time";
-    public static final String WEATHER_CODE = "weather";
-    public static final String SUMMARY = "summary";
-    public static String TEMP_CELSIUS = "tempC";
+    private static final String WEATHER_CODE = "weather";
+    private static final String SUMMARY = "summary";
+    private static final String TEMP_CELSIUS = "tempC";
     private static String TAG = "WeatherDataAsync.java";
     private final ImageButton refreshButton;
     private final TextView cityTextView;
@@ -127,7 +126,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         String url = "http://api2.worldweatheronline.com/premium/v1/weather.ashx?q=" +
                 "" + latitude + "%2C" + longitude + "" +
                 "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&showlocaltime=no&key=" + API_KEY + "";
-        Log.e(TAG, url);
+        //Log.e(TAG, url);
         weatherJson = getJSONFromUrl(url);
         return "You are at PostExecute";
     }
@@ -229,8 +228,8 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         boolean windMilesBool = sharedPreferences.getBoolean(SettingsActivity.WIND_MILES_BOOLEAN, true);
         boolean tempFBool = sharedPreferences.getBoolean(SettingsActivity.TEMP_FAHRENHEIT_BOOLEAN, false);
         String summary = sharedPreferences.getString(SUMMARY, "");
-        float tempC = sharedPreferences.getFloat(TEMP_CELSIUS, -1);
-        float tempF = sharedPreferences.getFloat(TEMP_FAHRENHEIT, -1);
+        float tempC = sharedPreferences.getFloat(TEMP_CELSIUS, -100);
+        float tempF = sharedPreferences.getFloat(TEMP_FAHRENHEIT, -100);
         float windKmh = sharedPreferences.getFloat(WIND_KM, -1);
         float windMph = sharedPreferences.getFloat(WIND_MI, -1);
         String city = sharedPreferences.getString(CITY, "");
@@ -282,14 +281,14 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         }
         if (tempFBool) {
-            if (tempF == -1) {
+            if (tempF == -100) {
                 tempTextView.setText("?" + " ℉");
             } else {
                 tempTextView.setText(tempF + " ℉");
             }
 
         } else {
-            if (tempC == -1) {
+            if (tempC == -100) {
                 tempTextView.setText("?" + " ℃");
             } else {
                 tempTextView.setText(tempC + " ℃");
@@ -301,7 +300,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             String weatherImage = sharedPreferences.getString(WEATHER_CODE, "");
             setWeatherImage(weatherImage);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            //Log.e(TAG, e.getMessage());
         }
         refreshAnimation.cancel();
     }

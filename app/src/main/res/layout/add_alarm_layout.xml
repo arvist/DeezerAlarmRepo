@@ -17,7 +17,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:text="Title"
         android:textColor="@color/colorPrimaryText"
         android:textSize="24sp" />
@@ -62,7 +62,7 @@
     <TextView
         android:id="@+id/ringtone"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="60dp"
         android:layout_alignBottom="@+id/textView"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignStart="@+id/textView2"
@@ -116,7 +116,6 @@
         android:layout_above="@+id/radioGroup"
         android:layout_alignLeft="@+id/radioGroup"
         android:layout_alignStart="@+id/radioGroup"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@id/ringtone"
         android:gravity="center_vertical"
@@ -137,20 +136,23 @@
         <RadioButton
             android:id="@+id/radioButtonYes"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_alignLeft="@+id/textView"
             android:layout_alignStart="@+id/textView"
             android:layout_below="@+id/textView"
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
-            android:text="Yes"
-            android:textSize="14sp" />
+            android:text=" Yes"
+            android:textSize="14sp"
+            android:button="@drawable/material_radio_btn"
+            android:checked="false"
+            android:layout_marginRight="4dp" />
 
         <RadioButton
             android:id="@+id/radioButtonNo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/textView"
             android:layout_toLeftOf="@+id/editRingtoneButton"
             android:layout_toStartOf="@+id/editRingtoneButton"
@@ -158,8 +160,10 @@
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
-            android:text="No"
-            android:textSize="14sp" />
+            android:text=" No"
+            android:textSize="14sp"
+            android:button="@drawable/material_radio_btn"
+            />
     </RadioGroup>
 
     <TimePicker

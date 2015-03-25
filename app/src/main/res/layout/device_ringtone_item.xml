@@ -15,12 +15,13 @@
         android:gravity="center_vertical"
         android:textColor="@color/colorPrimaryText"
         android:textSize="16sp"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        />
 
     <RadioButton
         android:id="@+id/deviceRingtoneRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
         android:layout_gravity="center_vertical|center_horizontal"
         android:button="@drawable/material_radio_btn"
         android:scaleType="fitXY"
@@ -28,8 +29,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginLeft="16dp" />
 
     <ImageButton
         android:id="@+id/soundImageButton"
@@ -37,9 +37,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_image_audiotrack"
         android:background="@color/colorTransparent"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_alignTop="@+id/deviceRingtoneRadioButton"
+        android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/deviceRingtoneRadioButton"
         android:layout_toStartOf="@+id/deviceRingtoneRadioButton" />
 

@@ -6,24 +6,12 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@+id/appTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
-        android:src="@drawable/ic_thunderstorms_night" />
-
-    <TextView
-        android:id="@+id/appTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
-        android:text="Wake Up With Deezer"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="24sp" />
+        android:src="@drawable/ic_waked_black" />
 
     <TextView
         android:id="@+id/version"
@@ -43,7 +31,7 @@
         android:layout_below="@+id/version"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Contact : info@cikoapps.com"
+        android:text="Send Feedback : info@cikoapps.com"
         android:textColor="@color/colorSecondaryText"
         android:textSize="16sp" />
 

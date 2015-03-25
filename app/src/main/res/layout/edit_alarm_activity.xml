@@ -125,8 +125,11 @@
             android:layout_below="@+id/repeatAlarmText"
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
+            android:button="@drawable/material_radio_btn"
             android:paddingTop="8dp"
-            android:text="Yes" />
+            android:text=" Yes"
+            android:layout_marginRight="4dp"
+            android:checked="false" />
 
         <RadioButton
             android:id="@+id/radioButtonNo"
@@ -138,8 +141,9 @@
             android:checked="true"
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
+            android:button="@drawable/material_radio_btn"
             android:paddingTop="8dp"
-            android:text="No" />
+            android:text=" No" />
 
     </RadioGroup>
 

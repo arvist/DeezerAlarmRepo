@@ -10,12 +10,14 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,6 +58,8 @@ import com.deezer.sdk.player.exception.TooManyPlayersExceptions;
 import com.deezer.sdk.player.networkcheck.NetworkStateChecker;
 import com.deezer.sdk.player.networkcheck.WifiAndMobileNetworkStateChecker;
 import com.deezer.sdk.player.networkcheck.WifiOnlyNetworkStateChecker;
+
+import java.io.IOException;
 
 
 public class DeezerListAlarmFragment extends Fragment {
@@ -125,24 +129,23 @@ public class DeezerListAlarmFragment extends Fragment {
             allowToConnect = true;
             Log.e(TAG, "Playing list if any network is available");
         }
-
+        Log.e(TAG, "Trying to restore deezer session");
         // Restore or Login Deezer Account
         SessionStore sessionStore = new SessionStore();
         deezerConnect = new DeezerConnect(context.getApplicationContext(), DeezerBase.APP_ID);
         if (sessionStore.restore(deezerConnect, context.getApplicationContext())) {
+            Log.e(TAG, "Deezer session restored");
             // Play album or playlist
             if (!allowToConnect) {
-                try {
-                    throw new DeezerError("Your phone is not connected to WiFi");
-                } catch (DeezerError deezerError) {
-                    deezerError.printStackTrace();
-                    Log.e(TAG, deezerError.getMessage());
-                    playDefaultRingtone(audioManager);
-                }
+                Log.e(TAG, "Not Allowed to connect, playing default alarm");
+                    playDefaultRingtone();
             } else {
+                Log.e(TAG, "Playing Alarm");
                 playAlarm();
             }
         } else {
+            Log.e(TAG, "Deezer session restore failed, playing default ringtone");
+            playDefaultRingtone();
             String[] permissions = new String[]{
                     Permissions.BASIC_ACCESS,
                     Permissions.MANAGE_LIBRARY,
@@ -150,20 +153,32 @@ public class DeezerListAlarmFragment extends Fragment {
             // The listener for authentication events
             DialogListener listener = new DialogListener() {
                 public void onComplete(Bundle values) {
+                    Log.e(TAG,"Authorization complete");
                     SessionStore sessionStore = new SessionStore();
                     sessionStore.save(deezerConnect, myApp);
                     playAlarm();
-                }
+                     try {
+                        if (mPlayer != null) {
+                             mPlayer.release();
+                        }
+                    } catch (IllegalStateException e){
+                       Log.e(TAG,e.getMessage());
+                    }
+                 }
 
                 public void onCancel() {
-                    playDefaultRingtone(audioManager);
+                    Log.e(TAG, "Deezer authorization canceled");
+                    playDefaultRingtone();
                 }
 
                 public void onException(Exception e) {
-                    playDefaultRingtone(audioManager);
+                    Log.e(TAG, "Deezer authorization exception");
+                    Log.e(TAG,e.getMessage());
+                    playDefaultRingtone();
                 }
             };
             // Launches the authentication process
+            Log.e(TAG, "Authorizing deezer account");
             deezerConnect.authorize((AlarmScreenActivity) context, permissions, listener);
         }
 
@@ -194,15 +209,24 @@ public class DeezerListAlarmFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "onDestroy");
+        Log.e(TAG,"OnDestroy");
         if (player != null) {
             player.stop();
             player.release();
         }
-        if (mPlayer != null) {
-            mPlayer.stop();
-            mPlayer.release();
+        try {
+            if (mPlayer != null) {
+                mPlayer.release();
+            }
+        } catch (IllegalStateException ignored){
+
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG,"OnPause");
     }
 
     private void initializeDismissButton() {
@@ -213,9 +237,12 @@ public class DeezerListAlarmFragment extends Fragment {
                     player.stop();
                     player.release();
                 }
-                if (mPlayer != null) {
-                    mPlayer.stop();
-                    mPlayer.release();
+                try {
+                    if (mPlayer != null) {
+                        mPlayer.release();
+                    }
+                } catch (IllegalStateException ignored){
+
                 }
                 Intent intent = new Intent((((AlarmScreenActivity) context)), QuoteActivity.class);
                 (((AlarmScreenActivity) context)).finishApp();
@@ -236,19 +263,18 @@ public class DeezerListAlarmFragment extends Fragment {
     }
 
     private void playAlarm() {
-        Log.e(TAG, type + " is Type called PlayListAlarm");
-        if (type == 1) {
+         if (type == 1) {
             try {
                 player = new PlaylistPlayer(myApp, deezerConnect, networkStateChecker);
                 //initPlaylistPlayer();
             } catch (TooManyPlayersExceptions | DeezerError tooManyPlayersExceptions) {
-                Log.e(TAG, "Deezer Error " + tooManyPlayersExceptions.getMessage());
+                //Log.e(TAG, "Deezer Error " + tooManyPlayersExceptions.getMessage());
                 tooManyPlayersExceptions.printStackTrace();
-                playDefaultRingtone(audioManager);
+                playDefaultRingtone();
             }
             // Play playlist
             ((PlaylistPlayer) player).playPlaylist(id);
-            Log.e(TAG, "Play playlist with id " + id);
+            //Log.e(TAG, "Play playlist with id " + id);
             player.setStereoVolume(maxVolume, maxVolume);
         } else if (type == 2) {
             try {
@@ -256,12 +282,12 @@ public class DeezerListAlarmFragment extends Fragment {
                 //initPlaylistPlayer();
             } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
                 tooManyPlayersExceptions.printStackTrace();
-                playDefaultRingtone(audioManager);
-                Log.e(TAG, "Deezer Error " + tooManyPlayersExceptions.getMessage());
+                playDefaultRingtone();
+                //Log.e(TAG, "Deezer Error " + tooManyPlayersExceptions.getMessage());
             } catch (DeezerError deezerError) {
-                Log.e(TAG, "Deezer Error " + deezerError.getMessage());
+                //Log.e(TAG, "Deezer Error " + deezerError.getMessage());
                 deezerError.printStackTrace();
-                playDefaultRingtone(audioManager);
+                playDefaultRingtone();
             }
             // Play album
             player.setStereoVolume(maxVolume, maxVolume);
@@ -269,34 +295,21 @@ public class DeezerListAlarmFragment extends Fragment {
         }
     }
 
-    private void playDefaultRingtone(AudioManager audioManager) {
-        mPlayer = new MediaPlayer();
-        mPlayer.setVolume(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        String tone;
-        try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((AlarmScreenActivity) context));
-            tone = preferences.getString(SettingsActivity.SELECTED_RINGTONE_URI, "");
-            if (tone.equalsIgnoreCase("")) {
-                RingtoneManager ringtoneMgr = new RingtoneManager(((AlarmScreenActivity) context));
-                ringtoneMgr.setType(RingtoneManager.TYPE_ALARM);
-                Cursor alarmsCursor = ringtoneMgr.getCursor();
-                int alarmsCount = alarmsCursor.getCount();
-                if (alarmsCount == 0 && !alarmsCursor.moveToFirst()) {
-                    alarmsCursor.close();
-                } else {
-                    int currentPosition = alarmsCursor.getPosition();
-                    tone = ringtoneMgr.getRingtoneUri(currentPosition).toString();
-                    alarmsCursor.close();
-                }
-            }
-            Uri toneUri = Uri.parse(tone);
-            mPlayer.setDataSource(((AlarmScreenActivity) context), toneUri);
-            mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+    private void playDefaultRingtone() {
+        Log.e(TAG, "Playing default ringtone");
+        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
+         try {
+            Uri alert =  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            mPlayer = new MediaPlayer();
+            mPlayer.setDataSource(context, alert);
+            mPlayer.setAudioStreamType(AudioManager.STREAM_RING);
             mPlayer.setLooping(true);
             mPlayer.prepare();
             mPlayer.start();
-        } catch (Exception f) {
-            f.printStackTrace();
+        } catch(Exception e) {
+            Log.e(TAG,e.getMessage());
         }
     }
 
@@ -393,7 +406,7 @@ public class DeezerListAlarmFragment extends Fragment {
 
             @Override
             public void onPlayTrack(Track track) {
-                Log.e(TAG, "playing track " + track.getTitle());
+                //Log.e(TAG, "playing track " + track.getTitle());
                 seekBar.setProgress(0);
                 playlistSize = player.getTracks().size();
                 if (trackPos == 1) {
@@ -422,7 +435,7 @@ public class DeezerListAlarmFragment extends Fragment {
 
             @Override
             public void onTrackEnded(Track track) {
-                Log.e(TAG, track.getTitle() + " have Ended");
+                //Log.e(TAG, track.getTitle() + " have Ended");
                 songTextView.setText("");
                 artistTextView.setText("");
                 trackPos++;
@@ -430,26 +443,44 @@ public class DeezerListAlarmFragment extends Fragment {
 
             @Override
             public void onRequestException(Exception e, Object o) {
-                Log.e(TAG, "RequestError " + e.getMessage());
+                //Log.e(TAG, "RequestError " + e.getMessage());
             }
 
         };
+        if(player!=null) {
+            Log.e(TAG, "deezer Player is not null setting player listeners");
+            setPlayerListeners(playerWrapperListener);
+        } else{
+            Log.e(TAG, "Trying to initialize player listeners again");
+            new CountDownTimer(3000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
+                @Override
+                public void onFinish() {
+                    initPlaylistPlayer();
+                }
+            }.start();
+        }
+    }
+
+    private void setPlayerListeners(PlayerWrapperListener playerWrapperListener) {
         player.addOnBufferErrorListener(new OnBufferErrorListener() {
             @Override
             public void onBufferError(Exception e, double v) {
-                Log.e(TAG, "Buffer Error " + e.getMessage());
+                //Log.e(TAG, "Buffer Error " + e.getMessage());
             }
         });
         player.addOnBufferStateChangeListener(new OnBufferStateChangeListener() {
             @Override
             public void onBufferStateChange(BufferState bufferState, double v) {
-                Log.e(TAG, "BufferState" + bufferState.name());
+                //Log.e(TAG, "BufferState" + bufferState.name());
             }
         });
         player.addOnPlayerStateChangeListener(new OnPlayerStateChangeListener() {
             @Override
             public void onPlayerStateChange(PlayerState playerState, long l) {
-                Log.e(TAG, "PlayerStateChanged to - " + playerState.name());
+                //Log.e(TAG, "PlayerStateChanged to - " + playerState.name());
                 if (playerState.compareTo(PlayerState.valueOf("PLAYING")) == 0) {
                     ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                         @Override

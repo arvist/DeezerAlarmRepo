@@ -11,8 +11,7 @@ import com.cikoapps.deezeralarm.R;
 public class NoNetworkConnectionFragment extends Fragment {
 
     public static Fragment newInstance() {
-        NoNetworkConnectionFragment fragment = new NoNetworkConnectionFragment();
-        return fragment;
+        return new NoNetworkConnectionFragment();
     }
 
     @Override

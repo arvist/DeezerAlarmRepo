@@ -88,7 +88,7 @@ public class DeezerPlaylistsFragment extends Fragment {
         }
     }
 
-    public void getUserPlayLists() {
+    void getUserPlayLists() {
         playlistsArrayList = new ArrayList<>();
         RequestListener requestListener = new JsonRequestListener() {
             public void onResult(Object result, Object requestId) {

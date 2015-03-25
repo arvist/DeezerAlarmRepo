@@ -84,7 +84,7 @@ public class DeezerAlbumFragment extends Fragment {
         }
     }
 
-    public void getUserAlbums() {
+    void getUserAlbums() {
         albumsArrayList = new ArrayList<>();
         final ArrayList<com.cikoapps.deezeralarm.models.Album> localAlbumList = new ArrayList<>();
         RequestListener requestListener = new JsonRequestListener() {

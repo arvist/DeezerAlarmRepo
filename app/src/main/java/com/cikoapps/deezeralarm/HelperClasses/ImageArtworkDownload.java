@@ -23,7 +23,7 @@ public class ImageArtworkDownload {
 
     private static final String TAG = "ImageArtworkDownload";
     private static final String APP_ID = DeezerBase.APP_ID;
-    final Context context;
+    private final Context context;
     private ImageLoadTask imageLoadTask;
 
     public ImageArtworkDownload(Context context) {

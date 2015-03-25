@@ -28,7 +28,7 @@ public class AddAlarmActivity extends DeezerBase {
     public static final String RESTART_ACTIVITY = "restartActivity";
     private static final String TAG = "AddAlarmActivity";
     private final String elements[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    boolean[] selected = {false, false, false, false, false, false, false};
+    private boolean[] selected = {false, false, false, false, false, false, false};
     private Context context;
     private int type;
     private String uri = null;

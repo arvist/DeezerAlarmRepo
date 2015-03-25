@@ -10,9 +10,11 @@
         android:id="@+id/splashScreenImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:src="@drawable/ic_waked_black"/>
+        android:src="@drawable/ic_waked_black"
+        android:layout_above="@+id/deezerLogoImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="150dp" />
 
     <ImageView
         android:id="@+id/deezerLogoImage"
@@ -21,5 +23,15 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/ic_deezer_logo" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="All music provided by : "
+        android:textColor="@color/colorSecondaryText"
+        android:textSize="16sp"
+        android:layout_alignTop="@+id/deezerLogoImage"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

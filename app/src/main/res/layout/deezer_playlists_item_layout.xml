@@ -31,7 +31,9 @@
         android:paddingBottom="3dp"
         android:layout_alignTop="@+id/playListImage"
         android:layout_alignLeft="@+id/playListInfoTextView"
-        android:layout_alignStart="@+id/playListInfoTextView" />
+        android:layout_alignStart="@+id/playListInfoTextView"
+        android:singleLine="true"
+        />
 
     <TextView
         android:id="@+id/playListInfoTextView"

@@ -18,8 +18,8 @@ public class AlarmManagerHelper extends BroadcastReceiver {
 
     public static final String ID = "id";
     public static final String NAME = "name";
-    public static final String TIME_HOUR = "hour";
-    public static final String TIME_MINUTE = "minute";
+    private static final String TIME_HOUR = "hour";
+    private static final String TIME_MINUTE = "minute";
     public static final String TONE = "alarmTone";
     public static final String TYPE = "type";
     public static final String ALARM_ID = "alarmid";
@@ -85,7 +85,9 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                             int day = dayOfWeek;
                             if (day == 6) {
                                 day = 1;
+                                Log.e(TAG, "Setting Alarm To Sunday");
                                 calendar.set(Calendar.DAY_OF_WEEK, 1);
+                                calendar.add(Calendar.WEEK_OF_YEAR,1);
                                 setAlarm(context, calendar, pIntent);
                                 isSunday = true;
                                 alarmSet = true;
@@ -93,6 +95,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                                 day = day + 2;
                             }
                             if (!isSunday) {
+                                Log.e(TAG,"Setting alarm to other days");
                                 calendar.set(Calendar.DAY_OF_WEEK, day);
                                 setAlarm(context, calendar, pIntent);
                                 alarmSet = true;

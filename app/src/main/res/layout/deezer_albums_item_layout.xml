@@ -29,7 +29,9 @@
         android:paddingBottom="3dp"
         android:layout_alignTop="@+id/albumImage"
         android:layout_alignLeft="@+id/albumArtistTextView"
-        android:layout_alignStart="@+id/albumArtistTextView" />
+        android:layout_alignStart="@+id/albumArtistTextView"
+        android:singleLine="true"
+        />
 
     <TextView
         android:id="@+id/albumArtistTextView"

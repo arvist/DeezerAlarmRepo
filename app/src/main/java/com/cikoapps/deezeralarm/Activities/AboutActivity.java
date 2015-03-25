@@ -13,14 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.R;
-import com.deezer.sdk.model.Permissions;
 import com.deezer.sdk.network.connect.DeezerConnect;
-import com.deezer.sdk.network.connect.SessionStore;
-import com.deezer.sdk.network.connect.event.DialogListener;
-import com.deezer.sdk.network.request.event.DeezerError;
-import com.deezer.sdk.player.AlbumPlayer;
-import com.deezer.sdk.player.exception.TooManyPlayersExceptions;
-import com.deezer.sdk.player.networkcheck.WifiAndMobileNetworkStateChecker;
+
 
 
 public class AboutActivity extends Activity {
@@ -61,49 +55,9 @@ public class AboutActivity extends Activity {
                 openDeezerApplication(getApplicationContext());
             }
         });
-
-
-
-        // Restore or Login Deezer Account
-        SessionStore sessionStore = new SessionStore();
-        deezerConnect = new DeezerConnect(getApplicationContext(), DeezerBase.APP_ID);
-        if (sessionStore.restore(deezerConnect,getApplicationContext())) {
-            try {
-
-                AlbumPlayer albumPlayer = new AlbumPlayer(getApplication(),deezerConnect,new WifiAndMobileNetworkStateChecker());
-                albumPlayer.playAlbum(5943680);
-            } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
-                tooManyPlayersExceptions.printStackTrace();
-            } catch (DeezerError deezerError) {
-                deezerError.printStackTrace();
-            }
-
-        } else {
-            String[] permissions = new String[]{
-                    Permissions.BASIC_ACCESS,
-                    Permissions.MANAGE_LIBRARY,
-                    Permissions.LISTENING_HISTORY};
-            // The listener for authentication events
-            DialogListener listener = new DialogListener() {
-                public void onComplete(Bundle values) {
-                    SessionStore sessionStore = new SessionStore();
-                    sessionStore.save(deezerConnect, getApplication());
-                }
-
-                public void onCancel() {
-
-                }
-
-                public void onException(Exception e) {
-
-                }
-            };
-            // Launches the authentication process
-            deezerConnect.authorize(AboutActivity.this, permissions, listener);
-        }
     }
 
-    public void openDeezerApplication(final Context context) {
+    void openDeezerApplication(final Context context) {
         Intent intent = null;
         PackageManager pm = context.getPackageManager();
         // check if Deezer is installed
@@ -118,7 +72,7 @@ public class AboutActivity extends Activity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
-    public static boolean isDeezerApplicationInstalled(final PackageManager pm) {
+    private static boolean isDeezerApplicationInstalled(final PackageManager pm) {
         try {
             // get the corresponding package information
             PackageInfo info = pm.getPackageInfo("deezer.android.app", 0);
@@ -128,8 +82,5 @@ public class AboutActivity extends Activity {
             return false;
         }
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+
 }

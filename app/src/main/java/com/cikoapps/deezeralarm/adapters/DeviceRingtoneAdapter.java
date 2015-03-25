@@ -141,10 +141,10 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
 
 
     class DeviceRingtoneViewHolder extends RecyclerView.ViewHolder {
-        TextView itemTextView;
-        RadioButton deviceRingtoneRadioButton;
-        View rowItem;
-        ImageButton soundImageButton;
+        final TextView itemTextView;
+        final RadioButton deviceRingtoneRadioButton;
+        final View rowItem;
+        final ImageButton soundImageButton;
 
         public DeviceRingtoneViewHolder(View itemView) {
             super(itemView);

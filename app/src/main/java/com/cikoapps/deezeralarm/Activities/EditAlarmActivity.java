@@ -23,6 +23,7 @@ import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.Alarm;
 
+@SuppressWarnings("ALL")
 public class EditAlarmActivity extends DeezerBase {
     private final String[] elements = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private String title;

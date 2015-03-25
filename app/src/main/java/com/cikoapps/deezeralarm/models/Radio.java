@@ -6,7 +6,7 @@ public class Radio {
     private final String pictureUrl;
     private final String imageUrlSmall;
     private final String imageUrlLarge;
-    public String imageUrlMedium;
+    public final String imageUrlMedium;
     public boolean selected;
 
 

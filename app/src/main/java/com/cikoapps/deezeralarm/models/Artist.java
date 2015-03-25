@@ -3,12 +3,12 @@ package com.cikoapps.deezeralarm.models;
 public class Artist {
     public final long id;
     public final String name;
-    private final String pictureUrl;
-    private final String imageUrlSmall;
-    private final String imageUrlLarge;
-    public String imageUrlMedium;
+    public final String pictureUrl;
+    public final String imageUrlSmall;
+    public final String imageUrlLarge;
+    public final String imageUrlMedium;
     public boolean selected;
-    private boolean hasRadio;
+    public final boolean hasRadio;
 
     public Artist(long id, String name, String pictureUrl, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge, boolean hasRadio) {
         this.id = id;

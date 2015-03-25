@@ -19,7 +19,21 @@ public class Quotes {
             "Happiness cannot be traveled to, owned, earned, or worn. It is the spiritual experience of living every minute with love, grace & gratitude.",
             "In order to succeed, your desire for success should be greater than your fear of failure.",
             "Don’t worry about failures, worry about the chances you miss when you don’t even try.",
-            "The only thing that stands between you and your dream is the will to try and the belief that it is actually possible."};
+            "The only thing that stands between you and your dream is the will to try and the belief that it is actually possible.",
+            "When we love, we always strive to become better than we are. When we strive to become better than we are, everything around us becomes better too.",
+            "Risks must be taken because the greatest hazard in life is to risk nothing.",
+            "All our dreams can come true if we have the courage to pursue them.",
+            "Great minds discuss ideas; average minds discuss events; small minds discuss people.",
+            "When you stop chasing the wrong things, you give the right things a chance to catch you.",
+            "The starting point of all achievement is desire.",
+            "All progress takes place outside the comfort zone.",
+            "We become what we think about most of the time, and that's the strangest secret.",
+            "I find that when you have a real interest in life and a curious life, that sleep is not the most important thing.",
+            "Don't let the fear of losing be greater than the excitement of winning.",
+            "Motivation is what gets you started. Habit is what keeps you going.",
+            "The individual who says it is not possible should move out of the way of those doing it.",
+            "Everyone wants to live on top of the mountain, but all the happiness and growth occurs while you're climbing it."
+    };
     private static final String[] authors = {
             "Kevin Kruse",
             "Helen Keller",
@@ -35,7 +49,21 @@ public class Quotes {
             "Denis Waitley",
             "Bill Cosby",
             "Jack Canfield",
-            "Joel Brown"};
+            "Joel Brown",
+            "Paulo Coelho",
+            "Leo Buscaglia",
+            "Walt Disney",
+            "Eleanor Roosevelt",
+            "Lolly Daskal",
+            "Napoleon Hill",
+            "Michael John Bobak",
+            "Earl Nightingale",
+            "Martha Stewart",
+            "Robert Kiyosaki",
+            "Jim Ryun",
+            "Tricia Cunningham",
+            "Andy Rooney"
+    };
     public final String quote;
     public final String author;
 

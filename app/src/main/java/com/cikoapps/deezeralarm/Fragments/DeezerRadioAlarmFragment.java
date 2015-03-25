@@ -57,30 +57,30 @@ import com.deezer.sdk.player.networkcheck.WifiOnlyNetworkStateChecker;
 
 public class DeezerRadioAlarmFragment extends Fragment {
     private static final String TAG = "DeezerRadioAlarmFrag";
-    Typeface robotoRegular;
-    long id;
-    MediaPlayer mPlayer;
-    SeekBar seekBar;
-    RadioPlayer radioPlayer;
-    TextView artistTextView;
-    TextView songTextView;
-    ImageView songImageView;
-    ImageButton controlButton;
-    ImageButton nextSongButton;
-    ImageButton prevSongButton;
-    CardView dismissButton;
-    ImageArtworkDownload imageArtworkDownload;
-    String currentPlayerState;
-    int type;
-    boolean WiFiConnected;
-    boolean allowToConnect = false;
-    AudioManager audioManager;
-    NetworkStateChecker networkStateChecker;
+    private Typeface robotoRegular;
+    private long id;
+    private MediaPlayer mPlayer;
+    private SeekBar seekBar;
+    private RadioPlayer radioPlayer;
+    private TextView artistTextView;
+    private TextView songTextView;
+    private ImageView songImageView;
+    private ImageButton controlButton;
+    private ImageButton nextSongButton;
+    private ImageButton prevSongButton;
+    private CardView dismissButton;
+    private ImageArtworkDownload imageArtworkDownload;
+    private String currentPlayerState;
+    private int type;
+    private boolean WiFiConnected;
+    private boolean allowToConnect = false;
+    private AudioManager audioManager;
+    private NetworkStateChecker networkStateChecker;
     private Context context;
     private Application myApp;
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     private DeezerConnect deezerConnect;
-    private Runnable mUpdateTimeTask = new Runnable() {
+    private final Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             radioPlayer.addOnPlayerProgressListener(new OnPlayerProgressListener() {
                 @Override
@@ -112,35 +112,29 @@ public class DeezerRadioAlarmFragment extends Fragment {
         if (WifiBool) {
             WiFiConnected = (new HelperClass(context)).isWifiConnected();
             if (!WiFiConnected) {
-                Log.e(TAG, "Default ringtone, Wifi not Connected");
-                allowToConnect = false;
+                 allowToConnect = false;
             } else {
-                Log.e(TAG, "Playing only on WiFi, WiFi is Connected");
-                networkStateChecker = new WifiOnlyNetworkStateChecker();
+                 networkStateChecker = new WifiOnlyNetworkStateChecker();
                 allowToConnect = true;
             }
         } else {
             networkStateChecker = new WifiAndMobileNetworkStateChecker();
             allowToConnect = true;
-            Log.e(TAG, "Playing list if any network is available");
-        }
+         }
         // Restore or Login Deezer Account
         SessionStore sessionStore = new SessionStore();
         deezerConnect = new DeezerConnect(myApp, DeezerBase.APP_ID);
         if (sessionStore.restore(deezerConnect, context.getApplicationContext())) {
             // Play album or playlist
             if (!allowToConnect) {
-                try {
-                    throw new DeezerError("Your phone is not connected to WiFi");
-                } catch (DeezerError deezerError) {
-                    deezerError.printStackTrace();
-                    Log.e(TAG, deezerError.getMessage());
-                    playDefaultRingtone(audioManager);
-                }
+
+                    playDefaultRingtone( );
+
             } else {
                 playRadioRingtone();
             }
         } else {
+            playDefaultRingtone( );
             String[] permissions = new String[]{
                     Permissions.BASIC_ACCESS,
                     Permissions.MANAGE_LIBRARY,
@@ -151,14 +145,20 @@ public class DeezerRadioAlarmFragment extends Fragment {
                     SessionStore sessionStore = new SessionStore();
                     sessionStore.save(deezerConnect, myApp);
                     playRadioRingtone();
-                }
+                    try {
+                        if (mPlayer != null) {
+                            mPlayer.release();
+                        }
+                    } catch (IllegalStateException ignored){
+                    }
+                 }
 
                 public void onCancel() {
-                    playDefaultRingtone(audioManager);
+                    playDefaultRingtone( );
                 }
 
                 public void onException(Exception e) {
-                    playDefaultRingtone(audioManager);
+                    playDefaultRingtone( );
                 }
             };
             // Launches the authentication process
@@ -188,10 +188,10 @@ public class DeezerRadioAlarmFragment extends Fragment {
             initArtistRadioPlayer();
         } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
             tooManyPlayersExceptions.printStackTrace();
-            playDefaultRingtone(audioManager);
+            playDefaultRingtone( );
         } catch (DeezerError deezerError) {
             deezerError.printStackTrace();
-            playDefaultRingtone(audioManager);
+            playDefaultRingtone( );
         }
         radioPlayer.setStereoVolume(maxVolume, maxVolume);
         if (type == 3) {
@@ -210,9 +210,13 @@ public class DeezerRadioAlarmFragment extends Fragment {
                     radioPlayer.stop();
                     radioPlayer.release();
                 }
-                if (mPlayer != null) {
-                    mPlayer.stop();
-                    mPlayer.release();
+                try {
+                    if (mPlayer != null) {
+                        mPlayer = new MediaPlayer();
+                        mPlayer.release();
+                    }
+                } catch (IllegalStateException ignored){
+
                 }
                 Intent intent = new Intent(((AlarmScreenActivity) context), QuoteActivity.class);
                 (((AlarmScreenActivity) context)).finishApp();
@@ -222,43 +226,45 @@ public class DeezerRadioAlarmFragment extends Fragment {
         });
     }
 
-    private void playDefaultRingtone(AudioManager audioManager) {
-        mPlayer = new MediaPlayer();
-        mPlayer.setVolume(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        String tone;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (radioPlayer != null) {
+            radioPlayer.stop();
+            radioPlayer.release();
+        }
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((AlarmScreenActivity) context));
-            tone = preferences.getString("selectedRingtoneUri", "");
-            if (tone.equalsIgnoreCase("")) {
-                RingtoneManager ringtoneMgr = new RingtoneManager(((AlarmScreenActivity) context));
-                ringtoneMgr.setType(RingtoneManager.TYPE_ALARM);
-                Cursor alarmsCursor = ringtoneMgr.getCursor();
-                int alarmsCount = alarmsCursor.getCount();
-                if (alarmsCount == 0 && !alarmsCursor.moveToFirst()) {
-                    alarmsCursor.close();
-                } else {
-                    alarmsCursor.moveToNext();
-                    int currentPosition = alarmsCursor.getPosition();
-                    tone = ringtoneMgr.getRingtoneUri(currentPosition).toString();
-                    alarmsCursor.close();
-                }
+            if (mPlayer != null) {
+                mPlayer = new MediaPlayer();
+                mPlayer.release();
             }
-            Uri toneUri = Uri.parse(tone);
-            mPlayer.setDataSource(((AlarmScreenActivity) context), toneUri);
-            mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+        } catch (IllegalStateException ignored){
+
+        }
+    }
+    private void playDefaultRingtone() {
+        Log.e(TAG, "Playing default ringtone");
+        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
+        try {
+            Uri alert =  RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            mPlayer = new MediaPlayer();
+            mPlayer.setDataSource(context, alert);
+            mPlayer.setAudioStreamType(AudioManager.STREAM_RING);
             mPlayer.setLooping(true);
             mPlayer.prepare();
             mPlayer.start();
-        } catch (Exception f) {
-            f.printStackTrace();
+        } catch(Exception e) {
+            Log.e(TAG,e.getMessage());
         }
     }
 
-    public void updateProgressBar() {
+    void updateProgressBar() {
         mHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
-    public void initControlButtons() {
+    void initControlButtons() {
 
         controlButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -330,11 +336,28 @@ public class DeezerRadioAlarmFragment extends Fragment {
 
 
     void initArtistRadioPlayer() {
+        if(radioPlayer!=null){
+            addPlayerListener();
+        } else {
+            new CountDownTimer(3000,1000){
 
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
+
+                @Override
+                public void onFinish() {
+                    initArtistRadioPlayer();
+                }
+            }.start();
+        }
+    }
+
+    private void addPlayerListener() {
         radioPlayer.addOnPlayerStateChangeListener(new OnPlayerStateChangeListener() {
             @Override
             public void onPlayerStateChange(PlayerState playerState, long l) {
-                Log.e(TAG, "PlayerStateChanged to - " + playerState.name());
+                //Log.e(TAG, "PlayerStateChanged to - " + playerState.name());
                 if (playerState.compareTo(PlayerState.valueOf("PLAYING")) == 0) {
                     ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                         @Override
@@ -421,7 +444,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
 
             @Override
             public void onRequestException(Exception e, Object o) {
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
 
             @Override
@@ -437,13 +460,13 @@ public class DeezerRadioAlarmFragment extends Fragment {
         radioPlayer.addOnBufferErrorListener(new OnBufferErrorListener() {
             @Override
             public void onBufferError(Exception e, double v) {
-                Log.e(TAG, "Buffer Error " + e.getMessage());
+                //Log.e(TAG, "Buffer Error " + e.getMessage());
             }
         });
         radioPlayer.addOnBufferStateChangeListener(new OnBufferStateChangeListener() {
             @Override
             public void onBufferStateChange(BufferState bufferState, double v) {
-                Log.e(TAG, "BufferState" + bufferState.name());
+                //Log.e(TAG, "BufferState" + bufferState.name());
             }
         });
     }

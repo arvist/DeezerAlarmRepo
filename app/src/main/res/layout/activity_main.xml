@@ -29,7 +29,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/horizontalLineView"
-        android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+        android:scrollbars="vertical"/>
 
     <com.shamanland.fab.FloatingActionButton
         android:id="@+id/floatingActionButtonView"

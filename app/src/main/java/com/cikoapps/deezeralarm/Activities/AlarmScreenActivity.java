@@ -90,8 +90,8 @@ public class AlarmScreenActivity extends Activity {
     private void showAds() {
         adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+/*                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("abc")*/
                 .build();
         adView.loadAd(adRequest);
     }
@@ -144,7 +144,7 @@ public class AlarmScreenActivity extends Activity {
         } else if ((type == 3 || type == 4) && alarmid != -1) {
             ft.add(R.id.alarm_bottom_fragment, new DeezerRadioAlarmFragment(alarmid, type, wifiBool, context, getApplication()));
         } else {
-            ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone));
+            ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone,context));
         }
         ft.commit();
     }

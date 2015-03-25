@@ -5,9 +5,9 @@ public class Album {
     public final long id;
     public final String title;
     public final String artist;
-    public final String coverURL;
-    public final String duration;
-    public final String imageUrlSmall;
+    private final String coverURL;
+    private final String duration;
+    private final String imageUrlSmall;
     private final String imageUrlLarge;
     public String imageUrlMedium;
     public boolean selected;

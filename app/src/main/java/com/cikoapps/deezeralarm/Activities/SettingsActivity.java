@@ -32,14 +32,14 @@ import java.util.ArrayList;
 
 public class SettingsActivity extends DeezerBase {
     public final static String SELECTED_INTERVAL = "selectedInterval";
-    public final static String SELECTED_RINGTONE = "selectedRingtone";
-    public final static String SELECTED_RINGTONE_TITLE = "selectedRingtoneTitle";
+    private final static String SELECTED_RINGTONE = "selectedRingtone";
+    private final static String SELECTED_RINGTONE_TITLE = "selectedRingtoneTitle";
     public final static String SELECTED_RINGTONE_URI = "selectedRingtoneUri";
     public final static String WIND_MILES_BOOLEAN = "windMilesBool";
     public final static String TEMP_FAHRENHEIT_BOOLEAN = "tempFBool";
     public final static String ONLY_WIFI_SELECTED = "wifiSelected";
     public final static String MAX_ALARM_VOLUME = "maxVolume";
-    static final String TAG = "SettingsActivity";
+    private static final String TAG = "SettingsActivity";
     private final String[] elements = {"5 minutes ", "10 minutes", "15 minutes ", "20 minutes", "25 minutes", "30 minutes",
             "35 minutes", "40 minutes", "45 minutes", "50 minutes", "55 minutes", "60 minutes", "Do not refresh automatically"};
     private Context context;

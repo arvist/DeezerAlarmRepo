@@ -65,7 +65,6 @@ public class RingtoneActivity extends DeezerBase {
         pager.setOffscreenPageLimit(5);
         pager.setAdapter(adapter);
         tabs.setViewPager(pager);
-
         pager.setPageMargin(pageMargin);
         selectedRingtone = new SelectedRingtone();
         showAds();
@@ -121,8 +120,8 @@ public class RingtoneActivity extends DeezerBase {
     private void showAds() {
         adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")
+/*                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("abc")*/
                 .build();
         adView.loadAd(adRequest);
     }

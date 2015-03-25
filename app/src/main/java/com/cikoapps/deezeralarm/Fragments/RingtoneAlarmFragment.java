@@ -27,14 +27,18 @@ public class RingtoneAlarmFragment extends Fragment {
 
 
     private final String name;
+    private AudioManager audioManager;
     private String tone;
     private MediaPlayer mPlayer;
 
     @SuppressLint("ValidFragment")
-    public RingtoneAlarmFragment(String name, String tone) {
+    public RingtoneAlarmFragment(String name, String tone,Context context) {
         super();
         this.name = name;
         this.tone = tone;
+        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
     }
 
     public RingtoneAlarmFragment() {
@@ -47,7 +51,6 @@ public class RingtoneAlarmFragment extends Fragment {
         View view = inflater.inflate(R.layout.ringtone_alarm_fragment_layout,
                 container, false);
         Typeface robotoRegular = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Regular.ttf");
-        Typeface robotoItalic = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
         TextView alarmTitleTextView = (TextView) view.findViewById(R.id.alarmTitleTextView);
         alarmTitleTextView.setText(name);
         alarmTitleTextView.setTypeface(robotoRegular);

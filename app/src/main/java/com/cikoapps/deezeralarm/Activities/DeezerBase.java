@@ -3,7 +3,6 @@ package com.cikoapps.deezeralarm.Activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 
 import com.deezer.sdk.model.Permissions;
 import com.deezer.sdk.network.connect.DeezerConnect;
@@ -22,12 +21,12 @@ public class DeezerBase extends ActionBarActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate DeezerBase.java");
+        //Log.e(TAG, "onCreate DeezerBase.java");
         this.context = getApplicationContext();
         deezerConnect = new DeezerConnect(getApplication(), APP_ID);
         sessionStore = new SessionStore();
         if (sessionStore.restore(deezerConnect, getApplication())) {
-            Log.e(TAG, "Session is valid " + deezerConnect.isSessionValid() + " onCreate");
+            //Log.e(TAG, "Session is valid " + deezerConnect.isSessionValid() + " onCreate");
             sessionStore.save(deezerConnect, getApplicationContext());
         } else {
             loginDeezer();
@@ -37,12 +36,11 @@ public class DeezerBase extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.e(TAG, "DeezerBase onCancel");
+        //Log.e(TAG, "DeezerBase onCancel");
     }
 
-    public void loginDeezer() {
-        Log.e(TAG, "loginDeezer method call");
-        String[] permissions = new String[]{
+    void loginDeezer() {
+         String[] permissions = new String[]{
                 Permissions.BASIC_ACCESS,
                 Permissions.MANAGE_LIBRARY,
                 Permissions.LISTENING_HISTORY};
@@ -53,7 +51,6 @@ public class DeezerBase extends ActionBarActivity {
             }
 
             public void onCancel() {
-
             }
 
             public void onException(Exception e) {
@@ -67,12 +64,12 @@ public class DeezerBase extends ActionBarActivity {
             }
         } else {
             deezerConnect.authorize(DeezerBase.this, permissions, listener);
-            Log.e(TAG, "Authorizing deezer account");
+            //Log.e(TAG, "Authorizing deezer account");
         }
-        Log.e(TAG, deezerConnect.getRadioToken());
+        //Log.e(TAG, deezerConnect.getRadioToken());
     }
 
-    protected boolean logoutDeezer() {
+    boolean logoutDeezer() {
         sessionStore.clear(this);
         deezerConnect.logout(this);
         return true;

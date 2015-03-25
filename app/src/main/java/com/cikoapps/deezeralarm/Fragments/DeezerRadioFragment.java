@@ -85,7 +85,7 @@ public class DeezerRadioFragment extends Fragment {
         }
     }
 
-    public void getUserRadio() {
+    void getUserRadio() {
         radioArrayList = new ArrayList<>();
         localRadioList = new ArrayList<>();
         RequestListener requestListener = new JsonRequestListener() {

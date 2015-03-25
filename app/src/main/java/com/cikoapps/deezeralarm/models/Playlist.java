@@ -6,7 +6,7 @@ public class Playlist {
     public final String info;
     private final String imageUrlSmall;
     private final String imageUrlLarge;
-    public String imageUrlMedium;
+    public final String imageUrlMedium;
     public boolean selected;
 
     public Playlist(long id, String title, String info, String imageUrl, String imageUrlM, String imageUrlL) {
