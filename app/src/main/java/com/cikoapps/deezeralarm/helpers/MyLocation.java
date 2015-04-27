@@ -1,10 +1,9 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -15,9 +14,8 @@ import com.google.android.gms.location.LocationServices;
 public class MyLocation implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "MyLocation";
     private final Context context;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient googleApiClient;
     private final Toolbar toolbar;
     private final RelativeLayout mainTopLayout;
 
@@ -27,43 +25,39 @@ public class MyLocation implements
         this.mainTopLayout = mainTopLayout;
     }
 
+    // Lai varētu iegūt lietotāja atrašanās vietas koordinātas
     public synchronized void buildGoogleApiClient() {
-
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
+        googleApiClient.connect();
     }
 
     public synchronized void reconnectGoogleApiClient() {
-        mGoogleApiClient.disconnect();
-
-        mGoogleApiClient.connect();
-
+        googleApiClient.disconnect();
+        googleApiClient.connect();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            String lat = String.valueOf(mLastLocation.getLatitude());
-            String lng = String.valueOf(mLastLocation.getLongitude());
-            double latitude = Double.parseDouble(lat);
-            double longitude = Double.parseDouble(lng);
-            new WeatherDataAsync(mainTopLayout, latitude, longitude, toolbar, context).execute();
+        Location myLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                googleApiClient);
+        if (myLastLocation != null) {
+            String lat = String.valueOf(myLastLocation.getLatitude());
+            String lng = String.valueOf(myLastLocation.getLongitude());
+            new WeatherDataAsync(mainTopLayout, Double.parseDouble(lat), Double.parseDouble(lng), toolbar, context).execute();
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e(TAG, "onConnectionSuspended");
+        reconnectGoogleApiClient();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAG, "onConnectionFailed");
+        reconnectGoogleApiClient();
     }
 }

@@ -13,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.Fragments.DeezerRadioFragment;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.fragments.DeezerRadioFragment;
 import com.cikoapps.deezeralarm.models.Radio;
 
 import java.io.InputStream;
@@ -32,7 +32,7 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
     private final ArrayList<Bitmap> images;
 
     public DeezerRadioAdapter(Context mContext, ArrayList<Radio> radio) {
-         radioList = new ArrayList<>(radio);
+        radioList = new ArrayList<>(radio);
         radioList.add(null);
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();

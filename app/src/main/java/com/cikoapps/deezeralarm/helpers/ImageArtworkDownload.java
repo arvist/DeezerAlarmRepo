@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.cikoapps.deezeralarm.Activities.DeezerBase;
+import com.cikoapps.deezeralarm.activities.DeezerBase;
 import com.deezer.sdk.network.connect.DeezerConnect;
 import com.deezer.sdk.network.request.DeezerRequest;
 import com.deezer.sdk.network.request.DeezerRequestFactory;
@@ -37,7 +37,7 @@ public class ImageArtworkDownload {
         }
     }
 
-    public void getAlbum(final ImageView imageView, int type, long id) {
+    public void setAlbumArtworkImage(final ImageView imageView, int type, long id) {
         RequestListener requestListener = new JsonRequestListener() {
             public void onResult(Object result, Object requestId) {
                 com.deezer.sdk.model.Album album = (com.deezer.sdk.model.Album) result;
@@ -62,7 +62,7 @@ public class ImageArtworkDownload {
     }
 
 
-    public void getPlaylistImage(String url, ImageView imageview) {
+    public void setPlaylistArtworkImage(String url, ImageView imageview) {
         imageLoadTask = new ImageLoadTask(url, imageview);
         imageLoadTask.execute();
 
@@ -78,6 +78,7 @@ public class ImageArtworkDownload {
             Log.e(TAG, url);
         }
 
+        // Lai neaizkavētu lietotāja interfeisu
         @Override
         protected Bitmap doInBackground(Void... params) {
             try {

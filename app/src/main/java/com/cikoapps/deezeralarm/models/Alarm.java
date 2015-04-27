@@ -2,7 +2,7 @@ package com.cikoapps.deezeralarm.models;
 
 import android.content.Context;
 
-import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
+import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
 
 public class Alarm {
     public static final String TITLE = "title";
@@ -39,10 +39,7 @@ public class Alarm {
     public String partOfDay = ""; //AM/FM
     public String alarmToneName;
 
-    public Alarm() {
-        repeatingDays = new boolean[7];
-    }
-
+    /* Konstruktors lietots MainActivity veidojot objektus no datubāzes*/
     public Alarm(String title, int id, int hour, int minute, boolean enabled, boolean[] repeatingDays,
                  boolean repeatWeekly, String alarmTone, String artist, long alarmid, int type, String alarmToneName) {
         this.title = title;
@@ -59,7 +56,7 @@ public class Alarm {
         this.alarmToneName = alarmToneName;
     }
 
-
+    /* Konstruktors lietots AddAlarmActivity, lai ievietotu objektus datubāzē */
     public Alarm(String title, int hour, int minute, boolean enabled, boolean[] repeatingDays,
                  boolean repeatWeekly, String alarmTone, long alarmid, int type, String alarmToneName, String artist) {
         this.title = title;
@@ -79,12 +76,13 @@ public class Alarm {
         return repeatingDays[dayOfWeek];
     }
 
+
     public void insertIntoDataBase(Context context) {
-        AlarmDBHelper alarmDBHelper = new AlarmDBHelper(context);
+        AlarmDatabaseAccessor alarmDatabaseAccessor = new AlarmDatabaseAccessor(context);
         String repeatDays = repeatingDaysToString();
-        alarmDBHelper.insertAlarm(title, hour, minute, repeatDays, repeatWeekly, alarmToneName, artist, alarmTone,
+        alarmDatabaseAccessor.insertAlarmIntoDatabase(title, hour, minute, repeatDays, repeatWeekly, alarmToneName, artist, alarmTone,
                 alarmid, type, enabled);
-        alarmDBHelper.close();
+        alarmDatabaseAccessor.close();
 
     }
 

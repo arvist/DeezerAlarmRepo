@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.cikoapps.deezeralarm.R;
 
+// Lai atdalītu saraksta elementus ar pelēku līniju
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private final Drawable mDivider;
 

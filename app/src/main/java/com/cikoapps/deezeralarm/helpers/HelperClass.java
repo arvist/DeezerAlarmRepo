@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -21,6 +21,7 @@ public class HelperClass {
     }
 
 
+    // Lai uzstādītu datuma mēnesi par vārdu
     public static String getMonthFromInt(int month) {
         String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         return monthNames[month];
@@ -33,6 +34,7 @@ public class HelperClass {
         return bd.doubleValue();
     }
 
+    // Lai attēlotu saraksta/albuma ilgumu
     public static String timeConversion(int totalSeconds) {
 
         final int MINUTES_IN_AN_HOUR = 60;
@@ -49,11 +51,13 @@ public class HelperClass {
         }
     }
 
+    // Lietots, lai atgrieztu kādu no citātiem
     public static int randomInteger(int min, int max) {
         Random rand = new Random();
         return rand.nextInt((max - min)) + min;
     }
 
+    // Lietots, ja uzstādīts, ka var lietot tikai WiFi savienojumu
     public boolean isWifiConnected() {
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -93,6 +97,7 @@ public class HelperClass {
         return false;
     }
 
+    // Lietots, lai pārdbauītu vai lietotāja ierīcē ir iespējota atrašanās vietas meklēšana
     public boolean isLocationEnabled() {
         int locationMode = 0;
         String locationProviders;

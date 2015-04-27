@@ -1,14 +1,12 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
+import com.cikoapps.deezeralarm.activities.AlarmScreenActivity;
 
 public class AlarmService extends Service {
-
-    public static String TAG = AlarmService.class.getSimpleName();
 
     @Override
     public IBinder onBind(Intent intent) {

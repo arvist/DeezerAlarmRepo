@@ -13,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.Fragments.DeezerArtistFragment;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.fragments.DeezerArtistFragment;
 import com.cikoapps.deezeralarm.models.Artist;
 
 import java.io.InputStream;
@@ -33,7 +33,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
     private final ArrayList<Bitmap> images;
 
     public DeezerArtistAdapter(Context mContext, ArrayList<Artist> artists) {
-         artistList = artists;
+        artistList = artists;
         artistList.add(null);
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();

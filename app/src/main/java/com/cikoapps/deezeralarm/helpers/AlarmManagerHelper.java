@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -30,7 +30,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
     public static void setAlarms(Context context) {
         cancelAlarms(context);
 
-        AlarmDBHelper dbHelper = new AlarmDBHelper(context);
+        AlarmDatabaseAccessor dbHelper = new AlarmDatabaseAccessor(context);
 
         List<Alarm> alarms = dbHelper.getAlarmList();
         for (Alarm alarm : alarms) {
@@ -41,13 +41,12 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                 calendar.set(Calendar.HOUR_OF_DAY, alarm.hour);
                 calendar.set(Calendar.MINUTE, (alarm.minute));
                 calendar.set(Calendar.SECOND, 55);
-                //Find next time to set
+
                 final int nowHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
                 final int nowMinute = Calendar.getInstance().get(Calendar.MINUTE);
                 final int nowSecond = Calendar.getInstance().get(Calendar.SECOND);
 
                 if (allFalse(alarm.repeatingDays)) {
-                    Log.e(TAG, alarm.hour + " : " + alarm.minute + " vs " + nowHour + " : " + nowMinute);
                     if ((alarm.hour > nowHour) ||
                             ((alarm.hour == nowHour) && (alarm.minute > nowMinute)) ||
                             ((alarm.hour == nowHour) && (alarm.minute == nowMinute) && (nowSecond < 30))) {
@@ -74,8 +73,8 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                     5 - Saturday,
                     6 - Sunday
                 */
-                    //First check if it's later in the week
 
+                    // Ja vēlāk nedēļā tad uzstāda uz šo nedēļu un atbilstošo dienu no alarm objekta
                     boolean isSunday = false;
                     for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
 
@@ -87,7 +86,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                                 day = 1;
                                 Log.e(TAG, "Setting Alarm To Sunday");
                                 calendar.set(Calendar.DAY_OF_WEEK, 1);
-                                calendar.add(Calendar.WEEK_OF_YEAR,1);
+                                calendar.add(Calendar.WEEK_OF_YEAR, 1);
                                 setAlarm(context, calendar, pIntent);
                                 isSunday = true;
                                 alarmSet = true;
@@ -95,7 +94,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                                 day = day + 2;
                             }
                             if (!isSunday) {
-                                Log.e(TAG,"Setting alarm to other days");
+                                Log.e(TAG, "Setting alarm to other days");
                                 calendar.set(Calendar.DAY_OF_WEEK, day);
                                 setAlarm(context, calendar, pIntent);
                                 alarmSet = true;
@@ -104,7 +103,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                         }
                     }
 
-                    //Else check if it's earlier in the week  if(repeatingDay && dayOfWeek >= nowDay && !(dayOfWeek == nowDay && alarm.hour < nowHour) &&
+                    //Ja diena pēc kārtas pirms konkrētās dienas tad pieskaita vienu nedēļu
                     if (!alarmSet) {
                         for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
                             boolean repeatingDay = alarm.getRepeatingDay(dayOfWeek);
@@ -147,8 +146,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
     }
 
     public static void cancelAlarms(Context context) {
-        AlarmDBHelper dbHelper = new AlarmDBHelper(context);
-
+        AlarmDatabaseAccessor dbHelper = new AlarmDatabaseAccessor(context);
         List<Alarm> alarms = dbHelper.getAlarmList();
         if (alarms != null) {
             for (Alarm alarm : alarms) {
@@ -161,6 +159,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         }
     }
 
+    // Lai iestatītu modinātāju nākotnē.
     private static PendingIntent createPendingIntent(Context context, Alarm alarm) {
         Intent intent = new Intent(context, AlarmService.class);
         intent.putExtra(ID, alarm.id);

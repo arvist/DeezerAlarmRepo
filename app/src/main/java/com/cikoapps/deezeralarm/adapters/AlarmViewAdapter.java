@@ -12,10 +12,10 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.MainActivity;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.MainActivity;
+import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
+import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
 import com.cikoapps.deezeralarm.models.Alarm;
 
 import java.util.ArrayList;
@@ -49,7 +49,6 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
 
     @Override
     public void onBindViewHolder(final AlarmViewHolder alarmViewHolder, final int position) {
-
         Alarm alarm = alarmList.get(position);
         alarmViewHolder.titleTextView.setText(alarm.title);
         alarmViewHolder.titleTextView.setTypeface(robotoRegular);
@@ -140,7 +139,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
             alarmViewHolder.alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    AlarmDBHelper dataBaseHelper = new AlarmDBHelper(context);
+                    AlarmDatabaseAccessor dataBaseHelper = new AlarmDatabaseAccessor(context);
                     alarmList.get(position).enabled = isChecked;
                     AlarmManagerHelper.cancelAlarms(context);
                     dataBaseHelper.updateIsEnabled(alarmList.get(position).id, isChecked);

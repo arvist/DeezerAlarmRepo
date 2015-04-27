@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.HelperClasses;
+package com.cikoapps.deezeralarm.helpers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,8 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cikoapps.deezeralarm.Activities.SettingsActivity;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.SettingsActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,7 +43,6 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
     private static final String WEATHER_CODE = "weather";
     private static final String SUMMARY = "summary";
     private static final String TEMP_CELSIUS = "tempC";
-    private static String TAG = "WeatherDataAsync.java";
     private final ImageButton refreshButton;
     private final TextView cityTextView;
     private final TextView dateTextView;
@@ -119,6 +118,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         dateTextView.setTypeface(robotoRegular);
     }
 
+    // Lejupielādē laikaapstākļu datus asinhroni, lai neaizkavētu lietotāja interfeisu.
     protected String doInBackground(Void... arg0) {
         final String API_KEY = "0a6bad312fb111db3c658e0250965";
         latitude = HelperClass.round(latitude, 3);
@@ -131,6 +131,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         return "You are at PostExecute";
     }
 
+    // Pēc datu lejupielāes atjauno leika prognožu datus.
     protected void onPostExecute(String result) {
         if (weatherJson != null) {
             try {
@@ -202,10 +203,10 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 }
             });
         }
-        // return JSON String
         return jsonObject;
     }
 
+    // Lai būtu pieejami jaunākie atjaunotie laikapstākļu dati attēlošanai
     private void saveWeatherToSharedPreferences(String summary, float tempC, float tempF, float windKmh, float windMph,
                                                 String city, String weatherImage) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -305,7 +306,8 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         refreshAnimation.cancel();
     }
 
-    void setTextColorLight() {
+    // Ja laika prognožu fona attēls tumšs, tad teksts un ikonas gaišas,
+    void setWeatherUserInterfaceLight() {
         dateTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
         summaryTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
         windTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
@@ -317,7 +319,8 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         refreshButton.setImageResource(R.drawable.ic_action_cached_white);
     }
 
-    void setTextColorDark() {
+    // Ja laika prognožu fona attēls gaišs, tad teksts un ikonas tumšas,
+    void setWeatherUserInterfaceDark() {
         dateTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         summaryTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         windTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
@@ -329,12 +332,13 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         refreshButton.setImageResource(R.drawable.ic_action_cached);
     }
 
+    // Atblistoši laika apstākļiem uzstāda laikapstākļu ikonu
     void setWeatherImage(String icon) {
         Calendar calendar = Calendar.getInstance();
         int weatherCode = Integer.parseInt(icon);
 
         if (weatherCode == 248 || weatherCode == 260 || weatherCode == 122 || weatherCode == 143) {
-            setTextColorDark();
+            setWeatherUserInterfaceDark();
             weatherImageView.setImageResource(R.drawable.ic_fog);
             weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundMist));
             if (toolbar != null) {
@@ -346,7 +350,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 113) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_sunny);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -358,7 +362,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 }
 
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_clear_sky_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 summaryTextView.setText("Clear");
@@ -372,7 +376,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 116) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_sunny_intervals);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -384,7 +388,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 }
 
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_night);
                 if (toolbar != null) {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundCloudyNight));
@@ -398,7 +402,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 119) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_white_cloud);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -410,7 +414,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 }
 
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_black_low_cloud);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 if (toolbar != null) {
@@ -424,7 +428,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 389) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_thunderstorms);
                 if (toolbar != null) {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
@@ -435,7 +439,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 }
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_thunderstorms_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundThunderStormsNight));
                 if (toolbar != null) {
@@ -449,7 +453,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 176 || weatherCode == 263 || weatherCode == 353) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_light_rain_showers);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -460,7 +464,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     tempImageView.setImageResource(R.drawable.ic_temperature_dark);
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_light_rain_showers_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 if (toolbar != null) {
@@ -474,7 +478,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 299 || weatherCode == 305 || weatherCode == 356) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_heavy_rain_showers);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -485,7 +489,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     tempImageView.setImageResource(R.drawable.ic_temperature_dark);
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_heavy_rain_showers_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 if (toolbar != null) {
@@ -499,7 +503,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 323 || weatherCode == 326 || weatherCode == 368) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_light_snow_showers);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -510,7 +514,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     tempImageView.setImageResource(R.drawable.ic_temperature_dark);
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_light_snow_showers_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 if (toolbar != null) {
@@ -524,7 +528,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 335 || weatherCode == 371) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_heavy_snow_showers);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -536,7 +540,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_heavy_snow_showers_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 if (toolbar != null) {
@@ -550,7 +554,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 179 || weatherCode == 362 || weatherCode == 365 || weatherCode == 374) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_sleet_showers);
                 if (toolbar != null) {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
@@ -562,7 +566,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 }
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_sleet_showers_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 if (toolbar != null) {
@@ -577,7 +581,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 200 || weatherCode == 386 || weatherCode == 392) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_thundery_showers);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundSun));
                 if (toolbar != null) {
@@ -589,7 +593,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_thundery_showers_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundClearSkyNight));
                 if (toolbar != null) {
@@ -604,7 +608,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 266 || weatherCode == 293 || weatherCode == 296) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_rain);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 if (toolbar != null) {
@@ -616,7 +620,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_rain_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundThunderStormsNight));
                 if (toolbar != null) {
@@ -631,7 +635,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 302 || weatherCode == 308 || weatherCode == 359) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 if (toolbar != null) {
@@ -644,7 +648,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_rain_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundThunderStormsNight));
                 if (toolbar != null) {
@@ -659,7 +663,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             }
         } else if (weatherCode == 227 || weatherCode == 320 || weatherCode == 395) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_snow);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 if (toolbar != null) {
@@ -671,7 +675,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_light_snow_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundThunderStormsNight));
                 if (toolbar != null) {
@@ -685,7 +689,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
         } else if (weatherCode == 230 || weatherCode == 329 || weatherCode == 332 || weatherCode == 338) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_snow);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 if (toolbar != null) {
@@ -697,7 +701,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_heavy_snow_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundThunderStormsNight));
                 if (toolbar != null) {
@@ -711,7 +715,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
         } else if (weatherCode == 182 || weatherCode == 185 || weatherCode == 281 || weatherCode == 284 ||
                 weatherCode == 311 || weatherCode == 314 || weatherCode == 317 || weatherCode == 350 || weatherCode == 377) {
             if (calendar.get(Calendar.HOUR_OF_DAY) < 18 && calendar.get(Calendar.HOUR_OF_DAY) > 6) {
-                setTextColorDark();
+                setWeatherUserInterfaceDark();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_sleet);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 if (toolbar != null) {
@@ -722,7 +726,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                     toolbar.setBackgroundColor(context.getResources().getColor(R.color.backgroundBlackCloudLow));
                 }
             } else {
-                setTextColorLight();
+                setWeatherUserInterfaceLight();
                 weatherImageView.setImageResource(R.drawable.ic_cloudy_with_sleet_night);
                 weatherLayout.setBackgroundColor(context.getResources().getColor(R.color.backgroundThunderStormsNight));
                 if (toolbar != null) {

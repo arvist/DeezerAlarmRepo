@@ -14,9 +14,9 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.Fragments.DeviceRingtoneFragment;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.fragments.DeviceRingtoneFragment;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                         deviceRingtone.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeviceRingtoneFragment.updateSelectedRingtone(deviceRingtone.Uri, deviceRingtone.title);
+                        DeviceRingtoneFragment.updateSelectedRingtone(deviceRingtone.uri, deviceRingtone.title);
                     } else if (selectedPosition == position) {
                         deviceRingtone.selected = false;
                         selectedPosition = -1;
@@ -87,7 +87,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                         deviceRingtone.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeviceRingtoneFragment.updateSelectedRingtone(deviceRingtone.Uri, deviceRingtone.title);
+                        DeviceRingtoneFragment.updateSelectedRingtone(deviceRingtone.uri, deviceRingtone.title);
                     }
                 }
             });
@@ -99,7 +99,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                             mediaPlayer.release();
                         mediaPlayer = new MediaPlayer();
                         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                        mediaPlayer.setDataSource(context, Uri.parse(deviceRingtone.Uri));
+                        mediaPlayer.setDataSource(context, Uri.parse(deviceRingtone.uri));
                         mediaPlayer.prepare();
                         mediaPlayer.setLooping(false);
                         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

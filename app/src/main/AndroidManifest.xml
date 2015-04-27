@@ -14,23 +14,23 @@
 
 
         <activity
-            android:name=".Activities.RingtoneActivity"
+            android:name=".activities.RingtoneActivity"
             android:configChanges="orientation"
             android:label="Ringtone Picker"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.DeezerBase"
+            android:name=".activities.DeezerBase"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:configChanges="orientation"
             android:label="dAlarm"
             android:screenOrientation="portrait">
 
         </activity>
         <activity
-            android:name=".Activities.SplashScreenActivity"
+            android:name=".activities.SplashScreenActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -40,46 +40,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.AddAlarmActivity"
+            android:name=".activities.AddAlarmActivity"
             android:configChanges="orientation"
             android:label="New Alarm"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.AlarmScreenActivity"
+            android:name=".activities.AlarmScreenActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:noHistory="true"
-            android:excludeFromRecents="true"
+
             />
         <activity
-            android:name=".Activities.AboutActivity"
+            android:name=".activities.AboutActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.EditAlarmActivity"
+            android:name=".activities.EditAlarmActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activities.QuoteActivity"
+            android:name=".activities.QuoteActivity"
             android:configChanges="orientation"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:taskAffinity="" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
 
         <service
-            android:name=".HelperClasses.AlarmService"
+            android:name=".helpers.AlarmService"
             android:enabled="true" />
 
 
-        <receiver android:name=".HelperClasses.AlarmManagerHelper">
+        <receiver android:name=".helpers.AlarmManagerHelper">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
