@@ -162,8 +162,7 @@
             android:paddingTop="8dp"
             android:text=" No"
             android:textSize="14sp"
-            android:button="@drawable/material_radio_btn"
-            />
+            android:button="@drawable/material_radio_btn" />
     </RadioGroup>
 
     <TimePicker

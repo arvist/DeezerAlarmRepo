@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.activities.RingtoneActivity;
 import com.cikoapps.deezeralarm.fragments.DeezerAlbumFragment;
-import com.cikoapps.deezeralarm.models.Album;
+import com.cikoapps.deezeralarm.models.DeezerAlbum;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,13 +28,13 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
 
     public static int selectedPosition = -1;
     private static Typeface robotoRegular;
-    private final ArrayList<Album> albumsList;
+    private final ArrayList<DeezerAlbum> albumsList;
     private final LayoutInflater inflater;
     private final ArrayList<Bitmap> images;
 
-    public DeezerAlbumAdapter(Context mContext, ArrayList<Album> albums) {
-        albumsList = albums;
-        albums.add(null);
+    public DeezerAlbumAdapter(Context mContext, ArrayList<DeezerAlbum> deezerAlbums) {
+        albumsList = deezerAlbums;
+        deezerAlbums.add(null);
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();
         for (int i = 0; i < albumsList.size(); i++) {
@@ -51,8 +51,8 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
 
     @Override
     public void onBindViewHolder(DeezerAlbumViewHolder holder, final int position) {
-        final Album album = albumsList.get(position);
-        if (album == null) {
+        final DeezerAlbum deezerAlbum = albumsList.get(position);
+        if (deezerAlbum == null) {
             holder.albumRadioButton.setWillNotDraw(true);
             holder.albumImageView.setWillNotDraw(true);
             holder.albumArtistTextView.setWillNotDraw(true);
@@ -63,42 +63,42 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
             holder.albumImageView.setWillNotDraw(false);
             holder.albumArtistTextView.setWillNotDraw(false);
             holder.albumTitleTextView.setWillNotDraw(false);
-            holder.albumTitleTextView.setText(album.title);
+            holder.albumTitleTextView.setText(deezerAlbum.title);
             holder.albumTitleTextView.setTypeface(robotoRegular);
-            holder.albumArtistTextView.setText(album.artist);
+            holder.albumArtistTextView.setText(deezerAlbum.artist);
             holder.albumArtistTextView.setTypeface(robotoRegular);
-            if (album.imageUrlMedium.length() > 1) {
+            if (deezerAlbum.imageUrlMedium.length() > 1) {
                 holder.albumImageView.setImageResource(R.drawable.ic_album);
-                if (album.selected && RingtoneActivity.selectedRingtone.type == 2) {
+                if (deezerAlbum.selected && RingtoneActivity.selectedRingtone.type == 2) {
                     holder.albumRadioButton.setChecked(true);
                 } else holder.albumRadioButton.setChecked(false);
 
                 if (images.get(position) != null) {
                     holder.albumImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(album.imageUrlMedium, holder.albumImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    new ImageLoadTask(deezerAlbum.imageUrlMedium, holder.albumImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
             holder.albumRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (selectedPosition == -1) {
-                        album.selected = true;
+                        deezerAlbum.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerAlbumFragment.updateSelectedRingtone(album.id, album.title, album.artist);
+                        DeezerAlbumFragment.updateSelectedRingtone(deezerAlbum.id, deezerAlbum.title, deezerAlbum.artist);
                     } else if (selectedPosition == position) {
-                        album.selected = false;
+                        deezerAlbum.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
                         DeezerAlbumFragment.updateSelectedRingtone(-1, "", "");
                     } else {
                         albumsList.get(selectedPosition).selected = false;
                         notifyItemChanged(selectedPosition);
-                        album.selected = true;
+                        deezerAlbum.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerAlbumFragment.updateSelectedRingtone(album.id, album.title, album.artist);
+                        DeezerAlbumFragment.updateSelectedRingtone(deezerAlbum.id, deezerAlbum.title, deezerAlbum.artist);
                     }
 
                 }

@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.activities.RingtoneActivity;
 import com.cikoapps.deezeralarm.fragments.DeezerArtistFragment;
-import com.cikoapps.deezeralarm.models.Artist;
+import com.cikoapps.deezeralarm.models.DeezerArtist;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,16 +28,16 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
 
     public static int selectedPosition = -1;
     private static Typeface robotoRegular;
-    private final ArrayList<Artist> artistList;
+    private final ArrayList<DeezerArtist> deezerArtistList;
     private final LayoutInflater inflater;
     private final ArrayList<Bitmap> images;
 
-    public DeezerArtistAdapter(Context mContext, ArrayList<Artist> artists) {
-        artistList = artists;
-        artistList.add(null);
+    public DeezerArtistAdapter(Context mContext, ArrayList<DeezerArtist> deezerArtists) {
+        deezerArtistList = deezerArtists;
+        deezerArtistList.add(null);
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();
-        for (int i = 0; i < artistList.size(); i++) {
+        for (int i = 0; i < deezerArtistList.size(); i++) {
             images.add(null);
         }
         robotoRegular = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Regular.ttf");
@@ -51,8 +51,8 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
 
     @Override
     public void onBindViewHolder(DeezerArtistViewHolder holder, final int position) {
-        final Artist artist = artistList.get(position);
-        if (artist == null) {
+        final DeezerArtist deezerArtist = deezerArtistList.get(position);
+        if (deezerArtist == null) {
             holder.artistRadioButton.setWillNotDraw(true);
             holder.artistImageView.setWillNotDraw(true);
             holder.artistTextView.setWillNotDraw(true);
@@ -61,39 +61,39 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
             holder.artistRadioButton.setWillNotDraw(false);
             holder.artistImageView.setWillNotDraw(false);
             holder.artistTextView.setWillNotDraw(false);
-            holder.artistTextView.setText(artist.name);
+            holder.artistTextView.setText(deezerArtist.name);
             holder.artistTextView.setTypeface(robotoRegular);
-            if (artist.imageUrlMedium.length() > 1) {
+            if (deezerArtist.imageUrlMedium.length() > 1) {
                 holder.artistImageView.setImageResource(R.drawable.ic_artist);
-                if (artist.selected && RingtoneActivity.selectedRingtone.type == 3) {
+                if (deezerArtist.selected && RingtoneActivity.selectedRingtone.type == 3) {
                     holder.artistRadioButton.setChecked(true);
                 } else holder.artistRadioButton.setChecked(false);
                 if (images.get(position) != null) {
                     holder.artistImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(artist.imageUrlMedium, holder.artistImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    new ImageLoadTask(deezerArtist.imageUrlMedium, holder.artistImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
             holder.artistRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (selectedPosition == -1) {
-                        artist.selected = true;
+                        deezerArtist.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerArtistFragment.updateSelectedRingtone(artist.id, artist.name);
+                        DeezerArtistFragment.updateSelectedRingtone(deezerArtist.id, deezerArtist.name);
                     } else if (selectedPosition == position) {
-                        artist.selected = false;
+                        deezerArtist.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
                         DeezerArtistFragment.updateSelectedRingtone(-1, "");
                     } else {
-                        artistList.get(selectedPosition).selected = false;
+                        deezerArtistList.get(selectedPosition).selected = false;
                         notifyItemChanged(selectedPosition);
-                        artist.selected = true;
+                        deezerArtist.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerArtistFragment.updateSelectedRingtone(artist.id, artist.name);
+                        DeezerArtistFragment.updateSelectedRingtone(deezerArtist.id, deezerArtist.name);
                     }
                 }
             });
@@ -102,7 +102,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
 
     @Override
     public int getItemCount() {
-        return artistList.size();
+        return deezerArtistList.size();
     }
 
     class DeezerArtistViewHolder extends RecyclerView.ViewHolder {

@@ -1,6 +1,6 @@
 package com.cikoapps.deezeralarm.models;
 
-public class Radio {
+public class DeezerRadio {
     public final long id;
     public final String title;
     private final String pictureUrl;
@@ -10,7 +10,7 @@ public class Radio {
     public boolean selected;
 
 
-    public Radio(long id, String title, String pictureUrl, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge) {
+    public DeezerRadio(long id, String title, String pictureUrl, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge) {
         this.id = id;
         this.title = title;
         this.pictureUrl = pictureUrl;

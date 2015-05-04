@@ -1,7 +1,7 @@
 package com.cikoapps.deezeralarm.models;
 
 
-public class Album {
+public class DeezerAlbum {
     public final long id;
     public final String title;
     public final String artist;
@@ -12,7 +12,7 @@ public class Album {
     public String imageUrlMedium;
     public boolean selected;
 
-    public Album(long id, String title, String artist, String coverURL, String duration, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge) {
+    public DeezerAlbum(long id, String title, String artist, String coverURL, String duration, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge) {
         this.id = id;
         this.title = title;
         this.artist = artist;

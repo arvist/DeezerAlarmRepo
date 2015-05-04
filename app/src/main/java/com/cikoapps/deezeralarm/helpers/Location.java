@@ -1,7 +1,6 @@
 package com.cikoapps.deezeralarm.helpers;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.RelativeLayout;
@@ -11,7 +10,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 
-public class MyLocation implements
+public class Location implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final Context context;
@@ -19,7 +18,7 @@ public class MyLocation implements
     private final Toolbar toolbar;
     private final RelativeLayout mainTopLayout;
 
-    public MyLocation(Context context, RelativeLayout mainTopLayout, Toolbar toolbar) {
+    public Location(Context context, RelativeLayout mainTopLayout, Toolbar toolbar) {
         this.context = context;
         this.toolbar = toolbar;
         this.mainTopLayout = mainTopLayout;
@@ -42,7 +41,7 @@ public class MyLocation implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Location myLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+        android.location.Location myLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (myLastLocation != null) {
             String lat = String.valueOf(myLastLocation.getLatitude());

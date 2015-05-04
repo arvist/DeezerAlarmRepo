@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.activities.RingtoneActivity;
 import com.cikoapps.deezeralarm.fragments.DeezerPlaylistsFragment;
-import com.cikoapps.deezeralarm.models.Playlist;
+import com.cikoapps.deezeralarm.models.DeezerPlaylist;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,19 +28,19 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
 
     public static int selectedPosition = -1;
     private static Typeface robotoRegular;
-    private final ArrayList<Playlist> playlistList;
+    private final ArrayList<DeezerPlaylist> deezerPlaylistList;
     private final LayoutInflater inflater;
     private final ArrayList<Bitmap> images;
 
-    public DeezerPlaylistAdapter(Context mContext, ArrayList<Playlist> playlist) {
-        playlistList = playlist;
-        if (playlistList.size() > 0) {
-            if (playlistList.get(playlist.size() - 1) != null)
-                playlistList.add(null);
+    public DeezerPlaylistAdapter(Context mContext, ArrayList<DeezerPlaylist> deezerPlaylist) {
+        deezerPlaylistList = deezerPlaylist;
+        if (deezerPlaylistList.size() > 0) {
+            if (deezerPlaylistList.get(deezerPlaylist.size() - 1) != null)
+                deezerPlaylistList.add(null);
         }
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();
-        for (int i = 0; i < playlistList.size(); i++) {
+        for (int i = 0; i < deezerPlaylistList.size(); i++) {
             images.add(null);
         }
         robotoRegular = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Regular.ttf");
@@ -54,8 +54,8 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
 
     @Override
     public void onBindViewHolder(DeezerPlaylistViewHolder holder, final int position) {
-        final Playlist playlist = playlistList.get(position);
-        if (playlist == null) {
+        final DeezerPlaylist deezerPlaylist = deezerPlaylistList.get(position);
+        if (deezerPlaylist == null) {
             holder.playlistChecked.setWillNotDraw(true);
             holder.playListImage.setWillNotDraw(true);
             holder.playListImage.setImageBitmap(null);
@@ -66,20 +66,20 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
             holder.playListImage.setWillNotDraw(false);
             holder.playListInfoTextView.setWillNotDraw(false);
             holder.playListTitleTextView.setWillNotDraw(false);
-            holder.playListTitleTextView.setText(playlist.title);
+            holder.playListTitleTextView.setText(deezerPlaylist.title);
             holder.playListTitleTextView.setTypeface(robotoRegular);
-            holder.playListInfoTextView.setText(playlist.info);
+            holder.playListInfoTextView.setText(deezerPlaylist.info);
             holder.playListInfoTextView.setTypeface(robotoRegular);
-            if (playlist.imageUrlMedium.length() > 1) {
+            if (deezerPlaylist.imageUrlMedium.length() > 1) {
                 holder.playListImage.setImageResource(R.drawable.ic_playlist);
-                if (playlist.selected && RingtoneActivity.selectedRingtone.type == 1) {
+                if (deezerPlaylist.selected && RingtoneActivity.selectedRingtone.type == 1) {
                     holder.playlistChecked.setChecked(true);
                 } else holder.playlistChecked.setChecked(false);
                 if (images.size() > 0) {
                     if (images.get(position) != null) {
                         holder.playListImage.setImageBitmap(images.get(position));
                     } else {
-                        new ImageLoadTask(playlist.imageUrlMedium, holder.playListImage, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        new ImageLoadTask(deezerPlaylist.imageUrlMedium, holder.playListImage, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
@@ -87,23 +87,23 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
                 @Override
                 public void onClick(View v) {
                     if (selectedPosition == -1) {
-                        playlist.selected = true;
+                        deezerPlaylist.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerPlaylistsFragment.updateSelectedRingtone(playlist.id, playlist.title);
-                        DeezerPlaylistsFragment.updateSelectedRingtone(playlist.id, playlist.title);
+                        DeezerPlaylistsFragment.updateSelectedRingtone(deezerPlaylist.id, deezerPlaylist.title);
+                        DeezerPlaylistsFragment.updateSelectedRingtone(deezerPlaylist.id, deezerPlaylist.title);
                     } else if (selectedPosition == position) {
-                        playlist.selected = false;
+                        deezerPlaylist.selected = false;
                         selectedPosition = -1;
                         notifyItemChanged(position);
                         DeezerPlaylistsFragment.updateSelectedRingtone(-1, "");
                     } else {
-                        playlistList.get(selectedPosition).selected = false;
+                        deezerPlaylistList.get(selectedPosition).selected = false;
                         notifyItemChanged(selectedPosition);
-                        playlist.selected = true;
+                        deezerPlaylist.selected = true;
                         selectedPosition = position;
                         notifyItemChanged(position);
-                        DeezerPlaylistsFragment.updateSelectedRingtone(playlist.id, playlist.title);
+                        DeezerPlaylistsFragment.updateSelectedRingtone(deezerPlaylist.id, deezerPlaylist.title);
                     }
                 }
             });
@@ -113,7 +113,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
 
     @Override
     public int getItemCount() {
-        return playlistList.size();
+        return deezerPlaylistList.size();
     }
 
     class DeezerPlaylistViewHolder extends RecyclerView.ViewHolder {

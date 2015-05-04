@@ -120,7 +120,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
     // Lejupielādē laikaapstākļu datus asinhroni, lai neaizkavētu lietotāja interfeisu.
     protected String doInBackground(Void... arg0) {
-        final String API_KEY = "0a6bad312fb111db3c658e0250965";
+        final String API_KEY = "9427f818e265ae4296ab81b2d885d";
         latitude = HelperClass.round(latitude, 3);
         longitude = HelperClass.round(longitude, 3);
         String url = "http://api2.worldweatheronline.com/premium/v1/weather.ashx?q=" +
@@ -151,6 +151,9 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
                 summaryTextView.setMaxLines(2);
                 setWeatherImage(weatherCode);
                 timeTextView.setText("0 minutes ");
+                textAgo.setText("ago");
+
+
                 if (windMilesBool) {
                     windTextView.setText(Float.parseFloat(windSpeedMph) + " mph");
                 } else {
@@ -245,6 +248,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             } else {
                 timeTextView.setText(minutes + " minutes ");
             }
+            textAgo.setText("ago");
         } else if (minutes > 60 && minutes < 1439) {
             int hours = minutes / 60;
             if (hours == 1) {
@@ -252,6 +256,7 @@ public class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
             } else {
                 timeTextView.setText(hours + " hours ");
             }
+            textAgo.setText("ago");
         } else if (minutes > 1439) {
             int days = minutes / 1440;
             if (days == 1) {

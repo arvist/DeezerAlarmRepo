@@ -36,8 +36,10 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.deviceRingtones = deviceRingtones;
-        if (deviceRingtones.get(deviceRingtones.size() - 1) != null)
-            this.deviceRingtones.add(null);
+        if (deviceRingtones.size() > 0) {
+            if (deviceRingtones.get(deviceRingtones.size() - 1) != null)
+                this.deviceRingtones.add(null);
+        }
         robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         this.mediaPlayer = media;
 
