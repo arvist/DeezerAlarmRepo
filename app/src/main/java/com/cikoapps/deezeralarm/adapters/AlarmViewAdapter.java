@@ -12,9 +12,9 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cikoapps.deezeralarm.Activities.MainActivity;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.activities.MainActivity;
-import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
+ import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
 import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
 import com.cikoapps.deezeralarm.models.Alarm;
 

@@ -12,11 +12,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
-import com.cikoapps.deezeralarm.HelperClasses.Quotes;
-import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.Location;
+import com.cikoapps.deezeralarm.helpers.Quotes;
+import com.cikoapps.deezeralarm.helpers.WeatherDataAsync;
 
 import java.util.Calendar;
 import java.util.Timer;
@@ -27,7 +27,7 @@ public class QuoteActivity extends Activity {
     private RelativeLayout mainTopLayout;
     private Context context;
     private ImageButton refreshButton;
-    private MyLocation myLocation;
+    private Location myLocation;
     private WeatherDataAsync weatherDataAsync;
     private Timer timer;
 
@@ -81,7 +81,7 @@ public class QuoteActivity extends Activity {
                 Calendar calendar = Calendar.getInstance();
                 long currentMillis = calendar.getTimeInMillis();
                 if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
-                    myLocation = new MyLocation(this, mainTopLayout, null);
+                    myLocation = new Location(this, mainTopLayout, null);
                     myLocation.buildGoogleApiClient();
                 }
             }
@@ -115,7 +115,7 @@ public class QuoteActivity extends Activity {
                     if (myLocation != null) {
                         myLocation.reconnectGoogleApiClient();
                     } else {
-                        myLocation = new MyLocation(context, mainTopLayout, null);
+                        myLocation = new Location(context, mainTopLayout, null);
                         myLocation.buildGoogleApiClient();
                     }
                 } else {

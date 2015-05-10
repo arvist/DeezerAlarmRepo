@@ -22,8 +22,8 @@ import com.cikoapps.deezeralarm.Fragments.DeezerPlaylistsFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerRadioFragment;
 import com.cikoapps.deezeralarm.Fragments.DeviceRingtoneFragment;
 import com.cikoapps.deezeralarm.Fragments.NoNetworkConnectionFragment;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.R;
+ import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 

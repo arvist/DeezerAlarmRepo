@@ -31,7 +31,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.jpardogo.materialtabstrip:library:1.0.8'
     compile files('src/main/libs/deezer-sdk-0.10.16.jar')
-
+    compile files('src/main/libs/robotium-solo-5.3.1.jar')
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile "org.mockito:mockito-core:1.9.5"
 }

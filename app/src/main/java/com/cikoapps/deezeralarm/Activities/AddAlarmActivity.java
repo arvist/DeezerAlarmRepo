@@ -18,9 +18,9 @@
         import android.widget.TextView;
         import android.widget.TimePicker;
 
-        import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-        import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
         import com.cikoapps.deezeralarm.R;
+        import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
+        import com.cikoapps.deezeralarm.helpers.HelperClass;
         import com.cikoapps.deezeralarm.models.Alarm;
 
 public class AddAlarmActivity extends DeezerBase {
@@ -43,7 +43,7 @@ public class AddAlarmActivity extends DeezerBase {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        setContentView(R.layout.add_alarm_layout);
+        setContentView(R.layout.add_alarm_activity_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
         repeatNoButtonClick();

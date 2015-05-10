@@ -15,11 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.adapters.DeezerArtistAdapter;
-import com.cikoapps.deezeralarm.models.Artist;
+ import com.cikoapps.deezeralarm.adapters.DeezerArtistAdapter;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
+import com.cikoapps.deezeralarm.models.DeezerArtist;
 import com.deezer.sdk.model.AImageOwner;
 import com.deezer.sdk.network.request.DeezerRequest;
 import com.deezer.sdk.network.request.DeezerRequestFactory;
@@ -86,7 +86,7 @@ public class DeezerArtistFragment extends Fragment {
 
     void getUserArtists() {
         artistArrayList = new ArrayList<>();
-        final ArrayList<com.cikoapps.deezeralarm.models.Artist> localArtistList = new ArrayList<>();
+        final ArrayList<DeezerArtist> localDeezerArtistList = new ArrayList<>();
         RequestListener requestListener = new JsonRequestListener() {
 
             public void onResult(Object result, Object requestId) {
@@ -95,21 +95,21 @@ public class DeezerArtistFragment extends Fragment {
                 //noinspection unchecked
                 artistArrayList = (ArrayList<com.deezer.sdk.model.Artist>) result;
                 for (com.deezer.sdk.model.Artist artist : artistArrayList) {
-                    com.cikoapps.deezeralarm.models.Artist artistLocal = new com.cikoapps.deezeralarm.models.Artist(artist.getId(), artist.getName()
+                    DeezerArtist deezerArtistLocal = new DeezerArtist(artist.getId(), artist.getName()
                             , artist.getPictureUrl(), artist.getImageUrl(AImageOwner.ImageSize.small), artist.getImageUrl(AImageOwner.ImageSize.medium),
                             artist.getImageUrl(AImageOwner.ImageSize.big), artist.hasRadio());
-                    localArtistList.add(artistLocal);
+                    localDeezerArtistList.add(deezerArtistLocal);
                 }
-                if (localArtistList.size() < 1) {
-                    localArtistList.add(new com.cikoapps.deezeralarm.models.Artist(-1, "No artists found", "", "", "", "", false));
+                if (localDeezerArtistList.size() < 1) {
+                    localDeezerArtistList.add(new DeezerArtist(-1, "No artists found", "", "", "", "", false));
                 }
-                Collections.sort(localArtistList, new Comparator<Artist>() {
+                Collections.sort(localDeezerArtistList, new Comparator<DeezerArtist>() {
                     @Override
-                    public int compare(Artist lhs, Artist rhs) {
+                    public int compare(DeezerArtist lhs, DeezerArtist rhs) {
                         return lhs.name.compareTo(rhs.name);
                     }
                 });
-                mAdapter = new DeezerArtistAdapter(context, localArtistList);
+                mAdapter = new DeezerArtistAdapter(context, localDeezerArtistList);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setAdapter(mAdapter);

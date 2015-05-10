@@ -29,11 +29,10 @@ import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 
 import java.util.ArrayList;
-
 public class SettingsActivity extends DeezerBase {
     public final static String SELECTED_INTERVAL = "selectedInterval";
-    private final static String SELECTED_RINGTONE = "selectedRingtone";
-    private final static String SELECTED_RINGTONE_TITLE = "selectedRingtoneTitle";
+    public final static String SELECTED_RINGTONE = "selectedRingtone";
+    public final static String SELECTED_RINGTONE_TITLE = "selectedRingtoneTitle";
     public final static String SELECTED_RINGTONE_URI = "selectedRingtoneUri";
     public final static String WIND_MILES_BOOLEAN = "windMilesBool";
     public final static String TEMP_FAHRENHEIT_BOOLEAN = "tempFBool";
@@ -51,7 +50,7 @@ public class SettingsActivity extends DeezerBase {
     private TextView disconnectDeezerAccountTextView;
     private TextView textTimeSelected;
     private TextView textRingtoneInfo;
-    private SharedPreferences.Editor sharedPreferencesEditor;
+    public SharedPreferences.Editor sharedPreferencesEditor;
     private boolean windMilesRadioButtonSelected = false;
     private boolean tempFahrenheitRadioButtonSelected = false;
     private boolean gettingRingtoneListFinished = false;
@@ -70,25 +69,30 @@ public class SettingsActivity extends DeezerBase {
     private int selectedVolume = 0;
     private Typeface robotoRegular;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.context = this;
-        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-
+        /*Set activity layout */
         setContentView(R.layout.settings_activity_layout);
-        initializeActivityViews();
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
-        initializeAppBarActions();
+        /* Initialize global variables */
+
+        this.context = this;
+        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        initializeActivityViews();
         SharedPreferences sharedPreferences;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferencesEditor = sharedPreferences.edit();
         if (ringtoneAcquire == null) {
             ringtoneAcquire = new RingtoneAcquire();
-            Log.e(TAG, "Executing ringtone acquiring");
             ringtoneAcquire.execute();
         }
+
+        /*Set on click listeners */
+        initializeAppBarActions();
+
     }
 
     @Override
@@ -98,7 +102,6 @@ public class SettingsActivity extends DeezerBase {
         setResult(RESULT_CANCELED, returnIntent);
         finish();
     }
-
 
     private void initializeActivityViews() {
         tempRadioButton = (RadioButton) findViewById(R.id.layoutTemp).findViewById(R.id.radioButtonTemp);
@@ -158,7 +161,7 @@ public class SettingsActivity extends DeezerBase {
                 textRingtoneInfo.setText(ringtoneElements[selectedRingtone]);
                 sharedPreferencesEditor.putInt(SELECTED_RINGTONE, selectedRingtone);
                 sharedPreferencesEditor.putString(SELECTED_RINGTONE_TITLE, ringtoneElements[selectedRingtone]);
-                sharedPreferencesEditor.putString(SELECTED_RINGTONE_URI, ringtoneList.get(selectedRingtone).Uri);
+                sharedPreferencesEditor.putString(SELECTED_RINGTONE_URI, ringtoneList.get(selectedRingtone).uri);
             }
         });
         ringtoneDialog = ringtoneDialogBuilder.create();
@@ -178,7 +181,7 @@ public class SettingsActivity extends DeezerBase {
         });
     }
 
-    private void setSavedValuesFromSharedPreferences() {
+    public void setSavedValuesFromSharedPreferences() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean windMiles = preferences.getBoolean(WIND_MILES_BOOLEAN, false);
         boolean tempFBool = preferences.getBoolean(TEMP_FAHRENHEIT_BOOLEAN, false);
@@ -193,7 +196,7 @@ public class SettingsActivity extends DeezerBase {
         refreshTime = preferences.getInt(SELECTED_INTERVAL, 1);
         textRingtoneInfo.setText(preferences.getString(SELECTED_RINGTONE_TITLE, "Not Selected"));
         selectedRingtone = preferences.getInt(SELECTED_RINGTONE, 1);
-        selectedVolume = preferences.getInt(MAX_ALARM_VOLUME,8);
+        selectedVolume = preferences.getInt(MAX_ALARM_VOLUME, 8);
         volumeSeekBar.setMax(((AudioManager) context.getSystemService(Context.AUDIO_SERVICE)).getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         volumeSeekBar.setProgress(selectedVolume);
     }
@@ -378,6 +381,34 @@ public class SettingsActivity extends DeezerBase {
         });
     }
 
+    public Dialog getRingtoneDialog() {
+        return this.ringtoneDialog;
+    }
+
+    public int getSelectedVolume() {
+        return this.selectedVolume;
+    }
+
+    public void setSelectedVolume(int value) {
+        this.selectedVolume = value;
+    }
+
+    public void setRefreshTime(int value){
+        this.refreshTime = value;
+    }
+
+    public int getRefreshTime(){
+        return this.refreshTime;
+    }
+    public void setSelectedRingtone(int value){
+        this.selectedRingtone = value;
+    }
+    public int getSelectedRingtone(){
+        return this.selectedRingtone;
+    }
+    public SharedPreferences.Editor getSharedPreferencesEditor() {
+        return this.sharedPreferencesEditor;
+    }
 
     class RingtoneAcquire extends AsyncTask<Void, Integer, String> {
         @Override
@@ -393,10 +424,9 @@ public class SettingsActivity extends DeezerBase {
             Cursor alarmsCursor = ringtoneMgr.getCursor();
             if (alarmsCursor.moveToFirst()) {
                 do {
-                    DeviceRingtone deviceRingtone = new DeviceRingtone();
+
                     int currentPosition = alarmsCursor.getPosition();
-                    deviceRingtone.title = ringtoneMgr.getRingtone(currentPosition).getTitle(context);
-                    deviceRingtone.Uri = ringtoneMgr.getRingtoneUri(currentPosition).toString();
+                    DeviceRingtone deviceRingtone = new DeviceRingtone(ringtoneMgr.getRingtoneUri(currentPosition).toString(), ringtoneMgr.getRingtone(currentPosition).getTitle(context), false);
                     ringtoneList.add(deviceRingtone);
                 } while (alarmsCursor.moveToNext());
                 alarmsCursor.close();

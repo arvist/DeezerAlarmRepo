@@ -2,7 +2,6 @@ package com.cikoapps.deezeralarm.Fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
@@ -17,11 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.adapters.DeviceRingtoneAdapter;
+ import com.cikoapps.deezeralarm.adapters.DeviceRingtoneAdapter;
+import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 
 import java.util.ArrayList;
@@ -118,10 +116,8 @@ public class DeviceRingtoneFragment extends Fragment {
             Cursor alarmsCursor = ringtoneMgr.getCursor();
             if (alarmsCursor.moveToFirst()) {
                 do {
-                    DeviceRingtone deviceRingtone = new DeviceRingtone();
                     int currentPosition = alarmsCursor.getPosition();
-                    deviceRingtone.title = ringtoneMgr.getRingtone(currentPosition).getTitle(context);
-                    deviceRingtone.Uri = ringtoneMgr.getRingtoneUri(currentPosition).toString();
+                    DeviceRingtone deviceRingtone = new DeviceRingtone(ringtoneMgr.getRingtoneUri(currentPosition).toString(), ringtoneMgr.getRingtone(currentPosition).getTitle(context), false);
                     ringtoneList.add(deviceRingtone);
                 } while (alarmsCursor.moveToNext());
                 alarmsCursor.close();

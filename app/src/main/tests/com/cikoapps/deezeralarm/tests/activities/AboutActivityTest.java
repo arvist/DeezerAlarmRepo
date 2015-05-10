@@ -9,8 +9,9 @@ import android.test.suitebuilder.annotation.SmallTest;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cikoapps.deezeralarm.Activities.AboutActivity;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.activities.AboutActivity;
+
 
 /**
  * Created by Arvis on 5/3/2015.

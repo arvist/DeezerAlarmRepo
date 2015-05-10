@@ -21,15 +21,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cikoapps.deezeralarm.HelperClasses.AlarmContract;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
-import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
-import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
+
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.adapters.AlarmViewAdapter;
+import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
+import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.Location;
+import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
+import com.cikoapps.deezeralarm.helpers.WeatherDataAsync;
 import com.cikoapps.deezeralarm.models.Alarm;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
     private ImageButton refreshButton;
     private WeatherDataAsync weatherDataAsync;
     private RelativeLayout mainTopLayout;
-    private MyLocation myLocation;
+    private Location myLocation;
     private boolean fullTimeClock;
     private Timer timer;
 
@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainActivity object = this;
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity_layout);
         context = this;
         Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
@@ -72,8 +72,8 @@ public class MainActivity extends ActionBarActivity {
         weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, toolbar, context);
         //weatherDataAsync.setFromSharedPreferences();
         initializeAppBarActions();
-        AlarmDBHelper alarmDBHelper = new AlarmDBHelper((getApplicationContext()));
-        alarmDBHelper.checkForData();
+        AlarmDatabaseAccessor alarmDBHelper = new AlarmDatabaseAccessor((getApplicationContext()));
+        alarmDBHelper.createIfNotValid();
         RecyclerView alarmRecyclerView = (RecyclerView) findViewById(R.id.alarmRecyclerView);
         alarmRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(
                 getApplicationContext()
@@ -153,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
                 Calendar calendar = Calendar.getInstance();
                 long currentMillis = calendar.getTimeInMillis();
                 if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
-                    myLocation = new MyLocation(this, mainTopLayout, toolbar);
+                    myLocation = new Location(this, mainTopLayout, toolbar);
                     myLocation.buildGoogleApiClient();
                 }
             }
@@ -170,7 +170,7 @@ public class MainActivity extends ActionBarActivity {
                         if (myLocation != null) {
                             myLocation.reconnectGoogleApiClient();
                         } else {
-                            myLocation = new MyLocation(context, mainTopLayout, toolbar);
+                            myLocation = new Location(context, mainTopLayout, toolbar);
                             myLocation.buildGoogleApiClient();
                         }
                     } else {
@@ -191,7 +191,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
                     Alarm alarm = alarmViewAdapter.turnItem(longClickedItem);
-                    AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
+                    AlarmDatabaseAccessor dataBaseHelper = new AlarmDatabaseAccessor(getApplicationContext());
                     AlarmManagerHelper.cancelAlarms(context);
                     dataBaseHelper.updateIsEnabled(alarm.id, alarm.enabled);
                     AlarmManagerHelper.setAlarms(context);
@@ -200,7 +200,7 @@ public class MainActivity extends ActionBarActivity {
                 } else if (which == 2) {
                     if (longClickedItem > -1) {
                         AlarmManagerHelper.cancelAlarms(context);
-                        AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
+                        AlarmDatabaseAccessor dataBaseHelper = new AlarmDatabaseAccessor(getApplicationContext());
                         dataBaseHelper.deleteAlarm(alarmViewAdapter.removeItem(longClickedItem));
                         AlarmManagerHelper.setAlarms(context);
                     }
@@ -249,22 +249,22 @@ public class MainActivity extends ActionBarActivity {
 
     List<Alarm> getAlarmList() {
         List<Alarm> testAlarms = new ArrayList<>();
-        AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
-        Cursor cursor = dataBaseHelper.getAlarms();
+        AlarmDatabaseAccessor dataBaseHelper = new AlarmDatabaseAccessor(getApplicationContext());
+        Cursor cursor = dataBaseHelper.getAlarmsCursor();
         if (cursor.moveToFirst()) {
             do {
-                int _id = cursor.getInt(cursor.getColumnIndex(AlarmContract._ID));
-                String title = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_NAME));
-                int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TIME_HOUR));
-                int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TIME_MINUTE));
-                String days = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_REPEAT_DAYS));
-                boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_REPEAT_WEEKLY)));
-                String alarmToneName = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TONE_NAME));
-                String tone = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TONE));
-                long alarmid = Long.parseLong("" + cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ID)));
-                int type = cursor.getInt(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_TYPE));
-                boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ALARM_ENABLED)));
-                String artist = cursor.getString(cursor.getColumnIndex(AlarmContract.COLUMN_NAME_ARTIST));
+                int _id = cursor.getInt(cursor.getColumnIndex(AlarmDatabaseAccessor._ID));
+                String title = cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_NAME));
+                int hour = cursor.getInt(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_TIME_HOUR));
+                int minute = cursor.getInt(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_TIME_MINUTE));
+                String days = cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_REPEAT_DAYS));
+                boolean weekly = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_REPEAT_WEEKLY)));
+                String alarmToneName = cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_TONE_NAME));
+                String tone = cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_TONE));
+                long alarmid = Long.parseLong("" + cursor.getInt(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ID)));
+                int type = cursor.getInt(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_TYPE));
+                boolean isEnabled = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ALARM_ENABLED)));
+                String artist = cursor.getString(cursor.getColumnIndex(AlarmDatabaseAccessor.COLUMN_NAME_ARTIST));
                 String[] repeatingDaysStrings = days.split(",");
                 boolean[] repeatingDays = new boolean[repeatingDaysStrings.length];
                 int i = 0;

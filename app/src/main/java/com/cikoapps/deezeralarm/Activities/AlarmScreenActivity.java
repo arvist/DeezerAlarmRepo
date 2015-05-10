@@ -19,12 +19,13 @@ import android.widget.Toast;
 import com.cikoapps.deezeralarm.Fragments.DeezerListAlarmFragment;
 import com.cikoapps.deezeralarm.Fragments.DeezerRadioAlarmFragment;
 import com.cikoapps.deezeralarm.Fragments.RingtoneAlarmFragment;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.MyLocation;
-import com.cikoapps.deezeralarm.HelperClasses.WeatherDataAsync;
 import com.cikoapps.deezeralarm.R;
+
+import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
+import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.Location;
+import com.cikoapps.deezeralarm.helpers.WeatherDataAsync;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -38,7 +39,7 @@ public class AlarmScreenActivity extends Activity {
     private static final String TAG = "AlarmScreen.java";
     private WakeLock mWakeLock;
     private Context context;
-    private MyLocation myLocation;
+    private Location location;
     private ImageButton refreshButton;
     private RelativeLayout mainTopLayout;
     private long alarmid;
@@ -54,9 +55,11 @@ public class AlarmScreenActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.alarm_screen);
+
+        /* Set activity layout */
+        this.setContentView(R.layout.alarm_screen_activity);
         mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
-        /* Initialize local variables needed by fragments*/
+        /* Initialize global variables */
         int databaseId = getIntent().getIntExtra(AlarmManagerHelper.ID, -1);
         name = getIntent().getStringExtra(AlarmManagerHelper.NAME);
         tone = getIntent().getStringExtra(AlarmManagerHelper.TONE);
@@ -65,26 +68,33 @@ public class AlarmScreenActivity extends Activity {
         boolean turnOff = getIntent().getBooleanExtra(AlarmManagerHelper.ONE_TIME_ALARM, true);
         this.context = this;
         refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
-        refresh();
-        /**********************************************/
-        weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, null, context);
-        weatherDataAsync.setFromSharedPreferences();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, null, context);
         wifiBool = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
-        /* Turn off not Repeating alarm in Database */
+
+        /* Enable weather refresh button */
+        refreshOnClick();
+        weatherDataAsync.setFromSharedPreferences();
+
+        /* Mark alarm as disabled in database */
         if (!turnOff && databaseId != -1) {
-            AlarmDBHelper dataBaseHelper = new AlarmDBHelper(getApplicationContext());
+            AlarmDatabaseAccessor dataBaseHelper = new AlarmDatabaseAccessor(getApplicationContext());
             AlarmManagerHelper.cancelAlarms(this);
             dataBaseHelper.updateIsEnabled(databaseId, false);
             AlarmManagerHelper.setAlarms(this);
         }
+        /* Allow device to lock screen after WAKELOCK_TIMEOUT  */
         releaseWakeLock();
-        updateWeatherData();
-        // Update weather information  minute
+
+        /*  Update weather layout every minute */
         updateDisplay();
-        // Apply either list player, radio player of device ringtone alarm fragment
+        updateWeatherDataOnRefreshTime();
+
+        /* Insert either list player, radio player of device ringtone alarm fragment */
         applyAlarmFragment();
-        showAds();
+
+        /* Uncomment to enable Google Ads*/
+        /*showAds();*/
     }
 
     private void showAds() {
@@ -107,7 +117,7 @@ public class AlarmScreenActivity extends Activity {
                     @Override
                     public void run() {
                         weatherDataAsync.setFromSharedPreferences();
-                        updateWeatherData();
+                        updateWeatherDataOnRefreshTime();
                     }
                 });
 
@@ -144,12 +154,12 @@ public class AlarmScreenActivity extends Activity {
         } else if ((type == 3 || type == 4) && alarmid != -1) {
             ft.add(R.id.alarm_bottom_fragment, new DeezerRadioAlarmFragment(alarmid, type, wifiBool, context, getApplication()));
         } else {
-            ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone,context));
+            ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone, context));
         }
         ft.commit();
     }
 
-    private void updateWeatherData() {
+    private void updateWeatherDataOnRefreshTime() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int refreshTime = preferences.getInt(SettingsActivity.SELECTED_INTERVAL, 1);
         if (refreshTime != 12) {
@@ -162,23 +172,23 @@ public class AlarmScreenActivity extends Activity {
                 Calendar calendar = Calendar.getInstance();
                 long currentMillis = calendar.getTimeInMillis();
                 if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
-                    myLocation = new MyLocation(this, mainTopLayout, null);
-                    myLocation.buildGoogleApiClient();
+                    location = new Location(this, mainTopLayout, null);
+                    location.buildGoogleApiClient();
                 }
             }
         }
     }
 
-    private void refresh() {
+    private void refreshOnClick() {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (new HelperClass(context).haveNetworkConnection()) {
-                    if (myLocation != null) {
-                        myLocation.reconnectGoogleApiClient();
+                    if (location != null) {
+                        location.reconnectGoogleApiClient();
                     } else {
-                        myLocation = new MyLocation(context, mainTopLayout, null);
-                        myLocation.buildGoogleApiClient();
+                        location = new Location(context, mainTopLayout, null);
+                        location.buildGoogleApiClient();
                     }
                 } else {
                     Toast.makeText(context, "No network connection", Toast.LENGTH_SHORT).show();
@@ -194,7 +204,7 @@ public class AlarmScreenActivity extends Activity {
         if (adView != null) {
             adView.resume();
         }
-        updateWeatherData();
+        updateWeatherDataOnRefreshTime();
         updateDisplay();
         // Set the window to keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);

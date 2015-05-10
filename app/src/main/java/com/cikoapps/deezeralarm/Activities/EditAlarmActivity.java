@@ -17,10 +17,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.cikoapps.deezeralarm.HelperClasses.AlarmDBHelper;
-import com.cikoapps.deezeralarm.HelperClasses.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
+
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
+import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
 import com.cikoapps.deezeralarm.models.Alarm;
 
 @SuppressWarnings("ALL")
@@ -53,7 +54,7 @@ public class EditAlarmActivity extends DeezerBase {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        setContentView(R.layout.edit_alarm_activity);
+        setContentView(R.layout.edit_alarm_activity_layout);
         layoutInflater = LayoutInflater.from(this);
         robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
@@ -393,7 +394,7 @@ public class EditAlarmActivity extends DeezerBase {
                         repeatWeekly, uri, deezerRingtoneId, type, alarmToneName, artist);
                 Log.e(TAG, title + " " + enabled + " " + repeatWeekly + " " + deezerRingtoneId + " " + hour + " : " + minute + " by " + artist);
                 AlarmManagerHelper.cancelAlarms(getApplicationContext());
-                AlarmDBHelper alarmDBHelper = new AlarmDBHelper(getApplicationContext());
+                AlarmDatabaseAccessor alarmDBHelper = new AlarmDatabaseAccessor(getApplicationContext());
                 alarmDBHelper.deleteAlarm(id);
                 alarm.insertIntoDataBase(getApplicationContext());
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);

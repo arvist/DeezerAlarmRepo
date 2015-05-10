@@ -15,10 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.adapters.DeezerPlaylistAdapter;
+ import com.cikoapps.deezeralarm.adapters.DeezerPlaylistAdapter;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
+import com.cikoapps.deezeralarm.models.DeezerPlaylist;
 import com.deezer.sdk.model.AImageOwner;
 import com.deezer.sdk.model.Playlist;
 import com.deezer.sdk.network.request.DeezerRequest;
@@ -39,8 +40,8 @@ public class DeezerPlaylistsFragment extends Fragment {
     private ArrayList<com.deezer.sdk.model.Playlist> playlistList;
     private Long playListId;
     private RecyclerView recyclerView;
-    private ArrayList<com.cikoapps.deezeralarm.models.Playlist> playlistsArrayList;
-    private com.cikoapps.deezeralarm.models.Playlist playlistLocal;
+    private ArrayList<DeezerPlaylist> playlistsArrayList;
+    private DeezerPlaylist deezerPlaylistLocal;
     private DeezerPlaylistAdapter mAdapter;
     private ProgressBar progress;
     private boolean enableNoWiFiTextView = false;
@@ -98,18 +99,18 @@ public class DeezerPlaylistsFragment extends Fragment {
                 //noinspection unchecked
                 playlistList = (ArrayList<Playlist>) result;
                 if (playlistList.size() < 1) {
-                    playlistLocal = new com.cikoapps.deezeralarm.models.Playlist(-1, "No playlists found", "", "", "", "");
+                    deezerPlaylistLocal = new DeezerPlaylist(-1, "No playlists found", "", "", "", "");
                 }
                 for (Playlist playlist : playlistList) {
                     playListId = playlist.getId();
-                    playlistLocal = new com.cikoapps.deezeralarm.models.Playlist(playlist.getId(), playlist.getTitle(),
+                    deezerPlaylistLocal = new DeezerPlaylist(playlist.getId(), playlist.getTitle(),
                             HelperClass.timeConversion(playlist.getDuration()), playlist.getImageUrl(AImageOwner.ImageSize.small), playlist.getImageUrl(AImageOwner.ImageSize.medium),
                             playlist.getImageUrl(AImageOwner.ImageSize.big));
-                    playlistsArrayList.add(playlistLocal);
+                    playlistsArrayList.add(deezerPlaylistLocal);
                 }
-                Collections.sort(playlistsArrayList, new Comparator<com.cikoapps.deezeralarm.models.Playlist>() {
+                Collections.sort(playlistsArrayList, new Comparator<DeezerPlaylist>() {
                     @Override
-                    public int compare(com.cikoapps.deezeralarm.models.Playlist lhs, com.cikoapps.deezeralarm.models.Playlist rhs) {
+                    public int compare(DeezerPlaylist lhs, DeezerPlaylist rhs) {
                         return lhs.title.compareTo(rhs.title);
                     }
                 });

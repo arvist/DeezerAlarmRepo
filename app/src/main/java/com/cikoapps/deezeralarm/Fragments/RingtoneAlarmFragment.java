@@ -20,8 +20,9 @@ import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
 import com.cikoapps.deezeralarm.Activities.SettingsActivity;
-import com.cikoapps.deezeralarm.HelperClasses.Quotes;
 import com.cikoapps.deezeralarm.R;
+
+import com.cikoapps.deezeralarm.helpers.Quotes;
 
 public class RingtoneAlarmFragment extends Fragment {
 
@@ -32,7 +33,7 @@ public class RingtoneAlarmFragment extends Fragment {
     private MediaPlayer mPlayer;
 
     @SuppressLint("ValidFragment")
-    public RingtoneAlarmFragment(String name, String tone,Context context) {
+    public RingtoneAlarmFragment(String name, String tone, Context context) {
         super();
         this.name = name;
         this.tone = tone;

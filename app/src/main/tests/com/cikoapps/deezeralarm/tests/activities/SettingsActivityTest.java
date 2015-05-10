@@ -10,12 +10,9 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.cikoapps.deezeralarm.Activities.SettingsActivity;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.activities.SettingsActivity;
 
-/**
- * Created by Arvis on 5/4/2015.
- */
 public class SettingsActivityTest extends ActivityInstrumentationTestCase2<SettingsActivity> {
 
     private SettingsActivity activity;
@@ -101,6 +98,8 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         sharedPreferencesEditor.putBoolean(SettingsActivity.WIND_MILES_BOOLEAN, false);
         sharedPreferencesEditor.putBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
         sharedPreferencesEditor.putInt(SettingsActivity.MAX_ALARM_VOLUME, 8);
+        sharedPreferencesEditor.putInt(SettingsActivity.SELECTED_INTERVAL,1);
+        sharedPreferencesEditor.putInt(SettingsActivity.SELECTED_RINGTONE,1);
 
         sharedPreferencesEditor.commit();
         activity.setSavedValuesFromSharedPreferences();
@@ -110,6 +109,8 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         windRadioButton.performClick();
         useOnlyWiFiButton.performClick();
         sharedPreferencesEditor.putInt(SettingsActivity.MAX_ALARM_VOLUME, 10);
+        sharedPreferencesEditor.putInt(SettingsActivity.SELECTED_INTERVAL, 2);
+        sharedPreferencesEditor.putInt(SettingsActivity.SELECTED_RINGTONE, 2);
 
         // Saglabā vērtības
         activity.getSharedPreferencesEditor().commit();
@@ -119,6 +120,8 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         windRadioButton.performClick();
         useOnlyWiFiButton.performClick();
         activity.setSelectedVolume(0);
+        activity.setRefreshTime(0);
+        activity.setSelectedRingtone(0);
 
 
         // Iestata saglabātās vērtības
@@ -129,6 +132,8 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         assertTrue(windRadioButton.isChecked());
         assertTrue(useOnlyWiFiButton.isChecked());
         assertEquals(10, activity.getSelectedVolume());
+        assertEquals(2, activity.getSelectedRingtone());
+        assertEquals(2,activity.getRefreshTime());
     }
 
 

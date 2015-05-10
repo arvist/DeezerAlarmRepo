@@ -15,11 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.adapters.DeezerRadioAdapter;
-import com.cikoapps.deezeralarm.models.Radio;
+ import com.cikoapps.deezeralarm.adapters.DeezerRadioAdapter;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
+import com.cikoapps.deezeralarm.models.DeezerRadio;
 import com.deezer.sdk.model.AImageOwner;
 import com.deezer.sdk.network.request.DeezerRequest;
 import com.deezer.sdk.network.request.DeezerRequestFactory;
@@ -38,7 +38,7 @@ public class DeezerRadioFragment extends Fragment {
     private static boolean onlyWiFi;
     private DeezerRadioAdapter mAdapter;
     private ArrayList<com.deezer.sdk.model.Radio> radioArrayList;
-    private ArrayList<com.cikoapps.deezeralarm.models.Radio> localRadioList;
+    private ArrayList<DeezerRadio> localDeezerRadioList;
     private RecyclerView recyclerView;
     private ProgressBar progress;
     private boolean enableNoWiFiTextView = false;
@@ -87,7 +87,7 @@ public class DeezerRadioFragment extends Fragment {
 
     void getUserRadio() {
         radioArrayList = new ArrayList<>();
-        localRadioList = new ArrayList<>();
+        localDeezerRadioList = new ArrayList<>();
         RequestListener requestListener = new JsonRequestListener() {
 
             public void onResult(Object result, Object requestId) {
@@ -97,19 +97,19 @@ public class DeezerRadioFragment extends Fragment {
                 progress.setVisibility(View.GONE);
                 radioArrayList = (ArrayList<com.deezer.sdk.model.Radio>) result;
                 for (com.deezer.sdk.model.Radio radio : radioArrayList) {
-                    com.cikoapps.deezeralarm.models.Radio radioLocal = new com.cikoapps.deezeralarm.models.Radio(radio.getId(), radio.getTitle().trim()
+                    DeezerRadio deezerRadioLocal = new DeezerRadio(radio.getId(), radio.getTitle().trim()
                             , radio.getPictureUrl(), radio.getImageUrl(AImageOwner.ImageSize.small), radio.getImageUrl(AImageOwner.ImageSize.medium),
                             radio.getImageUrl(AImageOwner.ImageSize.big));
-                    localRadioList.add(radioLocal);
+                    localDeezerRadioList.add(deezerRadioLocal);
                 }
-                if (localRadioList.size() < 1) {
-                    localRadioList.add(new com.cikoapps.deezeralarm.models.Radio(-1, "No radios found", "", "", "", ""));
+                if (localDeezerRadioList.size() < 1) {
+                    localDeezerRadioList.add(new DeezerRadio(-1, "No radios found", "", "", "", ""));
                 }
 
 
-                Collections.sort(localRadioList, new Comparator<Radio>() {
+                Collections.sort(localDeezerRadioList, new Comparator<DeezerRadio>() {
                     @Override
-                    public int compare(Radio lhs, Radio rhs) {
+                    public int compare(DeezerRadio lhs, DeezerRadio rhs) {
                         return lhs.title.compareTo(rhs.title);
                     }
 
@@ -119,7 +119,7 @@ public class DeezerRadioFragment extends Fragment {
                     }
                 });
 
-                mAdapter = new DeezerRadioAdapter(context, localRadioList);
+                mAdapter = new DeezerRadioAdapter(context, localDeezerRadioList);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setAdapter(mAdapter);

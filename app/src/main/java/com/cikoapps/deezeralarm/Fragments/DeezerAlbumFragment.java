@@ -15,10 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.HelperClasses.HelperClass;
-import com.cikoapps.deezeralarm.HelperClasses.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.R;
-import com.cikoapps.deezeralarm.adapters.DeezerAlbumAdapter;
+ import com.cikoapps.deezeralarm.adapters.DeezerAlbumAdapter;
+import com.cikoapps.deezeralarm.helpers.HelperClass;
+import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
+import com.cikoapps.deezeralarm.models.DeezerAlbum;
 import com.deezer.sdk.model.AImageOwner;
 import com.deezer.sdk.model.Album;
 import com.deezer.sdk.network.request.DeezerRequest;
@@ -86,7 +87,7 @@ public class DeezerAlbumFragment extends Fragment {
 
     void getUserAlbums() {
         albumsArrayList = new ArrayList<>();
-        final ArrayList<com.cikoapps.deezeralarm.models.Album> localAlbumList = new ArrayList<>();
+        final ArrayList<DeezerAlbum> localDeezerAlbumList = new ArrayList<>();
         RequestListener requestListener = new JsonRequestListener() {
             public void onResult(Object result, Object requestId) {
                 recyclerView.setVisibility(View.VISIBLE);
@@ -94,21 +95,21 @@ public class DeezerAlbumFragment extends Fragment {
                 //noinspection unchecked
                 albumsArrayList = (ArrayList<Album>) result;
                 for (Album album : albumsArrayList) {
-                    com.cikoapps.deezeralarm.models.Album albumLocal = new com.cikoapps.deezeralarm.models.Album(album.getId(), album.getTitle(), album.getArtist().getName(),
+                    DeezerAlbum deezerAlbumLocal = new DeezerAlbum(album.getId(), album.getTitle(), album.getArtist().getName(),
                             album.getCoverUrl(), HelperClass.timeConversion(album.getDuration()), album.getImageUrl(AImageOwner.ImageSize.small), album.getImageUrl(AImageOwner.ImageSize.medium),
                             album.getImageUrl(AImageOwner.ImageSize.big));
-                    localAlbumList.add(albumLocal);
+                    localDeezerAlbumList.add(deezerAlbumLocal);
                 }
-                if (localAlbumList.size() < 1) {
-                    localAlbumList.add(new com.cikoapps.deezeralarm.models.Album(-1, "No albums found", "", "", "", "", "", ""));
+                if (localDeezerAlbumList.size() < 1) {
+                    localDeezerAlbumList.add(new DeezerAlbum(-1, "No albums found", "", "", "", "", "", ""));
                 }
-                Collections.sort(localAlbumList, new Comparator<com.cikoapps.deezeralarm.models.Album>() {
+                Collections.sort(localDeezerAlbumList, new Comparator<DeezerAlbum>() {
                     @Override
-                    public int compare(com.cikoapps.deezeralarm.models.Album lhs, com.cikoapps.deezeralarm.models.Album rhs) {
+                    public int compare(DeezerAlbum lhs, DeezerAlbum rhs) {
                         return lhs.title.compareTo(rhs.title);
                     }
                 });
-                mAdapter = new DeezerAlbumAdapter(context, localAlbumList);
+                mAdapter = new DeezerAlbumAdapter(context, localDeezerAlbumList);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setAdapter(mAdapter);
