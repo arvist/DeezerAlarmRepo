@@ -10,8 +10,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.SettingsActivity;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.SettingsActivity;
 
 public class SettingsActivityTest extends ActivityInstrumentationTestCase2<SettingsActivity> {
 
@@ -122,7 +122,6 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         activity.setSelectedVolume(0);
         activity.setRefreshTime(0);
         activity.setSelectedRingtone(0);
-
 
         // Iestata saglabātās vērtības
         activity.setSavedValuesFromSharedPreferences();

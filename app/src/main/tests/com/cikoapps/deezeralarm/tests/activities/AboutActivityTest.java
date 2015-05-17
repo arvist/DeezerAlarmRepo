@@ -9,13 +9,10 @@ import android.test.suitebuilder.annotation.SmallTest;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.AboutActivity;
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.AboutActivity;
 
 
-/**
- * Created by Arvis on 5/3/2015.
- */
 public class AboutActivityTest extends ActivityInstrumentationTestCase2<AboutActivity> {
 
     AboutActivity activity;
@@ -52,16 +49,4 @@ public class AboutActivityTest extends ActivityInstrumentationTestCase2<AboutAct
         assertNotNull(activitySend);
         activitySend.finish();
     }
-
-/*   @SmallTest
-    public void testDeezerImageClick() {
-        Instrumentation.ActivityMonitor activityMonitor =
-                getInstrumentation().addMonitor(new IntentFilter(android.content.Intent.ACTION_DEFAULT), null, false);
-        TouchUtils.clickView(this,rateTextView);
-         Activity activitySend = activityMonitor.waitForActivityWithTimeout(8000);
-         assertNotNull(activitySend);
-        activitySend .finish();
-    }*/
-
-
 }

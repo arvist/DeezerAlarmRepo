@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
+import com.cikoapps.deezeralarm.activities.AlarmScreenActivity;
 
 
 public class AlarmService extends Service {

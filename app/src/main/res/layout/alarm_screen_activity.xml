@@ -10,9 +10,13 @@
         android:layout_height="match_parent">
 
 
-        <include
-            android:id="@+id/mainTopLayout"
-            layout="@layout/weather_layout" />
+        <FrameLayout
+            android:id="@+id/weather_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="56dp"
+         />
 
         <View
             android:id="@+id/horizontalLineView"
@@ -21,16 +25,17 @@
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="true"
             android:layout_gravity="right|top"
-            android:layout_marginTop="200dp"
-            android:background="@color/colorDivider" />
+            android:background="@color/colorDivider"
+            android:layout_below="@+id/weather_fragment"/>
 
         <FrameLayout
             android:id="@+id/alarm_bottom_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="202dp" />
+            android:layout_below="@+id/weather_fragment"
+            android:layout_marginTop="10dp"
+            />
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"

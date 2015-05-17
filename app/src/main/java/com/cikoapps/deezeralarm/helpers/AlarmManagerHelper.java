@@ -46,7 +46,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                 final int nowMinute = Calendar.getInstance().get(Calendar.MINUTE);
                 final int nowSecond = Calendar.getInstance().get(Calendar.SECOND);
 
-                if (allFalse(alarm.repeatingDays)) {
+                if (HelperClass.allFalse(alarm.repeatingDays)) {
                     if ((alarm.hour > nowHour) ||
                             ((alarm.hour == nowHour) && (alarm.minute > nowMinute)) ||
                             ((alarm.hour == nowHour) && (alarm.minute == nowMinute) && (nowSecond < 30))) {
@@ -94,7 +94,6 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                                 day = day + 2;
                             }
                             if (!isSunday) {
-                                Log.e(TAG, "Setting alarm to other days");
                                 calendar.set(Calendar.DAY_OF_WEEK, day);
                                 setAlarm(context, calendar, pIntent);
                                 alarmSet = true;
@@ -127,13 +126,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         }
     }
 
-    private static boolean allFalse(boolean[] values) {
-        for (boolean value : values) {
-            if (value)
-                return false;
-        }
-        return true;
-    }
+
 
     @SuppressLint("NewApi")
     private static void setAlarm(Context context, Calendar calendar, PendingIntent pIntent) {

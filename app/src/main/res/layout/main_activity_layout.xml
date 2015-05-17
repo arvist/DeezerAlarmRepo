@@ -8,18 +8,20 @@
         android:id="@+id/appBar"
         layout="@layout/app_bar_main" />
 
-    <include
-        android:id="@+id/mainTopLayout"
-        layout="@layout/weather_layout"
-        tools:ignore="DuplicateIncludedIds" />
-
+    <FrameLayout
+        android:id="@+id/weather_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="56dp"
+    />
     <View
         android:id="@+id/horizontalLineView"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/mainTopLayout"
+        android:layout_below="@+id/weather_fragment"
         android:background="@color/colorDivider" />
 
     <android.support.v7.widget.RecyclerView

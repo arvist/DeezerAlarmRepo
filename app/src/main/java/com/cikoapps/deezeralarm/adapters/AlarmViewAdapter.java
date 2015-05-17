@@ -12,9 +12,9 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.MainActivity;
 import com.cikoapps.deezeralarm.R;
- import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
+import com.cikoapps.deezeralarm.activities.MainActivity;
+import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
 import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
 import com.cikoapps.deezeralarm.models.Alarm;
 
@@ -69,7 +69,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         alarmViewHolder.alarmSwitch.setWillNotDraw(false);
 
-        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+        int currentApiVersion = Build.VERSION.SDK_INT;
         if (currentApiVersion < Build.VERSION_CODES.LOLLIPOP) {
             alarmViewHolder.alarmSwitch.setThumbResource(R.drawable.apptheme_switch_thumb_holo_light);
             alarmViewHolder.alarmSwitch.setTrackResource(R.drawable.apptheme_switch_track_holo_light);

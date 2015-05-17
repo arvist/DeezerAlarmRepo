@@ -24,7 +24,11 @@ public class HelperClass {
     // Lai uzstādītu datuma mēnesi par vārdu
     public static String getMonthFromInt(int month) {
         String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        return monthNames[month];
+        try {
+            return monthNames[month];
+        } catch (ArrayIndexOutOfBoundsException e){
+            return null;
+        }
     }
 
     public static double round(double value, int places) {
@@ -81,7 +85,7 @@ public class HelperClass {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    public boolean allFalse(boolean[] values) {
+    static public boolean allFalse(boolean[] values) {
         for (boolean value : values) {
             if (value)
                 return false;

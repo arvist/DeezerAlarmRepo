@@ -13,10 +13,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
-import com.cikoapps.deezeralarm.Fragments.DeezerPlaylistsFragment;
 import com.cikoapps.deezeralarm.R;
-
+import com.cikoapps.deezeralarm.activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.fragments.DeezerPlaylistsFragment;
 import com.cikoapps.deezeralarm.models.DeezerPlaylist;
 
 import java.io.InputStream;

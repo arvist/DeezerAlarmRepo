@@ -5,8 +5,7 @@
     android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
     android:layout_below="@+id/appBar"
-    android:layout_gravity="top"
-    >
+    android:layout_gravity="top">
 
     <View
         android:id="@+id/horizontalLineView"
