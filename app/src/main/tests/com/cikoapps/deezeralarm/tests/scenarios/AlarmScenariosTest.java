@@ -1,6 +1,7 @@
 package com.cikoapps.deezeralarm.tests.scenarios;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.UiThreadTest;
 import android.widget.TextView;
 
 
@@ -73,7 +74,7 @@ public class AlarmScenariosTest extends ActivityInstrumentationTestCase2<MainAct
             }
             if(solo.waitForActivity(MainActivity.class)){
                  assertEquals(((TextView) solo.getView("titleTextView")).getText().toString(), "Edited Alarm to 11:11");
-                assertEquals(((TextView)solo.getView("timeTextView",1)).getText().toString(), "11 : 11");
+                 assertEquals(((TextView)solo.getView("timeTextView",1)).getText().toString(), "11 : 11");
              }
         }
     }

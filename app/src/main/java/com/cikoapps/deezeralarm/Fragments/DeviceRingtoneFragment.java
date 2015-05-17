@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Fragments;
+package com.cikoapps.deezeralarm.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
 import com.cikoapps.deezeralarm.R;
- import com.cikoapps.deezeralarm.adapters.DeviceRingtoneAdapter;
+import com.cikoapps.deezeralarm.activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.adapters.DeviceRingtoneAdapter;
 import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 

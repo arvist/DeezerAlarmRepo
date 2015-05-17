@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Fragments;
+package com.cikoapps.deezeralarm.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.RingtoneActivity;
 import com.cikoapps.deezeralarm.R;
- import com.cikoapps.deezeralarm.adapters.DeezerPlaylistAdapter;
+import com.cikoapps.deezeralarm.activities.RingtoneActivity;
+import com.cikoapps.deezeralarm.adapters.DeezerPlaylistAdapter;
 import com.cikoapps.deezeralarm.helpers.HelperClass;
 import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
 import com.cikoapps.deezeralarm.models.DeezerPlaylist;
@@ -37,7 +37,7 @@ public class DeezerPlaylistsFragment extends Fragment {
     private static final String TAG = "DeezerPlaylistsFragment";
     private static Context context;
     private static boolean onlyWiFi;
-    private ArrayList<com.deezer.sdk.model.Playlist> playlistList;
+    private ArrayList<Playlist> playlistList;
     private Long playListId;
     private RecyclerView recyclerView;
     private ArrayList<DeezerPlaylist> playlistsArrayList;

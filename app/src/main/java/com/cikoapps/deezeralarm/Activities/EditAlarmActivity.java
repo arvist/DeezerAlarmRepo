@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Activities;
+package com.cikoapps.deezeralarm.activities;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -16,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
 
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
@@ -336,7 +335,7 @@ public class EditAlarmActivity extends DeezerBase {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             selected = tempSelection.clone();
-                            if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                            if (HelperClass.allFalse(selected)) {
                                 ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
                                 ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
                             }
@@ -352,7 +351,7 @@ public class EditAlarmActivity extends DeezerBase {
                     repeatingDaysDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                            if (HelperClass.allFalse(selected)) {
                                 ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
                                 ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
                             }

@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Activities;
+package com.cikoapps.deezeralarm.activities;
 
 import android.content.Context;
 import android.os.Bundle;

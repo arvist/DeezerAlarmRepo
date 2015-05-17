@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Fragments;
+package com.cikoapps.deezeralarm.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -27,12 +27,11 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.cikoapps.deezeralarm.Activities.AlarmScreenActivity;
-import com.cikoapps.deezeralarm.Activities.DeezerBase;
-import com.cikoapps.deezeralarm.Activities.QuoteActivity;
-import com.cikoapps.deezeralarm.Activities.SettingsActivity;
 import com.cikoapps.deezeralarm.R;
-
+import com.cikoapps.deezeralarm.activities.AlarmScreenActivity;
+import com.cikoapps.deezeralarm.activities.DeezerBase;
+import com.cikoapps.deezeralarm.activities.QuoteActivity;
+import com.cikoapps.deezeralarm.activities.SettingsActivity;
 import com.cikoapps.deezeralarm.helpers.HelperClass;
 import com.cikoapps.deezeralarm.helpers.ImageArtworkDownload;
 import com.deezer.sdk.model.AImageOwner;

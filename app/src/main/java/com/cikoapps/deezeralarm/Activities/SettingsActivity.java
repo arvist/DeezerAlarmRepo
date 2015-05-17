@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Activities;
+package com.cikoapps.deezeralarm.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -29,6 +29,7 @@ import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.models.DeviceRingtone;
 
 import java.util.ArrayList;
+
 public class SettingsActivity extends DeezerBase {
     public final static String SELECTED_INTERVAL = "selectedInterval";
     public final static String SELECTED_RINGTONE = "selectedRingtone";

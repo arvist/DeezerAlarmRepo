@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Activities;
+package com.cikoapps.deezeralarm.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.R;
 import com.deezer.sdk.network.connect.DeezerConnect;
-
 
 
 public class AboutActivity extends Activity {
@@ -35,9 +34,9 @@ public class AboutActivity extends Activity {
         contactTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setType("plain/text");
-                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {"info@cikoapps.com"});
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"info@cikoapps.com"});
                 startActivity(Intent.createChooser(emailIntent, ""));
             }
         });

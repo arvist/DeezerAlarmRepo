@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Fragments;
+package com.cikoapps.deezeralarm.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

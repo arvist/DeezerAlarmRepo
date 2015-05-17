@@ -1,14 +1,14 @@
-package com.cikoapps.deezeralarm.Activities;
+package com.cikoapps.deezeralarm.activities;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,28 +17,21 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.cikoapps.deezeralarm.R;
 import com.cikoapps.deezeralarm.adapters.AlarmViewAdapter;
+import com.cikoapps.deezeralarm.fragments.WeatherFragment;
 import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
 import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
-import com.cikoapps.deezeralarm.helpers.HelperClass;
-import com.cikoapps.deezeralarm.helpers.Location;
 import com.cikoapps.deezeralarm.helpers.SimpleDividerItemDecoration;
-import com.cikoapps.deezeralarm.helpers.WeatherDataAsync;
 import com.cikoapps.deezeralarm.models.Alarm;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -50,12 +43,7 @@ public class MainActivity extends ActionBarActivity {
     private Toolbar toolbar;
     private AlarmViewAdapter alarmViewAdapter;
     private Context context;
-    private ImageButton refreshButton;
-    private WeatherDataAsync weatherDataAsync;
-    private RelativeLayout mainTopLayout;
-    private Location myLocation;
     private boolean fullTimeClock;
-    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +52,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.main_activity_layout);
         context = this;
         Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-        mainTopLayout = (RelativeLayout) findViewById(R.id.mainTopLayout);
         toolbar = (Toolbar) findViewById(R.id.appBar);
-        ((TextView)toolbar.findViewById(R.id.app_bar_title)).setTypeface(robotoRegular);
+        ((TextView) toolbar.findViewById(R.id.app_bar_title)).setTypeface(robotoRegular);
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(context);
-        weatherDataAsync = new WeatherDataAsync(mainTopLayout, -1, -1, toolbar, context);
-        //weatherDataAsync.setFromSharedPreferences();
         initializeAppBarActions();
         AlarmDatabaseAccessor alarmDBHelper = new AlarmDatabaseAccessor((getApplicationContext()));
         alarmDBHelper.createIfNotValid();
@@ -83,7 +68,6 @@ public class MainActivity extends ActionBarActivity {
         alarmRecyclerView.setAdapter(alarmViewAdapter);
         alarmRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         alarmRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        refreshButton = (ImageButton) mainTopLayout.findViewById(R.id.refreshButton);
         findViewById(R.id.floatingActionButtonView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,94 +77,17 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         longClickDialog();
-        refreshWeatherButton();
-        updateWeatherData();
-        updateDisplay();
+
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, toolbar, context));
+        ft.commit();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        weatherDataAsync.setFromSharedPreferences();
-        updateWeatherData();
-        updateDisplay();
         alarmViewAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 2) {
-            if (resultCode == RESULT_OK) {
-                weatherDataAsync.setFromSharedPreferences();
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        timer.cancel();
-        timer.purge();
-    }
-
-    private void updateDisplay() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        weatherDataAsync.setFromSharedPreferences();
-                        updateWeatherData();
-                    }
-                });
-
-
-            }
-        }, 0, 1 * 60 * 1000);
-    }
-    private void updateWeatherData() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int refreshTime = preferences.getInt(SettingsActivity.SELECTED_INTERVAL, 1);
-        if (refreshTime != 12) {
-            long lastUpdateTimeMillis = preferences.getLong(WeatherDataAsync.TIME_UPDATED, 0);
-            boolean onlyWiFiUpdate = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
-            if ((onlyWiFiUpdate && new HelperClass(context).isWifiConnected()) || !onlyWiFiUpdate) {
-                Calendar deleteCalendar = Calendar.getInstance();
-                deleteCalendar.setTimeInMillis(lastUpdateTimeMillis);
-                int milliSecondsRefreshTime = (refreshTime + 1) * 5 * 60000;
-                Calendar calendar = Calendar.getInstance();
-                long currentMillis = calendar.getTimeInMillis();
-                if ((currentMillis - lastUpdateTimeMillis) > milliSecondsRefreshTime) {
-                    myLocation = new Location(this, mainTopLayout, toolbar);
-                    myLocation.buildGoogleApiClient();
-                }
-            }
-        }
-    }
-
-
-    private void refreshWeatherButton() {
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (new HelperClass(context).haveNetworkConnection()) {
-                    if (new HelperClass(context).isLocationEnabled()) {
-                        if (myLocation != null) {
-                            myLocation.reconnectGoogleApiClient();
-                        } else {
-                            myLocation = new Location(context, mainTopLayout, toolbar);
-                            myLocation.buildGoogleApiClient();
-                        }
-                    } else {
-                        Toast.makeText(context, "Couldn't determine current location", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, "No network connection", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     void longClickDialog() {
@@ -234,7 +141,6 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-
     void initializeAppBarActions() {
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +152,14 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        }
+    }
 
     List<Alarm> getAlarmList() {
         List<Alarm> testAlarms = new ArrayList<>();
@@ -339,6 +253,5 @@ public class MainActivity extends ActionBarActivity {
         });
         return testAlarms;
     }
-
 
 }

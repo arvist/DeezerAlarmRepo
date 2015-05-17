@@ -1,4 +1,4 @@
-package com.cikoapps.deezeralarm.Activities;
+package com.cikoapps.deezeralarm.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,13 +16,13 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.cikoapps.deezeralarm.Fragments.DeezerAlbumFragment;
-import com.cikoapps.deezeralarm.Fragments.DeezerArtistFragment;
-import com.cikoapps.deezeralarm.Fragments.DeezerPlaylistsFragment;
-import com.cikoapps.deezeralarm.Fragments.DeezerRadioFragment;
-import com.cikoapps.deezeralarm.Fragments.DeviceRingtoneFragment;
-import com.cikoapps.deezeralarm.Fragments.NoNetworkConnectionFragment;
- import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.fragments.DeezerAlbumFragment;
+import com.cikoapps.deezeralarm.fragments.DeezerArtistFragment;
+import com.cikoapps.deezeralarm.fragments.DeezerPlaylistsFragment;
+import com.cikoapps.deezeralarm.fragments.DeezerRadioFragment;
+import com.cikoapps.deezeralarm.fragments.DeviceRingtoneFragment;
+import com.cikoapps.deezeralarm.fragments.NoNetworkConnectionFragment;
 import com.cikoapps.deezeralarm.helpers.HelperClass;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -120,8 +120,6 @@ public class RingtoneActivity extends DeezerBase {
     private void showAds() {
         adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
-/*                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("abc")*/
                 .build();
         adView.loadAd(adRequest);
     }
