@@ -47,6 +47,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                 final int nowSecond = Calendar.getInstance().get(Calendar.SECOND);
 
                 if (HelperClass.allFalse(alarm.repeatingDays)) {
+                    //noinspection StatementWithEmptyBody
                     if ((alarm.hour > nowHour) ||
                             ((alarm.hour == nowHour) && (alarm.minute > nowMinute)) ||
                             ((alarm.hour == nowHour) && (alarm.minute == nowMinute) && (nowSecond < 30))) {
@@ -74,8 +75,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                     6 - Sunday
                 */
 
-                    // Ja vēlāk nedēļā tad uzstāda uz šo nedēļu un atbilstošo dienu no alarm objekta
-                    boolean isSunday = false;
+                     boolean isSunday = false;
                     for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
 
                         boolean repeatingDay = alarm.getRepeatingDay(dayOfWeek);
@@ -102,8 +102,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                         }
                     }
 
-                    //Ja diena pēc kārtas pirms konkrētās dienas tad pieskaita vienu nedēļu
-                    if (!alarmSet) {
+                     if (!alarmSet) {
                         for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
                             boolean repeatingDay = alarm.getRepeatingDay(dayOfWeek);
                             if (repeatingDay && dayOfWeek <= nowDay && alarm.repeatWeekly) {
@@ -152,8 +151,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
         }
     }
 
-    // Lai iestatītu modinātāju nākotnē.
-    private static PendingIntent createPendingIntent(Context context, Alarm alarm) {
+     private static PendingIntent createPendingIntent(Context context, Alarm alarm) {
         Intent intent = new Intent(context, AlarmService.class);
         intent.putExtra(ID, alarm.id);
         intent.putExtra(NAME, alarm.title);

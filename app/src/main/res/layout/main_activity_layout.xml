@@ -11,7 +11,7 @@
     <FrameLayout
         android:id="@+id/weather_fragment"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="56dp"
     />
@@ -43,6 +43,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:elevation="5dp"
-        android:src="@drawable/ic_plus" />
+        android:src="@drawable/ic_plus"
+        tools:ignore="UnusedAttribute" />
 
 </RelativeLayout>

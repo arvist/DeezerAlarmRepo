@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:gravity="center"
-        android:text="Connect to Wi-Fi, or allow app to use cellular network in settings"
+        android:text="@string/connectToWifi"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="120dp"
         android:layout_marginRight="16dp"

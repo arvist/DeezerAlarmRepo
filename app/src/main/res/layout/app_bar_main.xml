@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:background="@color/colorPrimary"
@@ -9,7 +10,8 @@
     app:contentInsetRight="0dp"
     app:contentInsetStart="0dp"
     app:theme="@style/AppTheme.Toolbar"
-    app:titleTextAppearance="@style/AppTheme.Toolbar.Title">
+    app:titleTextAppearance="@style/AppTheme.Toolbar.Title"
+    tools:ignore="Overdraw">
 
     <RelativeLayout
         android:layout_width="match_parent"

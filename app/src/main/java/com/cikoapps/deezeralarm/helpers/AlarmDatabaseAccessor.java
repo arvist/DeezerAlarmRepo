@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 import com.cikoapps.deezeralarm.models.Alarm;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
 
 
-    public static final String TABLE_NAME = "alarm";
+    private static final String TABLE_NAME = "alarm";
     public static final String COLUMN_NAME_ALARM_NAME = "title";
     public static final String COLUMN_NAME_ALARM_TIME_HOUR = "hour";
     public static final String COLUMN_NAME_ALARM_TIME_MINUTE = "minute";
@@ -50,6 +51,7 @@ public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
         this.myContext = context;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean createIfNotValid() {
         boolean isDataPresent = isDatabaseValid();
         if (isDataPresent) {
@@ -97,7 +99,7 @@ public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
     }
 
     public void insertAlarmIntoDatabase(String title, int hour, int minute, String repeatDays, boolean repeatWeekly, String alarmToneName, String artist,
-                                        String alarmTone, long alamrid, int type, boolean enabled) {
+                                        String alarmTone, long alarmId, int type, boolean enabled) {
 
 
         openDataBase();
@@ -113,7 +115,7 @@ public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
                 COLUMN_NAME_ID + " , " +
                 COLUMN_NAME_ALARM_TYPE + " , " +
                 COLUMN_NAME_ALARM_ENABLED + " ) values ( " +
-                "\"" + title + "\"" + " , " +
+                 "?" +  " , " +
                 hour + " , " +
                 minute + " , " +
                 "\"" + repeatDays + "\"" + " , " +
@@ -121,11 +123,13 @@ public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
                 "\"" + alarmToneName + "\"" + " , " +
                 "\"" + alarmTone + "\"" + " , " +
                 "\"" + artist + "\"" + " , " +
-                alamrid + " , " +
+                alarmId + " , " +
                 type + " , " +
                 "\"" + enabled + "\"" + " ); ";
-
-        myDataBase.execSQL(insertQuery);
+        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteStatement stmt = db.compileStatement(insertQuery);
+        stmt.bindString(1, title);
+        stmt.execute();     // myDataBase.execSQL(insertQuery);
         close();
 
 

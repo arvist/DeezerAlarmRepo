@@ -1,8 +1,6 @@
 package com.cikoapps.deezeralarm.helpers;
 
-/**
- * Created by arvis.taurenis on 3/8/2015.
- */
+
 public class Quotes {
     private static final String[] quotes = {
             "Life isn’t about getting and having, it’s about giving and being.",

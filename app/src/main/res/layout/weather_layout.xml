@@ -138,7 +138,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorPrimaryText"
-        android:text="Agenskalns"
+        android:text=""
         android:layout_below="@+id/dateTextView"
         android:layout_alignLeft="@+id/dateTextView"
         android:layout_alignStart="@+id/dateTextView" />

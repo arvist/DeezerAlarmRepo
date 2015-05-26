@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -34,7 +35,7 @@
         android:layout_below="@+id/timeTextView"
         android:layout_marginTop="16dp"
         android:gravity="center_vertical"
-        android:text="Ringtone"
+        android:text="@string/ringtone"
         android:textColor="@color/colorPrimaryText"
         android:textSize="20sp" />
 
@@ -50,7 +51,7 @@
         android:maxLines="1"
         android:maxWidth="180dp"
         android:singleLine="true"
-        android:text="Default ringtone"
+        android:text="@string/defaultRingtone"
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp" />
 
@@ -62,7 +63,7 @@
         android:layout_alignStart="@+id/setRingtoneTextView"
         android:layout_below="@+id/setRingtoneTextView"
         android:gravity="center_vertical"
-        android:text="Repeat Alarm"
+        android:text="@string/repeatAlarm"
         android:textColor="@color/colorPrimaryText"
         android:textSize="20sp" />
 
@@ -89,7 +90,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:elevation="5dp"
-        android:src="@drawable/ic_confirm" />
+        android:src="@drawable/ic_confirm"
+        tools:ignore="RelativeOverlap" />
 
     <com.shamanland.fab.FloatingActionButton
         android:id="@+id/cancelAlarmAdd"
@@ -102,7 +104,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:elevation="5dp"
-        android:src="@drawable/ic_cancel" />
+        android:src="@drawable/ic_cancel"
+        tools:ignore="UnusedAttribute" />
 
     <RadioGroup
         android:id="@+id/radioGroup"
@@ -127,9 +130,10 @@
             android:paddingRight="8dp"
             android:button="@drawable/material_radio_btn"
             android:paddingTop="8dp"
-            android:text=" Yes"
+            android:text="@string/yes"
             android:layout_marginRight="4dp"
-            android:checked="false" />
+            android:checked="false"
+            tools:ignore="ObsoleteLayoutParam" />
 
         <RadioButton
             android:id="@+id/radioButtonNo"
@@ -143,7 +147,8 @@
             android:paddingRight="8dp"
             android:button="@drawable/material_radio_btn"
             android:paddingTop="8dp"
-            android:text=" No" />
+            android:text="@string/blankNo"
+            tools:ignore="ObsoleteLayoutParam" />
 
     </RadioGroup>
 
@@ -157,7 +162,7 @@
         android:maxLines="1"
         android:maxWidth="250dp"
         android:minHeight="48dp"
-        android:text="00:00"
+        android:text="@string/clockMidnight"
         android:textColor="@color/colorPrimaryText"
         android:textSize="32sp" />
 

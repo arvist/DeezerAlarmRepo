@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.cikoapps.deezeralarm.helpers.AlarmDatabaseAccessor;
 
+@SuppressWarnings("CanBeFinal")
 public class Alarm {
     public static final String TITLE = "title";
     public static final String TONE_NAME = "alarmToneName";
@@ -39,8 +40,7 @@ public class Alarm {
     public String partOfDay = ""; //AM/FM
     public String alarmToneName;
 
-    /* Konstruktors lietots MainActivity veidojot objektus no datubāzes*/
-    public Alarm(String title, int id, int hour, int minute, boolean enabled, boolean[] repeatingDays,
+     public Alarm(String title, int id, int hour, int minute, boolean enabled, boolean[] repeatingDays,
                  boolean repeatWeekly, String alarmTone, String artist, long alarmid, int type, String alarmToneName) {
         this.title = title;
         this.id = id;
@@ -56,7 +56,6 @@ public class Alarm {
         this.alarmToneName = alarmToneName;
     }
 
-    /* Konstruktors lietots AddAlarmActivity, lai ievietotu objektus datubāzē */
     public Alarm(String title, int hour, int minute, boolean enabled, boolean[] repeatingDays,
                  boolean repeatWeekly, String alarmTone, long alarmid, int type, String alarmToneName, String artist) {
         this.title = title;

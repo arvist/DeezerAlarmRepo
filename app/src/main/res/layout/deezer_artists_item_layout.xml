@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
     android:orientation="horizontal">
@@ -17,7 +18,7 @@
         android:layout_marginStart="9dp"
         android:background="@color/colorTransparent"
         android:src="@drawable/ic_artist"
-        android:contentDescription="Image of Artist" />
+        android:contentDescription="@string/imageOfArtist" />
 
     <TextView
         android:id="@+id/artistTextView"
@@ -34,7 +35,8 @@
         android:paddingTop="3dp"
         android:text="@string/ArtistTextView"
         android:textColor="@color/colorPrimaryText"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:ignore="RelativeOverlap" />
 
 
     <RadioButton

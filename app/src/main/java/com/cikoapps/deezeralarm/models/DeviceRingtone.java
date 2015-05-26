@@ -1,6 +1,7 @@
 package com.cikoapps.deezeralarm.models;
 
 
+@SuppressWarnings({"CanBeFinal", "SameParameterValue"})
 public class DeviceRingtone {
 
     public String uri;

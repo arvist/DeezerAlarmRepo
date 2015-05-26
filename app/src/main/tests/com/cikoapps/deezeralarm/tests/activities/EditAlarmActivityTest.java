@@ -13,20 +13,13 @@ import com.robotium.solo.Solo;
 
 public class EditAlarmActivityTest extends ActivityInstrumentationTestCase2<EditAlarmActivity> {
 
-    Intent intent;
     private Solo solo;
-    private String title = "test";
-    private String alarmToneName = "test";
-    private int hour = 12;
-    private int minute = 12;
-    private int type = 2;
-    private boolean[] repeatingDays = {false,false,false,true,true,true,true};
-    private int id = 1;
-    private String partOfDay = "AM";
-    private long alarmid = 123;
-    private String artist = "test";
-    private boolean enabled = true ;
-    private String alarmTone = "null";
+    private final String title = "test";
+    private final String alarmToneName = "test";
+    private final int hour = 12;
+    private final int minute = 12;
+    private final boolean[] repeatingDays = {false,false,false,true,true,true,true};
+    private final String partOfDay = "AM";
 
     public EditAlarmActivityTest() {
         super(EditAlarmActivity.class);
@@ -41,19 +34,24 @@ public class EditAlarmActivityTest extends ActivityInstrumentationTestCase2<Edit
 
     @Override
     public EditAlarmActivity getActivity() {
-        intent = new Intent(getInstrumentation()
+        Intent intent = new Intent(getInstrumentation()
                 .getTargetContext(), EditAlarmActivity.class);
         intent.putExtra(Alarm.TITLE, title);
-        intent.putExtra(Alarm.TONE_NAME,alarmToneName);
+        intent.putExtra(Alarm.TONE_NAME, alarmToneName);
         intent.putExtra(Alarm.HOUR, hour);
         intent.putExtra(Alarm.MINUTE, minute);
+        int type = 2;
         intent.putExtra(Alarm.TYPE, type);
         intent.putExtra(Alarm.REPEATING_DAYS, repeatingDays);
+        int id = 1;
         intent.putExtra(Alarm.ALARM_ID, id);
         intent.putExtra(Alarm.PART_OF_DAY, partOfDay);
+        String alarmTone = "null";
         intent.putExtra(Alarm.ALARM_URI, alarmTone);
+        long alarmid = 123;
         intent.putExtra(Alarm.DEEZER_RINGTONE_ID, alarmid);
-        intent.putExtra(Alarm.ENABLED, enabled);
+        intent.putExtra(Alarm.ENABLED, true);
+        String artist = "test";
         intent.putExtra(Alarm.ARTIST, artist);
         setActivityIntent(intent);
         return super.getActivity();

@@ -9,7 +9,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit alarm title"
+        android:text="@string/editAlarmTitle"
         android:textColor="@color/colorPrimary"
         android:textSize="20sp" />
 
@@ -17,7 +17,7 @@
         android:id="@+id/titleEditText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter title here..."
+        android:hint="@string/enterTitleHere"
         android:inputType="textCapSentences"
         android:lines="1"
         android:padding="10dp"

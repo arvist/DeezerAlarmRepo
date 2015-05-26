@@ -21,8 +21,7 @@ public class HelperClass {
     }
 
 
-    // Lai uzstādītu datuma mēnesi par vārdu
-    public static String getMonthFromInt(int month) {
+     public static String getMonthFromInt(int month) {
         String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         try {
             return monthNames[month];
@@ -38,8 +37,7 @@ public class HelperClass {
         return bd.doubleValue();
     }
 
-    // Lai attēlotu saraksta/albuma ilgumu
-    public static String timeConversion(int totalSeconds) {
+     public static String timeConversion(int totalSeconds) {
 
         final int MINUTES_IN_AN_HOUR = 60;
         final int SECONDS_IN_A_MINUTE = 60;
@@ -55,14 +53,12 @@ public class HelperClass {
         }
     }
 
-    // Lietots, lai atgrieztu kādu no citātiem
-    public static int randomInteger(int min, int max) {
+     public static int randomInteger(int min, int max) {
         Random rand = new Random();
         return rand.nextInt((max - min)) + min;
     }
 
-    // Lietots, ja uzstādīts, ka var lietot tikai WiFi savienojumu
-    public boolean isWifiConnected() {
+     public boolean isWifiConnected() {
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         return mWifi.isConnected();
@@ -101,7 +97,7 @@ public class HelperClass {
         return false;
     }
 
-    // Lietots, lai pārdbauītu vai lietotāja ierīcē ir iespējota atrašanās vietas meklēšana
+     @SuppressWarnings("deprecation")
     public boolean isLocationEnabled() {
         int locationMode = 0;
         String locationProviders;

@@ -11,21 +11,18 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cikoapps.deezeralarm.R;
+import com.cikoapps.deezeralarm.activities.AboutActivity;
 import com.cikoapps.deezeralarm.activities.SettingsActivity;
+import com.robotium.solo.Solo;
 
 public class SettingsActivityTest extends ActivityInstrumentationTestCase2<SettingsActivity> {
 
     private SettingsActivity activity;
     private RadioButton windRadioButton;
     private RadioButton useOnlyWiFiButton;
-    private TextView disconnectDeezerAccountTextView;
-    private TextView textTimeSelected;
-    private TextView textRingtoneInfo;
-    private ImageButton editDefaultRingtoneButton;
-    private ImageButton refreshWeatherDataEditButton;
-    private RelativeLayout aboutLayout;
-    private SeekBar volumeSeekBar;
+
     private RadioButton tempRadioButton;
+    private Solo solo;
 
     public SettingsActivityTest() {
         super(SettingsActivity.class);
@@ -34,35 +31,17 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        solo = new Solo(getInstrumentation(), getActivity());
         activity = getActivity();
         tempRadioButton = (RadioButton) activity.findViewById(R.id.layoutTemp).findViewById(R.id.radioButtonTemp);
         windRadioButton = (RadioButton) activity.findViewById(R.id.layoutWind).findViewById(R.id.radioButtonWind);
         useOnlyWiFiButton = (RadioButton) activity.findViewById(R.id.layoutWiFi).findViewById(R.id.radioButtonWifi);
-        disconnectDeezerAccountTextView = (TextView) activity.findViewById(R.id.layoutAccount).findViewById(R.id.disconnect);
-        textTimeSelected = (TextView) activity.findViewById(R.id.layoutRefresh).findViewById(R.id.textTimeSelected);
-        textRingtoneInfo = (TextView) activity.findViewById(R.id.layoutRingtone).findViewById(R.id.textRingtoneInfo);
-        editDefaultRingtoneButton = (ImageButton) activity.findViewById(R.id.layoutRingtone).findViewById(R.id.buttonRingtone);
-        refreshWeatherDataEditButton = (ImageButton) activity.findViewById(R.id.layoutRefresh).findViewById(R.id.buttonRate);
-        aboutLayout = (RelativeLayout) activity.findViewById(R.id.about);
-        volumeSeekBar = (SeekBar) activity.findViewById(R.id.layoutVolume).findViewById(R.id.volumeSeekBar);
     }
 
-    @SmallTest
-    public void testViewsNotNull() {
-        assertNotNull(tempRadioButton);
-        assertNotNull(windRadioButton);
-        assertNotNull(useOnlyWiFiButton);
-        assertNotNull(disconnectDeezerAccountTextView);
-        assertNotNull(textTimeSelected);
-        assertNotNull(textRingtoneInfo);
-        assertNotNull(editDefaultRingtoneButton);
-        assertNotNull(refreshWeatherDataEditButton);
-        assertNotNull(aboutLayout);
-        assertNotNull(volumeSeekBar);
-    }
+
 
     @UiThreadTest
-    public void testRadioButtonClicks() {
+    public void test0_radioButtonClicks() {
 
         SharedPreferences.Editor sharedPreferencesEditor = activity.getSharedPreferencesEditor();
         sharedPreferencesEditor.putBoolean(SettingsActivity.TEMP_FAHRENHEIT_BOOLEAN, false);
@@ -90,9 +69,8 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
     }
 
     @UiThreadTest
-    public void testSaveValuesToSharedPreferences() {
+    public void test1_saveValuesToSharedPreferences() {
 
-        // Iestata visas radio pogas izslēgtas
         SharedPreferences.Editor sharedPreferencesEditor = activity.getSharedPreferencesEditor();
         sharedPreferencesEditor.putBoolean(SettingsActivity.TEMP_FAHRENHEIT_BOOLEAN, false);
         sharedPreferencesEditor.putBoolean(SettingsActivity.WIND_MILES_BOOLEAN, false);
@@ -104,7 +82,6 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         sharedPreferencesEditor.commit();
         activity.setSavedValuesFromSharedPreferences();
 
-        // Nospiež uz visām raido pogām, lai visas būtu ieslēgtas - TRUE
         tempRadioButton.performClick();
         windRadioButton.performClick();
         useOnlyWiFiButton.performClick();
@@ -112,27 +89,30 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<Setti
         sharedPreferencesEditor.putInt(SettingsActivity.SELECTED_INTERVAL, 2);
         sharedPreferencesEditor.putInt(SettingsActivity.SELECTED_RINGTONE, 2);
 
-        // Saglabā vērtības
         activity.getSharedPreferencesEditor().commit();
 
-        // Nospiež visas radio pogas vēlreiz, lai izmainītu vērtību uz FALSE
         tempRadioButton.performClick();
         windRadioButton.performClick();
         useOnlyWiFiButton.performClick();
-        activity.setSelectedVolume(0);
-        activity.setRefreshTime(0);
-        activity.setSelectedRingtone(0);
-
-        // Iestata saglabātās vērtības
+        activity.setSelectedVolume(8 );
+        activity.setRefreshTime(1)  ;
+        activity.setSelectedRingtone(1);
         activity.setSavedValuesFromSharedPreferences();
-
-        // Pārbauda vai visas vērtības ir TRUE
         assertTrue(tempRadioButton.isChecked());
         assertTrue(windRadioButton.isChecked());
         assertTrue(useOnlyWiFiButton.isChecked());
         assertEquals(10, activity.getSelectedVolume());
         assertEquals(2, activity.getSelectedRingtone());
         assertEquals(2,activity.getRefreshTime());
+    }
+    public void test2_activityNavigationButtons(){
+        solo.clickOnView(solo.getView("about"));
+        if(solo.waitForActivity(AboutActivity.class)){
+            solo.goBack();
+            if(solo.waitForActivity(SettingsActivity.class)){
+                solo.clickOnView(solo.getView("app_bar_save"));
+            }
+        }
     }
 
 

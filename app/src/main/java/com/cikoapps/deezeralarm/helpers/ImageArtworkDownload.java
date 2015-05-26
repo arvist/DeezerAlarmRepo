@@ -37,6 +37,7 @@ public class ImageArtworkDownload {
         }
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void setAlbumArtworkImage(final ImageView imageView, int type, long id) {
         RequestListener requestListener = new JsonRequestListener() {
             public void onResult(Object result, Object requestId) {
@@ -78,7 +79,6 @@ public class ImageArtworkDownload {
             Log.e(TAG, url);
         }
 
-        // Lai neaizkavētu lietotāja interfeisu
         @Override
         protected Bitmap doInBackground(Void... params) {
             try {

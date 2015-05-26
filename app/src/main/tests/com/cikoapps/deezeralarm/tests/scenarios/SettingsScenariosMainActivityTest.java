@@ -3,7 +3,6 @@ package com.cikoapps.deezeralarm.tests.scenarios;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -48,15 +47,14 @@ public class SettingsScenariosMainActivityTest extends ActivityInstrumentationTe
                 tempTextViewNew = (TextView) solo.getView("tempTextView");
                 tempUnitNew = tempTextViewNew.getText().toString();
                 tempUnitNew = tempUnitNew.substring(tempTextViewNew.getText().toString().length() - 1, tempTextViewNew.getText().toString().length());
-                   assertFalse(tempUnit.equalsIgnoreCase(tempUnitNew));
-                Log.e("BANANA",tempUnit + " " + tempUnitNew);
+                assertFalse(tempUnit.equalsIgnoreCase(tempUnitNew));
                 assertTrue(tempUnitNew.equalsIgnoreCase("℃") || tempUnitNew.equalsIgnoreCase("℉"));
                 assertTrue(tempUnit.equalsIgnoreCase("℃") || tempUnit.equalsIgnoreCase("℉"));
             }
         }
     }
 
-    public void test1_Wind() {
+    public void test1_wind() {
         TextView windTextView;
         String windUnit;
         TextView windTextViewNew;
@@ -81,7 +79,7 @@ public class SettingsScenariosMainActivityTest extends ActivityInstrumentationTe
 
     }
 
-    public void test2_CellularNetwork() {
+    public void test2_cellularNetwork() {
         solo.waitForActivity(MainActivity.class);
         solo.clickOnView(solo.getView("app_bar_settings"));
         if (solo.waitForActivity(SettingsActivity.class)) {
@@ -103,7 +101,7 @@ public class SettingsScenariosMainActivityTest extends ActivityInstrumentationTe
         }
     }
 
-    public void test3_DefaultRingtone(){
+    public void test3_defaultVolume(){
         int volume = 2;
         solo.waitForActivity(MainActivity.class);
         solo.clickOnView(solo.getView("app_bar_settings"));
@@ -111,12 +109,13 @@ public class SettingsScenariosMainActivityTest extends ActivityInstrumentationTe
             solo.setProgressBar((ProgressBar)solo.getView("volumeSeekBar"),volume);
             solo.sleep(3000);
             solo.clickOnView(solo.getView("app_bar_save"));
-            if(solo.waitForActivity(MainActivity.class));
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-            assertEquals(volume,preferences.getInt(SettingsActivity.MAX_ALARM_VOLUME,8));
+            if(solo.waitForActivity(MainActivity.class)) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                assertEquals(volume, preferences.getInt(SettingsActivity.MAX_ALARM_VOLUME, 8));
+            }
         }
     }
-    public void test4_WeatherRefreshRate(){
+    public void test4_weatherRefreshRate(){
         solo.waitForActivity(MainActivity.class);
         solo.clickOnView(solo.getView("app_bar_settings"));
         if (solo.waitForActivity(SettingsActivity.class)) {
@@ -133,7 +132,7 @@ public class SettingsScenariosMainActivityTest extends ActivityInstrumentationTe
         }
     }
 
-    public void test5_DefaultRingtone(){
+    public void test5_defaultRingtone(){
         solo.waitForActivity(MainActivity.class);
         SharedPreferences sharedPreferences;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -154,7 +153,7 @@ public class SettingsScenariosMainActivityTest extends ActivityInstrumentationTe
         }
     }
 
-    public void test6_Disconnect(){
+    public void test6_disconnect(){
         String toastMessage = "Your Deezer account is no longer connected to app";
         solo.waitForActivity(MainActivity.class);
         solo.clickOnView(solo.getView("app_bar_settings"));

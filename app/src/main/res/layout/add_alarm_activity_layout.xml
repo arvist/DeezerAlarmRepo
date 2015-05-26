@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -18,7 +19,7 @@
         android:layout_centerVertical="true"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="Title"
+        android:text="@string/title"
         android:textColor="@color/colorPrimaryText"
         android:textSize="24sp" />
 
@@ -44,7 +45,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:elevation="5dp"
-        android:src="@drawable/ic_confirm" />
+        android:src="@drawable/ic_confirm"
+        tools:ignore="RelativeOverlap,UnusedAttribute" />
 
     <com.shamanland.fab.FloatingActionButton
         android:id="@+id/cancelAlarmAdd"
@@ -72,7 +74,7 @@
         android:maxLines="1"
         android:maxWidth="250dp"
         android:singleLine="true"
-        android:text="Default ringtone"
+        android:text="@string/defaultRingtone"
         android:textColor="@color/colorPrimaryText"
         android:textSize="14sp" />
 
@@ -143,11 +145,12 @@
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
-            android:text=" Yes"
+            android:text="@string/blankYes"
             android:textSize="14sp"
             android:button="@drawable/material_radio_btn"
             android:checked="false"
-            android:layout_marginRight="4dp" />
+            android:layout_marginRight="4dp"
+            tools:ignore="ObsoleteLayoutParam" />
 
         <RadioButton
             android:id="@+id/radioButtonNo"
@@ -160,9 +163,10 @@
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingTop="8dp"
-            android:text=" No"
+            android:text="@string/blankNo"
             android:textSize="14sp"
-            android:button="@drawable/material_radio_btn" />
+            android:button="@drawable/material_radio_btn"
+            tools:ignore="ObsoleteLayoutParam" />
     </RadioGroup>
 
     <TimePicker

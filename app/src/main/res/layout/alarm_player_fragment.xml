@@ -23,7 +23,7 @@
             android:paddingLeft="26dp"
             android:paddingRight="26dp"
             android:paddingTop="8dp"
-            android:text="Stop"
+            android:text="@string/stop"
             android:textColor="@color/colorWhite"
             android:textSize="24sp" />
 
@@ -131,7 +131,7 @@
         android:layout_centerHorizontal="true"
         android:maxWidth="250dp"
         android:singleLine="true"
-        android:text="..."
+        android:text="@string/threeDots"
         android:textColor="@color/colorPrimaryText"
         android:textSize="20sp" />
 

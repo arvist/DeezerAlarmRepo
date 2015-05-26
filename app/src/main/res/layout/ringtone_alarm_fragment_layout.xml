@@ -25,7 +25,7 @@
             android:paddingLeft="26dp"
             android:paddingRight="26dp"
             android:paddingTop="8dp"
-            android:text="Dismiss"
+            android:text="@string/dismiss"
             android:textColor="@color/colorWhite"
             android:textSize="24sp" />
 
@@ -37,7 +37,7 @@
         android:layout_below="@+id/mainTopLayout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="AlarmTitle"
+        android:text="@string/alarmTitle"
         android:textColor="@color/colorPrimaryText"
         android:textSize="32sp" />
 

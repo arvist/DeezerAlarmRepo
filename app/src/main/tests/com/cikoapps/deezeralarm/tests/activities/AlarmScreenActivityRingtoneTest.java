@@ -9,14 +9,11 @@ import com.cikoapps.deezeralarm.activities.MainActivity;
 import com.cikoapps.deezeralarm.helpers.AlarmManagerHelper;
 import com.robotium.solo.Solo;
 
-/**
- * Created by Arvis on 5/11/2015.
- */
 public class AlarmScreenActivityRingtoneTest extends ActivityInstrumentationTestCase2<AlarmScreenActivity> {
 
-    Intent intent;
+    private Intent  intent;
     private Solo solo;
-    String alarmName = "Robotium Test";
+    private final String alarmName = "Robotium Test";
 
     public AlarmScreenActivityRingtoneTest() {
         super(AlarmScreenActivity.class);
@@ -35,18 +32,15 @@ public class AlarmScreenActivityRingtoneTest extends ActivityInstrumentationTest
                 .getTargetContext(), AlarmScreenActivity.class);
         intent.putExtra(AlarmManagerHelper.NAME, alarmName);
         intent.putExtra(AlarmManagerHelper.TONE, "");
-        // Type = 0, modinātājs ar signālu no ierīces
-        intent.putExtra(AlarmManagerHelper.TYPE, 0);
-        // ID = -1, lai aktivitāte nemēģina datubāzē atzīmēt modinātāju kā izslēgtu pēc ID.
-        intent.putExtra(AlarmManagerHelper.ID, -1);
+         intent.putExtra(AlarmManagerHelper.TYPE, 0);
+         intent.putExtra(AlarmManagerHelper.ID, -1);
         intent.putExtra(AlarmManagerHelper.ONE_TIME_ALARM, false);
-        // Nav svarīgs, jo attiecas uz ID deezer servisā.
-        intent.putExtra(AlarmManagerHelper.ALARM_ID, -1);
+         intent.putExtra(AlarmManagerHelper.ALARM_ID, -1);
         setActivityIntent(intent);
         return super.getActivity();
     }
 
-    public void test0_DeviceRingtoneTest() {
+    public void test0_deviceRingtoneTest() {
         if (solo.waitForActivity(AlarmScreenActivity.class)) {
             assertTrue(((TextView) solo.getView("alarmTitleTextView")).getText().toString().equalsIgnoreCase(alarmName));
             assertNotNull(((TextView) solo.getView("quoteTextView")).getText().toString());

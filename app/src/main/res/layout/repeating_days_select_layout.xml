@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -7,48 +8,49 @@
     android:layout_marginTop="48dp"
     android:layout_marginRight="16dp"
     android:layout_marginLeft="16dp"
-    android:layout_marginBottom="48dp">
+    android:layout_marginBottom="48dp"
+    tools:ignore="Overdraw">
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Monday"
+        android:text="@string/monday"
         android:textSize="16sp"
         android:id="@+id/MondayCheckBox"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tuesday"
+        android:text="@string/tuesday"
         android:textSize="16sp"
         android:id="@+id/TuesdayCheckBox"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wednesday"
+        android:text="@string/wednesday"
         android:textSize="16sp"
         android:id="@+id/WednesdayCheckBox"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thursday"
+        android:text="@string/thursday"
         android:textSize="16sp"
         android:id="@+id/ThursdayCheckBox"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Friday"
+        android:text="@string/friday"
         android:textSize="16sp"
         android:id="@+id/FridayCheckBox"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Saturaday"
+        android:text="@string/saturday"
         android:textSize="16sp"
         android:id="@+id/SaturdayCheckBox"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sunday"
+        android:text="@string/sunday"
         android:textSize="16sp"
         android:id="@+id/SundayCheckBox"/>
 

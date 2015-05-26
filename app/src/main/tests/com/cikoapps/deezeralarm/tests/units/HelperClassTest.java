@@ -6,8 +6,7 @@ import com.cikoapps.deezeralarm.activities.MainActivity;
 import com.cikoapps.deezeralarm.helpers.HelperClass;
 
 public class HelperClassTest extends ActivityInstrumentationTestCase2<MainActivity> {
-    HelperClass helperClass;
-    MainActivity activity;
+    private HelperClass helperClass;
 
     public HelperClassTest() {
         super(MainActivity.class);
@@ -17,14 +16,10 @@ public class HelperClassTest extends ActivityInstrumentationTestCase2<MainActivi
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        activity = getActivity();
+        MainActivity activity = getActivity();
         helperClass = new HelperClass(activity.getApplicationContext());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
     public void testGetMonthFromInt(){
         assertTrue("January".equalsIgnoreCase(HelperClass.getMonthFromInt(0)));
         assertTrue("December".equalsIgnoreCase(HelperClass.getMonthFromInt(11)));

@@ -50,15 +50,21 @@ public class RingtoneActivityTest extends ActivityInstrumentationTestCase2<Ringt
     public void test2_buttons() {
         if (solo.waitForActivity(RingtoneActivity.class)) {
             solo.clickOnText("PLAYLISTS");
+            assertTrue((solo.getView("deezerPlaylists")).isShown());
             solo.clickOnText("DEVICE RINGTONES");
+            assertTrue((solo.getView("deezerArtists")).isShown());
             solo.clickOnText("ALBUMS");
+            assertTrue((solo.getView("deezerAlbums")).isShown());
             solo.clickOnText("FAVORITE ARTISTS");
+            assertTrue((solo.getView("deezerArtists")).isShown());
             solo.clickOnText("RADIO");
+            assertTrue((solo.getView("deezerRadio")).isShown());
             solo.clickOnView(solo.getView("confirmRingtone"));
         }
     }
 
     public void test3_radioButtonsSelect() {
+        solo.sleep(5500);
         if (solo.waitForActivity(RingtoneActivity.class)) {
             solo.clickOnView(solo.getView("deviceRingtoneRadioButton", 3));
             solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.RIGHT);
@@ -68,13 +74,8 @@ public class RingtoneActivityTest extends ActivityInstrumentationTestCase2<Ringt
             RadioButton deviceRingtoneItemRadioButton = (RadioButton) solo.getView("deviceRingtoneRadioButton", 3);
             assertFalse(deviceRingtoneItemRadioButton.isChecked());
             solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.RIGHT);
-            solo.sleep(1000);
-            solo.clickOnView(solo.getView("playlistChecked", 3));
-            solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.RIGHT);
-            solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.RIGHT);
-            solo.clickOnView(solo.getView("artistRadioButton", 3));
-            solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.LEFT);
-            solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.LEFT);
+            RadioButton playlistItemRadioButton = (RadioButton) solo.getView("playlistChecked", 3);
+            assertTrue(playlistItemRadioButton.isChecked());
         }
     }
 }
