@@ -23,6 +23,9 @@
         import com.cikoapps.deezeralarm.helpers.HelperClass;
         import com.cikoapps.deezeralarm.models.Alarm;
 
+        import org.apache.commons.lang.StringEscapeUtils;
+
+
         public class AddAlarmActivity extends DeezerBase {
 
             public static final String RESTART_ACTIVITY = "restartActivity";
@@ -35,7 +38,6 @@
             private long deezerRingtoneId;
             private String ringtoneName = "";
             private String artist = "";
-            private HelperClass helperClass;
             private boolean[] tempSelection;
 
 
@@ -43,21 +45,28 @@
             protected void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 context = getApplicationContext();
+                /* Layout of activity */
                 setContentView(R.layout.add_alarm_activity_layout);
                 Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
                 setSupportActionBar(toolbar);
+                /* Repeated Days dialog listener initialization */
                 repeatNoButtonClick();
                 repeatYesButtonClick();
+                /* Cancel alarm button on click listener initialization */
                 cancelAddingAlarm();
+                /* Add alarm button on click listener initialization */
                 addAlarm();
+                /* Alarm Ringtone select button on click listener initialization */
                 ringtoneEdit();
+                /* Application bar functionality */
                 appBarActions();
+                /* Set time picker to use appropriate time settings */
                 TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
                 boolean fullTimeClock = DateFormat.is24HourFormat(context);
                 timePicker.setIs24HourView(fullTimeClock);
-                helperClass = new HelperClass(this);
-            }
+             }
 
+            // Navigates back to MainActivity
             @Override
             public void onBackPressed() {
                 super.onBackPressed();
@@ -66,6 +75,7 @@
                 startActivity(intent);
             }
 
+            // To initialize application bar on click actions
             void appBarActions() {
                 ImageButton backButton = (ImageButton) findViewById(R.id.app_bar_back_btn);
                 ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
@@ -86,6 +96,7 @@
                 });
             }
 
+            // Clears repeated day selection array
             void repeatNoButtonClick() {
                 findViewById(R.id.radioButtonNo).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -97,6 +108,7 @@
                 });
             }
 
+            // To select repeated days for alarm
             void repeatYesButtonClick() {
                 findViewById(R.id.radioButtonYes).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -113,7 +125,9 @@
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     selected = tempSelection.clone();
-                                    if (new HelperClass(getApplicationContext()).allFalse(selected)) {
+                                    // If none repeated day selected then set No radio button to checked
+                                    // and disable Yes radio button
+                                    if (HelperClass.allFalse(selected)) {
                                         ((RadioButton) findViewById(R.id.radioButtonNo)).setChecked(true);
                                         ((RadioButton) findViewById(R.id.radioButtonYes)).setChecked(false);
                                     }
@@ -144,6 +158,7 @@
                 });
             }
 
+            // To navigate back to MainActivity on cancel button click
             void cancelAddingAlarm() {
                 findViewById(R.id.cancelAlarmAdd).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -155,6 +170,7 @@
                 });
             }
 
+            // To save created alarm object to database
             void addAlarm() {
                 findViewById(R.id.confirmAlarmAdd).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -167,27 +183,31 @@
                         EditText title = (EditText) findViewById(R.id.alarmTitleTextView);
                         String alarmTitleString = title.getText().toString();
                         boolean repeatWeekly = helperClass.oneOrMoreTrue(selected);
+                        // If no title created use default value
                         if (alarmTitleString.trim().length() < 1) {
                             alarmTitleString = "My Alarm";
                         }
                         if (artist == null) artist = "";
-                        Alarm alarm = new Alarm(alarmTitleString, hour, minute, true, selected,
+
+                        Alarm alarm = new Alarm(StringEscapeUtils.escapeSql(alarmTitleString), hour, minute, true, selected,
                                 repeatWeekly, uri, deezerRingtoneId, type, ringtoneName, artist);
-                        Log.e(TAG, alarmTitleString + " " + hour + ":" + minute + " " + deezerRingtoneId + " " + type + " " + ringtoneName);
                         AlarmManagerHelper.cancelAlarms(context);
                         alarm.insertIntoDataBase(context);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         finish();
                         AlarmManagerHelper.setAlarms(context);
+                        // Navigate back to MainActivity
                         startActivity(intent);
                     }
-                });
+                }) ;
             }
 
+            // Alarm ringtone chooser
             void ringtoneEdit() {
                 findViewById(R.id.editRingtoneButton).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        // To enable Ripple animation
                         new CountDownTimer(350, 80) {
                             @Override
                             public void onTick(long millisUntilFinished) {
@@ -209,6 +229,7 @@
                 if (requestCode == 1) {
                     if (resultCode == RESULT_OK) {
                         try {
+                            // Used when Deezer session was not active when activity was started first time
                             if (data.getStringExtra(RESTART_ACTIVITY).equalsIgnoreCase("true")) {
                                 Intent intent = new Intent(AddAlarmActivity.this, RingtoneActivity.class);
                                 startActivityForResult(intent, 1);
@@ -224,27 +245,32 @@
                             artist = "";
                         }
                         if (ringtoneName != null) {
-                            if (ringtoneName.length() < 2) {
-                                ringtoneName = "Default Ringtone";
-                            } else {
-                                if (type == 0) {
-                                    ringtoneName = ringtoneName.concat(" Ringtone");
-                                } else if (type == 1) {
-                                    ringtoneName = ringtoneName.concat(" Playlist");
-                                } else if (type == 3) {
-                                    ringtoneName = ringtoneName.concat(" Artist Radio");
-                                } else if (type == 4) {
-                                    ringtoneName = ringtoneName.concat(" Radio");
-                                } else if (type == 2) {
-                                    if (artist != null)
-                                        ringtoneName = ringtoneName.concat(" by " + artist);
-                                }
-                            }
+                            setRingtoneName(ringtoneName);
                             ((TextView) findViewById(R.id.ringtone)).setText(ringtoneName);
                             ((TextView) findViewById(R.id.ringtone)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
                         }
                     }
                 }
+            }
+
+            private void setRingtoneName(String alarmToneName) {
+                String ringtoneName = alarmToneName;
+                if (type == 0) {
+                    ringtoneName = ringtoneName.concat(" Ringtone");
+                } else if (type == 1) {
+                    ringtoneName = ringtoneName.concat(" Playlist");
+                } else if (type == 3) {
+                    ringtoneName = ringtoneName.concat(" Artist Radio");
+                } else if (type == 4) {
+                    ringtoneName = ringtoneName.concat(" Radio");
+                } else if (type == 2) {
+                    if (artist != null)
+                        ringtoneName = ringtoneName.concat(" by " + artist);
+                }
+                if (alarmToneName.length() < 1) ringtoneName = "Default ringtone";
+                ((TextView) findViewById(R.id.ringtone)).setText(ringtoneName);
+                ((TextView) findViewById(R.id.ringtone)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
+
             }
         }
 

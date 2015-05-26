@@ -12,7 +12,6 @@ import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -37,21 +36,15 @@ public class AlarmScreenActivity extends Activity {
     private String tone;
     private int type;
     private boolean wifiBool;
-     private AdView adView;
-
-    @Nullable
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(name, context, attrs);
-
-    }
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* Set activity layout */
-        this.setContentView(R.layout.alarm_screen_activity);
+        // Layout of activity
+        setContentView(R.layout.alarm_screen_activity);
+
          /* Initialize global variables */
         int databaseId = getIntent().getIntExtra(AlarmManagerHelper.ID, -1);
         name = getIntent().getStringExtra(AlarmManagerHelper.NAME);
@@ -60,8 +53,8 @@ public class AlarmScreenActivity extends Activity {
         alarmid = getIntent().getLongExtra(AlarmManagerHelper.ALARM_ID, -1);
         boolean turnOff = getIntent().getBooleanExtra(AlarmManagerHelper.ONE_TIME_ALARM, true);
         this.context = this;
-         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-         wifiBool = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        wifiBool = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
 
 
         /* Mark alarm as disabled in database */
@@ -85,6 +78,7 @@ public class AlarmScreenActivity extends Activity {
     private void showAds() {
         adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
+                // Test device to be used in app development to test ad functionality
 /*                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("abc")*/
                 .build();
@@ -92,8 +86,7 @@ public class AlarmScreenActivity extends Activity {
     }
 
 
-
-
+    // Used to wake device app on alarm
     private void releaseWakeLock() {
     /* Ensure wakelock release */
         Runnable releaseWakelock = new Runnable() {
@@ -111,29 +104,33 @@ public class AlarmScreenActivity extends Activity {
         new Handler().postDelayed(releaseWakelock, WAKELOCK_TIMEOUT);
     }
 
+    // Initialize correct alarm player fragment depending on alarm type
+    // Initialize weather forecast service fragment if needed
     private void applyAlarmFragment() {
 
-    /*  Aktivitātē tiek ievietots atbilstošais modinātāja tipa fragments */
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean weatherService = sharedPreferences.getBoolean(SettingsActivity.WEATHER_SERVICE, false);
         FragmentManager fm = getFragmentManager();
-        Log.e("BANANA",type + " Tha TYPE " + alarmid );
         FragmentTransaction ft = fm.beginTransaction();
         if ((type == 1 || type == 2) && alarmid != -1) {
-
-            ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, null, context));
+            if(!weatherService) {
+                ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, null, context));
+            }
             ft.add(R.id.alarm_bottom_fragment, new DeezerListAlarmFragment(alarmid, type, wifiBool, context, getApplication()));
         } else if ((type == 3 || type == 4) && alarmid != -1) {
-            ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, null, context));
+            if(!weatherService) {
+                ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, null, context));
+            }
             ft.add(R.id.alarm_bottom_fragment, new DeezerRadioAlarmFragment(alarmid, type, wifiBool, context, getApplication()));
         } else {
-            ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, null, context));
+            if(!weatherService) {
+                ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, null, context));
+            }
             ft.add(R.id.alarm_bottom_fragment, new RingtoneAlarmFragment(name, tone, context));
 
         }
         ft.commit();
     }
-
-
-
 
 
     @SuppressWarnings("deprecation")
@@ -143,7 +140,7 @@ public class AlarmScreenActivity extends Activity {
         if (adView != null) {
             adView.resume();
         }
-          // Set the window to keep screen on
+        // Set the window to keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);

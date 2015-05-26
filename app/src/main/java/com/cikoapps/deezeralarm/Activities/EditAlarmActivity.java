@@ -53,11 +53,14 @@ public class EditAlarmActivity extends DeezerBase {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        // Set Layout of activity
         setContentView(R.layout.edit_alarm_activity_layout);
         layoutInflater = LayoutInflater.from(this);
         robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
+
+        /* Initialize global variables */
         fullTimeClock = DateFormat.is24HourFormat(this);
         title = getIntent().getStringExtra(Alarm.TITLE);
         alarmToneName = getIntent().getStringExtra(Alarm.TONE_NAME);
@@ -74,6 +77,7 @@ public class EditAlarmActivity extends DeezerBase {
         if (partOfDay == null) {
             partOfDay = "";
         }
+        /* Call methods to initialize all on click listeners, pickers */
         initViews();
         setViewValues();
         timePickerClick();
@@ -86,6 +90,7 @@ public class EditAlarmActivity extends DeezerBase {
         appBarActions();
     }
 
+    // To choose different ringtone for alarm
     void ringtoneEditClick() {
         editRingtoneImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +106,7 @@ public class EditAlarmActivity extends DeezerBase {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 try {
+                    // Restart RingtoneActivity if Deezer session was not valid on activity start
                     if (data.getStringExtra(AddAlarmActivity.RESTART_ACTIVITY).equalsIgnoreCase("true")) {
                         Intent intent = new Intent(EditAlarmActivity.this, RingtoneActivity.class);
                         startActivityForResult(intent, 1);
@@ -129,6 +135,7 @@ public class EditAlarmActivity extends DeezerBase {
         startActivity(intent);
     }
 
+    // To create displayable ringtone name
     private void setRingtoneName(String alarmToneName) {
         String ringtoneName = alarmToneName;
         if (type == 0) {
@@ -147,6 +154,7 @@ public class EditAlarmActivity extends DeezerBase {
         setRingtoneTextView.setText(ringtoneName);
     }
 
+    // To set values from editable Alarm object
     private void setViewValues() {
         setRingtoneName(alarmToneName);
         String timeString;
@@ -197,6 +205,7 @@ public class EditAlarmActivity extends DeezerBase {
         }
     }
 
+    // Used to set time text view value. Used for both 12 and 24 hour clocks
     private void setTimeView() {
         String timeString;
         if (fullTimeClock) {
@@ -238,6 +247,7 @@ public class EditAlarmActivity extends DeezerBase {
          timeTextView.setText(timeString);
     }
 
+    // Used to initalize views used in functions
     private void initViews() {
         alarmTitleTextView = (TextView) findViewById(R.id.alarmTitleTextView);
         alarmTitleTextView.setTypeface(robotoRegular);
@@ -248,6 +258,7 @@ public class EditAlarmActivity extends DeezerBase {
         editRingtoneImageButton = (ImageButton) findViewById(R.id.editRingtone);
     }
 
+    // Enables alarm title editing via Dialog
     private void titleEditClick() {
         alarmTitleTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,6 +289,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
+    // Enables alarm time editing via Dialog
     private void timePickerClick() {
         timeTextView.setOnClickListener(new View.OnClickListener() {
             int hour;
@@ -308,6 +320,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
+    // Used to clear repeated day selection array
     void repeatNoButtonClick() {
         findViewById(R.id.radioButtonNo).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -319,6 +332,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
+    // Enables repeated day selection for alarm via dialog
     void repeatYesButtonClick() {
         findViewById(R.id.radioButtonYes).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,6 +379,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
+    // On Alarm editing cancellation returns back to MainActivity
     void cancelAddingAlarm() {
         findViewById(R.id.cancelAlarmAdd).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -376,6 +391,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
+    // Deletes olf alarm object and creates new one. Navigates back to MainActivity
     void addAlarm() {
         findViewById(R.id.confirmAlarmAdd).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -404,6 +420,7 @@ public class EditAlarmActivity extends DeezerBase {
         });
     }
 
+    // Application Bar on click listeners
     void appBarActions() {
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
         ImageButton backButton = (ImageButton) findViewById(R.id.app_bar_back_btn);

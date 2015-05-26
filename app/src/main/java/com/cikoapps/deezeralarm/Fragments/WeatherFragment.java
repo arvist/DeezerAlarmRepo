@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,16 +45,14 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by Arvis on 5/14/2015.
- */
+@SuppressWarnings({"deprecation", "CanBeFinal", "SameParameterValue"})
 @SuppressLint("ValidFragment")
 public class WeatherFragment extends Fragment {
     private static final String TEMP_FAHRENHEIT = "tempF";
     private static final String WIND_KM = "windKmh";
     private static final String WIND_MI = "windMph";
     private static final String CITY = "city";
-    public static final String TIME_UPDATED = "time";
+    private static final String TIME_UPDATED = "time";
     private static final String WEATHER_CODE = "weather";
     private static final String SUMMARY = "summary";
     private static final String TEMP_CELSIUS = "tempC";
@@ -82,7 +79,6 @@ public class WeatherFragment extends Fragment {
     private Animation refreshAnimation;
     private Context context;
     private Location location;
-    private Timer timer;
 
     public WeatherFragment(double latitude, double longitude, Toolbar toolbar, Context context) {
         this.latitude = latitude;
@@ -99,7 +95,15 @@ public class WeatherFragment extends Fragment {
         refreshWeatherButton();
         updateWeatherDataOnRefreshTime();
         updateDisplay();
-        if (true) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        long updateTime = sharedPreferences.getLong(TIME_UPDATED, -1);
+        int selectedInterval = sharedPreferences.getInt(SettingsActivity.SELECTED_INTERVAL, -1);
+        Calendar currentTime = Calendar.getInstance();
+        long currentMillis = currentTime.getTimeInMillis();
+        long diffMillis = currentMillis - updateTime;
+        long intervalMillis = (selectedInterval*5 +5)*1000;
+
+        if (diffMillis > intervalMillis) {
             location = new Location(context);
             location.buildGoogleApiClient();
         } else {
@@ -109,11 +113,11 @@ public class WeatherFragment extends Fragment {
     }
 
     private void updateDisplay() {
-        timer = new Timer();
+        Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(getActivity()!=null) {
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -210,7 +214,7 @@ public class WeatherFragment extends Fragment {
         });
     }
 
-    public void setFromSharedPreferences() {
+    void setFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Calendar calendar = Calendar.getInstance();
         long timeNow = calendar.getTimeInMillis();
@@ -308,7 +312,6 @@ public class WeatherFragment extends Fragment {
         refreshButton.setImageResource(R.drawable.ic_action_cached_white);
     }
 
-    // Ja laika prognožu fona attēls gaišs, tad teksts un ikonas tumšas,
     void setWeatherUserInterfaceDark() {
         dateTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         summaryTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
@@ -321,7 +324,6 @@ public class WeatherFragment extends Fragment {
         refreshButton.setImageResource(R.drawable.ic_action_cached);
     }
 
-    // Atblistoši laika apstākļiem uzstāda laikapstākļu ikonu
     void setWeatherImage(String icon) {
         Calendar calendar = Calendar.getInstance();
         int weatherCode = Integer.parseInt(icon);
@@ -761,7 +763,6 @@ public class WeatherFragment extends Fragment {
             this.context = context;
         }
 
-        // Lai varētu iegūt lietotāja atrašanās vietas koordinātas
         public synchronized void buildGoogleApiClient() {
             googleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
@@ -800,8 +801,6 @@ public class WeatherFragment extends Fragment {
 
     private class WeatherDataAsync extends AsyncTask<Void, Integer, String> {
 
-
-        // Lejupielādē laikaapstākļu datus asinhroni, lai neaizkavētu lietotāja interfeisu.
         protected String doInBackground(Void... arg0) {
             final String API_KEY = "9427f818e265ae4296ab81b2d885d";
             latitude = HelperClass.round(latitude, 3);
@@ -809,12 +808,10 @@ public class WeatherFragment extends Fragment {
             String url = "http://api2.worldweatheronline.com/premium/v1/weather.ashx?q=" +
                     "" + latitude + "%2C" + longitude + "" +
                     "&format=json&num_of_days=0&fx=no&cc=yes&mca=no&includelocation=yes&showlocaltime=no&key=" + API_KEY + "";
-            Log.e("WeatuerFragment", url);
             weatherJson = getJSONFromUrl(url);
             return "You are at PostExecute";
         }
 
-        // Pēc datu lejupielāes atjauno leika prognožu datus.
         protected void onPostExecute(String result) {
             if (weatherJson != null) {
                 try {

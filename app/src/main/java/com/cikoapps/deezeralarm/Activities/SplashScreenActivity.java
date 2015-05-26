@@ -9,6 +9,7 @@ import com.cikoapps.deezeralarm.R;
 
 public class SplashScreenActivity extends Activity {
 
+    /* Shows activity for 1000ms then starts MainActivity */
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);

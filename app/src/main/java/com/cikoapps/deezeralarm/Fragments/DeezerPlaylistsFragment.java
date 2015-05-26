@@ -81,8 +81,10 @@ public class DeezerPlaylistsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean WiFiConnected = (new HelperClass(context)).isWifiConnected();
-        if ((onlyWiFi && WiFiConnected) || !onlyWiFi) {
+        // if user is allowed to connect to internet fetch user playlist list
+        // otherwise set true warning text variable
+        boolean wifiConnected = (new HelperClass(context)).isWifiConnected();
+        if ((onlyWiFi && wifiConnected) || !onlyWiFi) {
             getUserPlayLists();
         } else {
             enableNoWiFiTextView = true;
@@ -99,13 +101,13 @@ public class DeezerPlaylistsFragment extends Fragment {
                 //noinspection unchecked
                 playlistList = (ArrayList<Playlist>) result;
                 if (playlistList.size() < 1) {
-                    deezerPlaylistLocal = new DeezerPlaylist(-1, "No playlists found", "", "", "", "");
+                    deezerPlaylistLocal = new DeezerPlaylist(-1, "No playlists found", "", "");
                 }
                 for (Playlist playlist : playlistList) {
                     playListId = playlist.getId();
                     deezerPlaylistLocal = new DeezerPlaylist(playlist.getId(), playlist.getTitle(),
-                            HelperClass.timeConversion(playlist.getDuration()), playlist.getImageUrl(AImageOwner.ImageSize.small), playlist.getImageUrl(AImageOwner.ImageSize.medium),
-                            playlist.getImageUrl(AImageOwner.ImageSize.big));
+                            HelperClass.timeConversion(playlist.getDuration()), playlist.getImageUrl(AImageOwner.ImageSize.medium)
+                    );
                     playlistsArrayList.add(deezerPlaylistLocal);
                 }
                 Collections.sort(playlistsArrayList, new Comparator<DeezerPlaylist>() {
@@ -140,13 +142,16 @@ public class DeezerPlaylistsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.deezer_playlists_fragment_layout, container, false);
+        // inflate fragment into view
         recyclerView = (RecyclerView) rootView.findViewById(R.id.playlistRecyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setVisibility(View.GONE);
+        // enable loading animation
         progress = (ProgressBar) rootView.findViewById(R.id.cover_progress);
         progress.setVisibility(View.VISIBLE);
         TextView noWifiTextView = (TextView) rootView.findViewById(R.id.noWifiTextView);
+        //if user is not allowed to connect to internet show warning message
         if (enableNoWiFiTextView) {
             noWifiTextView.setVisibility(View.VISIBLE);
         } else {

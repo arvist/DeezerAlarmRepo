@@ -11,40 +11,34 @@ import com.deezer.sdk.network.connect.event.DialogListener;
 
 public class DeezerBase extends ActionBarActivity {
 
+    // Deezer API Application ID
     public static final String APP_ID = "153961";
-    private static final String TAG = "DeezerBase.java";
     public DeezerConnect deezerConnect;
     private SessionStore sessionStore;
     private Context context;
-    private DialogListener listener;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.e(TAG, "onCreate DeezerBase.java");
         this.context = getApplicationContext();
         deezerConnect = new DeezerConnect(getApplication(), APP_ID);
         sessionStore = new SessionStore();
+        // Restore session if possible otherwise ask user to login
         if (sessionStore.restore(deezerConnect, getApplication())) {
-            //Log.e(TAG, "Session is valid " + deezerConnect.isSessionValid() + " onCreate");
             sessionStore.save(deezerConnect, getApplicationContext());
         } else {
             loginDeezer();
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //Log.e(TAG, "DeezerBase onCancel");
-    }
+
 
     void loginDeezer() {
          String[] permissions = new String[]{
                 Permissions.BASIC_ACCESS,
                 Permissions.MANAGE_LIBRARY,
                 Permissions.LISTENING_HISTORY};
-        listener = new DialogListener() {
+        DialogListener listener = new DialogListener() {
             public void onComplete(Bundle values) {
                 sessionStore.save(deezerConnect, context);
                 deezerConnect.getRadioToken();
@@ -64,11 +58,11 @@ public class DeezerBase extends ActionBarActivity {
             }
         } else {
             deezerConnect.authorize(DeezerBase.this, permissions, listener);
-            //Log.e(TAG, "Authorizing deezer account");
-        }
-        //Log.e(TAG, deezerConnect.getRadioToken());
+         }
+
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     boolean logoutDeezer() {
         sessionStore.clear(this);
         deezerConnect.logout(this);

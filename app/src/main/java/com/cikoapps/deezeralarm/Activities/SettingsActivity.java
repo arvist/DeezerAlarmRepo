@@ -1,5 +1,6 @@
 package com.cikoapps.deezeralarm.activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -30,29 +31,33 @@ import com.cikoapps.deezeralarm.models.DeviceRingtone;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("SameParameterValue")
 public class SettingsActivity extends DeezerBase {
     public final static String SELECTED_INTERVAL = "selectedInterval";
     public final static String SELECTED_RINGTONE = "selectedRingtone";
-    public final static String SELECTED_RINGTONE_TITLE = "selectedRingtoneTitle";
+    private final static String SELECTED_RINGTONE_TITLE = "selectedRingtoneTitle";
     public final static String SELECTED_RINGTONE_URI = "selectedRingtoneUri";
     public final static String WIND_MILES_BOOLEAN = "windMilesBool";
     public final static String TEMP_FAHRENHEIT_BOOLEAN = "tempFBool";
     public final static String ONLY_WIFI_SELECTED = "wifiSelected";
     public final static String MAX_ALARM_VOLUME = "maxVolume";
+    public final static String WEATHER_SERVICE = "weatherService";
     private static final String TAG = "SettingsActivity";
     private final String[] elements = {"5 minutes ", "10 minutes", "15 minutes ", "20 minutes", "25 minutes", "30 minutes",
             "35 minutes", "40 minutes", "45 minutes", "50 minutes", "55 minutes", "60 minutes", "Do not refresh automatically"};
     private Context context;
     private RadioButton tempRadioButton;
     private RadioButton windRadioButton;
+    private RadioButton weatherButton;
     private RadioButton useOnlyWiFiButton;
     private ImageButton editDefaultRingtoneButton;
     private ImageButton refreshWeatherDataEditButton;
     private TextView disconnectDeezerAccountTextView;
     private TextView textTimeSelected;
     private TextView textRingtoneInfo;
-    public SharedPreferences.Editor sharedPreferencesEditor;
+    private SharedPreferences.Editor sharedPreferencesEditor;
     private boolean windMilesRadioButtonSelected = false;
+    private boolean weatherRadioButtonSelected = false;
     private boolean tempFahrenheitRadioButtonSelected = false;
     private boolean gettingRingtoneListFinished = false;
     private boolean wifiSelected;
@@ -78,8 +83,8 @@ public class SettingsActivity extends DeezerBase {
         setContentView(R.layout.settings_activity_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(toolbar);
-        /* Initialize global variables */
 
+        /* Initialize global variables */
         this.context = this;
         robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         initializeActivityViews();
@@ -108,6 +113,7 @@ public class SettingsActivity extends DeezerBase {
         tempRadioButton = (RadioButton) findViewById(R.id.layoutTemp).findViewById(R.id.radioButtonTemp);
         windRadioButton = (RadioButton) findViewById(R.id.layoutWind).findViewById(R.id.radioButtonWind);
         useOnlyWiFiButton = (RadioButton) findViewById(R.id.layoutWiFi).findViewById(R.id.radioButtonWifi);
+        weatherButton = (RadioButton) findViewById(R.id.layoutWeather).findViewById(R.id.radioButtonWeather);
         disconnectDeezerAccountTextView = (TextView) findViewById(R.id.layoutAccount).findViewById(R.id.disconnect);
         disconnectDeezerAccountTextView.setTypeface(robotoRegular);
         textTimeSelected = (TextView) findViewById(R.id.layoutRefresh).findViewById(R.id.textTimeSelected);
@@ -127,6 +133,7 @@ public class SettingsActivity extends DeezerBase {
         createOnClickListeners();
     }
 
+    /* Build and set listeners to RingtoneSelect & WeatherRefreshRate dialogs */
     private void buildDialogs() {
         AlertDialog.Builder refreshRateDialogBuilder = new AlertDialog.Builder(SettingsActivity.this);
         refreshRateDialogBuilder.setSingleChoiceItems(elements, refreshTime, new DialogInterface.OnClickListener() {
@@ -182,16 +189,20 @@ public class SettingsActivity extends DeezerBase {
         });
     }
 
+    /* Apply saved selected values to all views */
     public void setSavedValuesFromSharedPreferences() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean windMiles = preferences.getBoolean(WIND_MILES_BOOLEAN, false);
         boolean tempFBool = preferences.getBoolean(TEMP_FAHRENHEIT_BOOLEAN, false);
         boolean wifiBool = preferences.getBoolean(ONLY_WIFI_SELECTED, false);
+        boolean weatherBool = preferences.getBoolean(WEATHER_SERVICE, false);
         windRadioButton.setChecked(windMiles);
         tempRadioButton.setChecked(tempFBool);
         useOnlyWiFiButton.setChecked(wifiBool);
+        weatherButton.setChecked(weatherBool);
         windMilesRadioButtonSelected = windMiles;
         tempFahrenheitRadioButtonSelected = tempFBool;
+        weatherRadioButtonSelected = weatherBool;
         wifiSelected = wifiBool;
         textTimeSelected.setText(elements[preferences.getInt(SELECTED_INTERVAL, 1)]);
         refreshTime = preferences.getInt(SELECTED_INTERVAL, 1);
@@ -202,8 +213,9 @@ public class SettingsActivity extends DeezerBase {
         volumeSeekBar.setProgress(selectedVolume);
     }
 
+    /* Create on click listeners for views that do not have dialogs */
     private void createOnClickListeners() {
-        View.OnClickListener tempClickListener = new View.OnClickListener() {
+        tempRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (tempFahrenheitRadioButtonSelected) {
@@ -219,8 +231,7 @@ public class SettingsActivity extends DeezerBase {
                     sharedPreferencesEditor.putBoolean(TEMP_FAHRENHEIT_BOOLEAN, false);
                 }
             }
-        };
-        tempRadioButton.setOnClickListener(tempClickListener);
+        });
         windRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -255,6 +266,23 @@ public class SettingsActivity extends DeezerBase {
                 }
             }
         });
+        weatherButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (weatherRadioButtonSelected) {
+                    weatherButton.setChecked(false);
+                    weatherRadioButtonSelected = false;
+                } else {
+                    weatherButton.setChecked(true);
+                    weatherRadioButtonSelected = true;
+                }
+                if (weatherRadioButtonSelected) {
+                    sharedPreferencesEditor.putBoolean(WEATHER_SERVICE, true);
+                } else {
+                    sharedPreferencesEditor.putBoolean(WEATHER_SERVICE, false);
+                }
+            }
+        });
         disconnectDeezerAccountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,6 +297,11 @@ public class SettingsActivity extends DeezerBase {
                 startActivity(intent);
             }
         });
+             /*
+                Creates and shows loading animation
+                until ringtone list fetched from database
+                and can be shown as dialog
+             */
         refreshWeatherDataEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -303,7 +336,11 @@ public class SettingsActivity extends DeezerBase {
                 }.start();
             }
         });
-
+            /*
+                Creates and shows loading animation
+                until ringtone list fetched from database
+                and can be shown as dialog
+             */
         editDefaultRingtoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -339,12 +376,14 @@ public class SettingsActivity extends DeezerBase {
             }
         });
 
+        /*
+            Puts selected volume value in shared preferences
+         */
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 selectedVolume = progress;
                 sharedPreferencesEditor.putInt(MAX_ALARM_VOLUME, selectedVolume);
-                Log.e(TAG, " Selected Volume " + selectedVolume);
             }
 
             @Override
@@ -359,6 +398,7 @@ public class SettingsActivity extends DeezerBase {
         });
     }
 
+    /* Application bar action creation */
     private void initializeAppBarActions() {
         ImageButton backButton = (ImageButton) findViewById(R.id.app_bar_back_btn);
         ImageButton saveButton = (ImageButton) findViewById(R.id.app_bar_save);
@@ -382,35 +422,7 @@ public class SettingsActivity extends DeezerBase {
         });
     }
 
-    public Dialog getRingtoneDialog() {
-        return this.ringtoneDialog;
-    }
-
-    public int getSelectedVolume() {
-        return this.selectedVolume;
-    }
-
-    public void setSelectedVolume(int value) {
-        this.selectedVolume = value;
-    }
-
-    public void setRefreshTime(int value){
-        this.refreshTime = value;
-    }
-
-    public int getRefreshTime(){
-        return this.refreshTime;
-    }
-    public void setSelectedRingtone(int value){
-        this.selectedRingtone = value;
-    }
-    public int getSelectedRingtone(){
-        return this.selectedRingtone;
-    }
-    public SharedPreferences.Editor getSharedPreferencesEditor() {
-        return this.sharedPreferencesEditor;
-    }
-
+    /* Aquires Device ringtone list in background */
     class RingtoneAcquire extends AsyncTask<Void, Integer, String> {
         @Override
         protected String doInBackground(Void... params) {

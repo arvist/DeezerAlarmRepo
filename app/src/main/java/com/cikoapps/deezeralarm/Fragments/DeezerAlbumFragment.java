@@ -64,8 +64,7 @@ public class DeezerAlbumFragment extends Fragment {
                     }
                 }
             } else {
-                if (albumsArrayList == null) {
-                }
+
                 if (mAdapter != null) {
                     if (DeezerAlbumAdapter.selectedPosition >= 0)
                         mAdapter.notifyItemChanged(DeezerAlbumAdapter.selectedPosition);
@@ -95,13 +94,12 @@ public class DeezerAlbumFragment extends Fragment {
                 //noinspection unchecked
                 albumsArrayList = (ArrayList<Album>) result;
                 for (Album album : albumsArrayList) {
-                    DeezerAlbum deezerAlbumLocal = new DeezerAlbum(album.getId(), album.getTitle(), album.getArtist().getName(),
-                            album.getCoverUrl(), HelperClass.timeConversion(album.getDuration()), album.getImageUrl(AImageOwner.ImageSize.small), album.getImageUrl(AImageOwner.ImageSize.medium),
-                            album.getImageUrl(AImageOwner.ImageSize.big));
+                    DeezerAlbum deezerAlbumLocal = new DeezerAlbum(album.getId(), album.getTitle(), album.getArtist().getName()
+                            , album.getImageUrl(AImageOwner.ImageSize.medium));
                     localDeezerAlbumList.add(deezerAlbumLocal);
                 }
                 if (localDeezerAlbumList.size() < 1) {
-                    localDeezerAlbumList.add(new DeezerAlbum(-1, "No albums found", "", "", "", "", "", ""));
+                    localDeezerAlbumList.add(new DeezerAlbum(-1, "No albums found", "", ""));
                 }
                 Collections.sort(localDeezerAlbumList, new Comparator<DeezerAlbum>() {
                     @Override

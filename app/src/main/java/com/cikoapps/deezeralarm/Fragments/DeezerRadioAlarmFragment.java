@@ -54,7 +54,6 @@ import com.deezer.sdk.player.networkcheck.WifiOnlyNetworkStateChecker;
 
 public class DeezerRadioAlarmFragment extends Fragment {
     private static final String TAG = "DeezerRadioAlarmFrag";
-    private Typeface robotoRegular;
     private long id;
     private MediaPlayer mPlayer;
     private SeekBar seekBar;
@@ -69,8 +68,6 @@ public class DeezerRadioAlarmFragment extends Fragment {
     private ImageArtworkDownload imageArtworkDownload;
     private String currentPlayerState;
     private int type;
-    private boolean WiFiConnected;
-    private boolean allowToConnect = false;
     private AudioManager audioManager;
     private NetworkStateChecker networkStateChecker;
     private Context context;
@@ -90,45 +87,6 @@ public class DeezerRadioAlarmFragment extends Fragment {
     };
     private ProgressBar controlProgress;
     private int maxVolume;
-    DialogListener listener = new DialogListener() {
-        public void onComplete(Bundle values) {
-            SessionStore sessionStore = new SessionStore();
-            sessionStore.save(deezerConnect, myApp);
-            playRadioRingtone();
-            try {
-                if (mPlayer != null) {
-                    mPlayer.release();
-                }
-            } catch (IllegalStateException ignored) {
-            }
-        }
-
-        public void onCancel() {
-        }
-
-        public void onException(Exception e) {
-        }
-    };
-    CountDownTimer countDownTimer = new CountDownTimer(30 * 1000, 1000) {
-        @Override
-        public void onTick(long millisUntilFinished) {
-
-        }
-
-        @Override
-        public void onFinish() {
-            if (radioPlayer == null) {
-                Log.e(TAG, "Player is null, playing default ringtone;");
-                playDefaultRingtone();
-            } else {
-                Log.e(TAG, "Countdown timer finished not playing default ringtone, list player is playing");
-            }
-        }
-    };
-    String[] permissions = new String[]{
-            Permissions.BASIC_ACCESS,
-            Permissions.MANAGE_LIBRARY,
-            Permissions.LISTENING_HISTORY};
 
     public DeezerRadioAlarmFragment() {
         super();
@@ -141,11 +99,11 @@ public class DeezerRadioAlarmFragment extends Fragment {
         this.type = type;
         this.myApp = application;
         this.context = context;
-        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
-        imageArtworkDownload = new ImageArtworkDownload(((AlarmScreenActivity) context));
-        boolean allowedToConnect = isAllowedToConnect(WifiBool, context);
+        imageArtworkDownload = new ImageArtworkDownload(context);
+        boolean allowToConnect = isAllowedToConnect(WifiBool, context);
         // Restore or Login Deezer Account
 
         if (allowToConnect) {
@@ -158,7 +116,46 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 Log.e(TAG, "Deezer session restore failed");
                 // Launches the authentication process
                 Log.e(TAG, "Authorizing deezer account");
+                DialogListener listener = new DialogListener() {
+                    public void onComplete(Bundle values) {
+                        SessionStore sessionStore = new SessionStore();
+                        sessionStore.save(deezerConnect, myApp);
+                        playRadioRingtone();
+                        try {
+                            if (mPlayer != null) {
+                                mPlayer.release();
+                            }
+                        } catch (IllegalStateException ignored) {
+                        }
+                    }
+
+                    public void onCancel() {
+                    }
+
+                    public void onException(Exception e) {
+                    }
+                };
+                String[] permissions = new String[]{
+                        Permissions.BASIC_ACCESS,
+                        Permissions.MANAGE_LIBRARY,
+                        Permissions.LISTENING_HISTORY};
                 deezerConnect.authorize(((AlarmScreenActivity) context), permissions, listener);
+                CountDownTimer countDownTimer = new CountDownTimer(30 * 1000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if (radioPlayer == null) {
+                            Log.e(TAG, "Player is null, playing default ringtone;");
+                            playDefaultRingtone();
+                        } else {
+                            Log.e(TAG, "Countdown timer finished not playing default ringtone, list player is playing");
+                        }
+                    }
+                };
                 countDownTimer.start();
             }
         } else {
@@ -167,9 +164,10 @@ public class DeezerRadioAlarmFragment extends Fragment {
     }
 
     private boolean isAllowedToConnect(boolean WifiBool, Context context) {
+        boolean allowToConnect;
         if (WifiBool) {
-            WiFiConnected = (new HelperClass(context)).isWifiConnected();
-            if (!WiFiConnected) {
+            boolean wiFiConnected = (new HelperClass(context)).isWifiConnected();
+            if (!wiFiConnected) {
                 allowToConnect = false;
             } else {
                 networkStateChecker = new WifiOnlyNetworkStateChecker();
@@ -202,11 +200,8 @@ public class DeezerRadioAlarmFragment extends Fragment {
         try {
             radioPlayer = new RadioPlayer(myApp, deezerConnect, networkStateChecker);
             initArtistRadioPlayer();
-        } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
+        } catch (TooManyPlayersExceptions | DeezerError tooManyPlayersExceptions) {
             tooManyPlayersExceptions.printStackTrace();
-            playDefaultRingtone();
-        } catch (DeezerError deezerError) {
-            deezerError.printStackTrace();
             playDefaultRingtone();
         }
         radioPlayer.setStereoVolume(maxVolume, maxVolume);
@@ -234,7 +229,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 } catch (IllegalStateException ignored) {
 
                 }
-                Intent intent = new Intent(((AlarmScreenActivity) context), QuoteActivity.class);
+                Intent intent = new Intent(context, QuoteActivity.class);
                 (((AlarmScreenActivity) context)).finishApp();
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -261,7 +256,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
 
     private void playDefaultRingtone() {
         Log.e(TAG, "Playing default ringtone");
-        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
         try {
@@ -330,7 +325,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
     }
 
     void initializeLayoutViews(View view) {
-        robotoRegular = Typeface.createFromAsset(((AlarmScreenActivity) context).getAssets(), "Roboto-Regular.ttf");
+        Typeface robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         artistTextView = (TextView) view.findViewById(R.id.artistTextView);
         songTextView = (TextView) view.findViewById(R.id.songTextView);
         artistTextView.setTypeface(robotoRegular);
@@ -467,7 +462,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
             public void onTooManySkipsException() {
                 ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(((AlarmScreenActivity) context), "Error! Too many Skips", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Error! Too many Skips", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

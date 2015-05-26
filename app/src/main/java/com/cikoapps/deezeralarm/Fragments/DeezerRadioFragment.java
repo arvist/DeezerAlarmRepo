@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
+@SuppressWarnings("unchecked")
 public class DeezerRadioFragment extends Fragment {
 
     private static final String TAG = "DeezerRadioFragment";
@@ -92,18 +93,17 @@ public class DeezerRadioFragment extends Fragment {
 
             public void onResult(Object result, Object requestId) {
 
-                //noinspection unchecked
-                recyclerView.setVisibility(View.VISIBLE);
+                 recyclerView.setVisibility(View.VISIBLE);
                 progress.setVisibility(View.GONE);
                 radioArrayList = (ArrayList<com.deezer.sdk.model.Radio>) result;
                 for (com.deezer.sdk.model.Radio radio : radioArrayList) {
                     DeezerRadio deezerRadioLocal = new DeezerRadio(radio.getId(), radio.getTitle().trim()
-                            , radio.getPictureUrl(), radio.getImageUrl(AImageOwner.ImageSize.small), radio.getImageUrl(AImageOwner.ImageSize.medium),
-                            radio.getImageUrl(AImageOwner.ImageSize.big));
+                            , radio.getImageUrl(AImageOwner.ImageSize.small), radio.getImageUrl(AImageOwner.ImageSize.medium)
+                            );
                     localDeezerRadioList.add(deezerRadioLocal);
                 }
                 if (localDeezerRadioList.size() < 1) {
-                    localDeezerRadioList.add(new DeezerRadio(-1, "No radios found", "", "", "", ""));
+                    localDeezerRadioList.add(new DeezerRadio(-1, "No radios found",   "", ""));
                 }
 
 

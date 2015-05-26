@@ -96,12 +96,12 @@ public class DeezerArtistFragment extends Fragment {
                 artistArrayList = (ArrayList<com.deezer.sdk.model.Artist>) result;
                 for (com.deezer.sdk.model.Artist artist : artistArrayList) {
                     DeezerArtist deezerArtistLocal = new DeezerArtist(artist.getId(), artist.getName()
-                            , artist.getPictureUrl(), artist.getImageUrl(AImageOwner.ImageSize.small), artist.getImageUrl(AImageOwner.ImageSize.medium),
-                            artist.getImageUrl(AImageOwner.ImageSize.big), artist.hasRadio());
+                            ,    artist.getImageUrl(AImageOwner.ImageSize.medium)
+                             , artist.hasRadio());
                     localDeezerArtistList.add(deezerArtistLocal);
                 }
                 if (localDeezerArtistList.size() < 1) {
-                    localDeezerArtistList.add(new DeezerArtist(-1, "No artists found", "", "", "", "", false));
+                    localDeezerArtistList.add(new DeezerArtist(-1, "No artists found", "", false));
                 }
                 Collections.sort(localDeezerArtistList, new Comparator<DeezerArtist>() {
                     @Override

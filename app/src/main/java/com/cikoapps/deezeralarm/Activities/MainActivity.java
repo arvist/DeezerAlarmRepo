@@ -6,9 +6,11 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,10 +39,8 @@ public class MainActivity extends ActionBarActivity {
 
     public static final String PART_OF_DAY_PM = "PM";
     public static final String PART_OF_DAY_AM = "AM";
-    private static final String TAG = "MainActivity.java";
     public static AlertDialog.Builder builder;
     public static int longClickedItem = -1;
-    private Toolbar toolbar;
     private AlarmViewAdapter alarmViewAdapter;
     private Context context;
     private boolean fullTimeClock;
@@ -49,25 +49,35 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainActivity object = this;
-        setContentView(R.layout.main_activity_layout);
         context = this;
+
+        // Layout of Activity
+        setContentView(R.layout.main_activity_layout);
         Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
-        toolbar = (Toolbar) findViewById(R.id.appBar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.appBar);
         ((TextView) toolbar.findViewById(R.id.app_bar_title)).setTypeface(robotoRegular);
         setSupportActionBar(toolbar);
         fullTimeClock = DateFormat.is24HourFormat(context);
+
+        // Initialize Application Bar click listeners
         initializeAppBarActions();
+
+        // Get Access to Alarm database
         AlarmDatabaseAccessor alarmDBHelper = new AlarmDatabaseAccessor((getApplicationContext()));
         alarmDBHelper.createIfNotValid();
+
+        // Create Recycler view to display all alarm objects in list
         RecyclerView alarmRecyclerView = (RecyclerView) findViewById(R.id.alarmRecyclerView);
         alarmRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(
                 getApplicationContext()
         ));
-        alarmRecyclerView.setHasFixedSize(true);
+        alarmRecyclerView.setHasFixedSize(true );
         alarmViewAdapter = new AlarmViewAdapter(getApplicationContext(), getAlarmList(), object);
         alarmRecyclerView.setAdapter(alarmViewAdapter);
         alarmRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         alarmRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // On Click listener for create new alarm button
         findViewById(R.id.floatingActionButtonView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,12 +86,19 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        // Initialize alarm actions on long press
         longClickDialog();
 
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, toolbar, context));
-        ft.commit();
+        // If weatherServices are enabled in app insert weather fragment in activity
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean weatherService = sharedPreferences.getBoolean(SettingsActivity.WEATHER_SERVICE, false);
+        if(!weatherService) {
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.weather_fragment, new WeatherFragment(0, 0, toolbar, context));
+            ft.commit();
+        }
     }
 
     @Override
@@ -93,6 +110,7 @@ public class MainActivity extends ActionBarActivity {
     void longClickDialog() {
         final String[] longClickArray = {"Turn On/Off", "Edit", "Delete"};
         builder = new AlertDialog.Builder(this);
+        // apply alarm actions depending on dialog clicked position in list
         builder.setItems(longClickArray, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -125,6 +143,7 @@ public class MainActivity extends ActionBarActivity {
         } else {
             alarm = alarmClicked;
         }
+        // Puts all editable Alarm values in intent
         intent.putExtra(Alarm.TITLE, alarm.title);
         intent.putExtra(Alarm.TONE_NAME, alarm.alarmToneName);
         intent.putExtra(Alarm.HOUR, alarm.hour);
@@ -141,6 +160,7 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    // Enables navigating to SettingsActivity by ApplicationBar
     void initializeAppBarActions() {
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +172,8 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    /* If SettingsActivity returns RESULT_OK it indicates that user has changed some of settings
+    * therefore reload of activity is needed  */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK){
@@ -161,6 +183,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    // Parse database values to Alarm Objects
     List<Alarm> getAlarmList() {
         List<Alarm> testAlarms = new ArrayList<>();
         AlarmDatabaseAccessor dataBaseHelper = new AlarmDatabaseAccessor(getApplicationContext());
@@ -211,6 +234,7 @@ public class MainActivity extends ActionBarActivity {
             } while (cursor.moveToNext());
             dataBaseHelper.close();
         }
+        // To sort alarms in list by alarm time
         Collections.sort(testAlarms, new Comparator<Alarm>() {
             @Override
             public int compare(Alarm lhs, Alarm rhs) {

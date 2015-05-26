@@ -1,6 +1,5 @@
 package com.cikoapps.deezeralarm.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,7 +42,6 @@ public class RingtoneActivity extends DeezerBase {
     private static final String TAG = "RingtoneActivity";
     public static SelectedRingtone selectedRingtone;
     private PagerSlidingTabStrip tabs;
-    private Activity activity;
     private Context context;
     private ViewPager pager;
     private AdView adView;
@@ -54,20 +52,28 @@ public class RingtoneActivity extends DeezerBase {
         this.context = this;
         setContentView(R.layout.ringtone_activity_layout);
         initializeAppBarActions();
-        activity = this;
         final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
                 .getDisplayMetrics());
         Toolbar toolbar = (Toolbar) findViewById(R.id.ringtoneAppBar);
         tabs = (PagerSlidingTabStrip) findViewById(R.id.ringtone_tabs);
         pager = (ViewPager) findViewById(R.id.ringtone_pager);
         setSupportActionBar(toolbar);
+
+        // Add Tabs to activity
         TabsPagerAdapter adapter = new TabsPagerAdapter(getSupportFragmentManager());
         pager.setOffscreenPageLimit(5);
         pager.setAdapter(adapter);
         tabs.setViewPager(pager);
         pager.setPageMargin(pageMargin);
         selectedRingtone = new SelectedRingtone();
+
+        /* Enable to show Google ads
         showAds();
+        */
+
+        /* On alarm ringtone confirmation click returns
+           selectedRintgone values back to calling activity
+         */
         findViewById(R.id.confirmRingtone).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +130,7 @@ public class RingtoneActivity extends DeezerBase {
         adView.loadAd(adRequest);
     }
 
+    // Enable navigating between activities from application bar
     void initializeAppBarActions() {
         ImageButton backButton = (ImageButton) findViewById(R.id.app_bar_back_btn);
         ImageButton settingsButton = (ImageButton) findViewById(R.id.app_bar_settings);
@@ -155,6 +162,7 @@ public class RingtoneActivity extends DeezerBase {
         }
     }
 
+    // Enables to have multiple fragment tabs in activity
     public class TabsPagerAdapter extends android.support.v4.app.FragmentStatePagerAdapter {
 
         private final String[] TAB_TITLES = {"DEVICE RINGTONES", "PLAYLISTS", "ALBUMS", "FAVORITE ARTISTS", "RADIO"};
@@ -173,12 +181,12 @@ public class RingtoneActivity extends DeezerBase {
             return TAB_TITLES.length;
         }
 
+        // Applies correct fragment in activity
         @Override
         public Fragment getItem(int position) {
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean wifiBool = preferences.getBoolean(SettingsActivity.ONLY_WIFI_SELECTED, false);
-
             HelperClass helperClass = new HelperClass(getApplicationContext());
             boolean haveNetworkConnection = helperClass.haveNetworkConnection();
             if (position == RINGTONE_ID) {
@@ -212,6 +220,8 @@ public class RingtoneActivity extends DeezerBase {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
+    // Keeps track on selected alarm ringtone between all tabs
     public class SelectedRingtone {
         public int type;
         long id;

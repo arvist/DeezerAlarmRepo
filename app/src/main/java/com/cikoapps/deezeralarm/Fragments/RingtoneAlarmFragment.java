@@ -27,7 +27,6 @@ public class RingtoneAlarmFragment extends Fragment {
 
 
     private final String name;
-    private AudioManager audioManager;
     private String tone;
     private MediaPlayer mPlayer;
 
@@ -36,7 +35,7 @@ public class RingtoneAlarmFragment extends Fragment {
         super();
         this.name = name;
         this.tone = tone;
-        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
     }

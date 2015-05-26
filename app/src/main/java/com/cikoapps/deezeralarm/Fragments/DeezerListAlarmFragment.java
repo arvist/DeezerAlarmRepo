@@ -96,9 +96,8 @@ public class DeezerListAlarmFragment extends Fragment {
     private Application myApp;
     private ProgressBar controlProgress;
     private String currentPlayerState;
-    DialogListener listener = new DialogListener() {
+    private final DialogListener listener = new DialogListener() {
         public void onComplete(Bundle values) {
-            Log.e(TAG, "Authorization complete");
             SessionStore sessionStore = new SessionStore();
             sessionStore.save(deezerConnect, myApp);
             playAlarm();
@@ -121,7 +120,7 @@ public class DeezerListAlarmFragment extends Fragment {
             Log.e(TAG, e.getMessage());
         }
     };
-    CountDownTimer countDownTimer = new CountDownTimer(30 * 1000, 1000) {
+    private final CountDownTimer countDownTimer = new CountDownTimer(30 * 1000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
         }
@@ -136,7 +135,7 @@ public class DeezerListAlarmFragment extends Fragment {
             }
         }
     };
-    String[] permissions = new String[]{
+    private final String[] permissions = new String[]{
             Permissions.BASIC_ACCESS,
             Permissions.MANAGE_LIBRARY,
             Permissions.LISTENING_HISTORY};
@@ -148,11 +147,11 @@ public class DeezerListAlarmFragment extends Fragment {
         this.type = type;
         this.context = context;
         this.myApp = application;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((AlarmScreenActivity) context));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         maxVolume = preferences.getInt(SettingsActivity.MAX_ALARM_VOLUME, 8);
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_SHOW_UI);
-        imageArtworkDownload = new ImageArtworkDownload(((AlarmScreenActivity) context));
+        imageArtworkDownload = new ImageArtworkDownload((context));
         boolean allowToConnect;
         allowToConnect = isAllowedToConnect(wiFiBool, context);
         if (allowToConnect) {
@@ -181,10 +180,10 @@ public class DeezerListAlarmFragment extends Fragment {
         if (wiFiBool) {
             boolean wiFiConnected = (new HelperClass(context)).isWifiConnected();
             if (!wiFiConnected) {
-                Log.e(TAG, "Default ringtone, Wifi not Connected");
+                Log.e(TAG, "Default ringtone, WiFi not Connected");
                 allowToConnect = false;
             } else {
-                Log.e(TAG, "Playing only on WiFi, WiFi is Connected");
+                Log.e(TAG, "Playing on WiFi connection");
                 networkStateChecker = new WifiOnlyNetworkStateChecker();
                 allowToConnect = true;
             }
@@ -221,7 +220,6 @@ public class DeezerListAlarmFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "OnDestroy");
         if (player != null) {
             player.stop();
             player.release();
@@ -235,11 +233,7 @@ public class DeezerListAlarmFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e(TAG, "OnPause");
-    }
+
 
     private void initializeDismissButton() {
         dismissButton.setOnClickListener(new View.OnClickListener() {
@@ -256,7 +250,7 @@ public class DeezerListAlarmFragment extends Fragment {
                 } catch (IllegalStateException ignored) {
 
                 }
-                Intent intent = new Intent((((AlarmScreenActivity) context)), QuoteActivity.class);
+                Intent intent = new Intent(context, QuoteActivity.class);
                 (((AlarmScreenActivity) context)).finishApp();
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -292,13 +286,8 @@ public class DeezerListAlarmFragment extends Fragment {
             try {
                 player = new AlbumPlayer(myApp, deezerConnect, networkStateChecker);
                 //initPlaylistPlayer();
-            } catch (TooManyPlayersExceptions tooManyPlayersExceptions) {
+            } catch (TooManyPlayersExceptions | DeezerError tooManyPlayersExceptions) {
                 tooManyPlayersExceptions.printStackTrace();
-                playDefaultRingtone();
-                //Log.e(TAG, "Deezer Error " + tooManyPlayersExceptions.getMessage());
-            } catch (DeezerError deezerError) {
-                //Log.e(TAG, "Deezer Error " + deezerError.getMessage());
-                deezerError.printStackTrace();
                 playDefaultRingtone();
             }
             // Play album
@@ -309,7 +298,7 @@ public class DeezerListAlarmFragment extends Fragment {
 
     private void playDefaultRingtone() {
         Log.e(TAG, "Playing default ringtone");
-        audioManager = (AudioManager) ((AlarmScreenActivity) context).getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_PLAY_SOUND);
         try {
@@ -559,7 +548,7 @@ public class DeezerListAlarmFragment extends Fragment {
     }
 
     private void initializeLayoutViews(View view) {
-        Typeface robotoRegular = Typeface.createFromAsset(((AlarmScreenActivity) context).getAssets(), "Roboto-Regular.ttf");
+        Typeface robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         artistTextView = (TextView) view.findViewById(R.id.artistTextView);
         songTextView = (TextView) view.findViewById(R.id.songTextView);
         artistTextView.setTypeface(robotoRegular);
