@@ -22,9 +22,9 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo = new Solo(getInstrumentation(), getActivity());
     }
 
-    public void test1_buttons(){
+    public void test0_buttons() {
         solo.clickOnView(solo.getView("app_bar_settings"));
-        if(solo.waitForActivity(SettingsActivity.class)){
+        if (solo.waitForActivity(SettingsActivity.class)) {
             solo.goBack();
             if(solo.waitForActivity(MainActivity.class)){
                 solo.clickOnView(solo.getView("floatingActionButtonView"));
@@ -32,7 +32,8 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
             }
         }
     }
-    public void test0_alarmOptions() throws InterruptedException {
+
+    public void test1_alarmOptions() throws InterruptedException {
         if (solo.waitForView(solo.getView("floatingActionButtonView"))) {
             solo.clickOnView(solo.getView("floatingActionButtonView"));
         }

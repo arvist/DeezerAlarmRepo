@@ -112,6 +112,7 @@ public class WeatherFragment extends Fragment {
         return weatherLayout;
     }
 
+    // Update display every minute
     private void updateDisplay() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -175,6 +176,7 @@ public class WeatherFragment extends Fragment {
         dateTextView.setTypeface(robotoRegular);
     }
 
+    // Save renewed weather data
     private void saveWeatherToSharedPreferences(String summary, float tempC, float tempF, float windKmh, float windMph,
                                                 String city, String weatherImage) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -214,6 +216,7 @@ public class WeatherFragment extends Fragment {
         });
     }
 
+    // Set last saved weather data
     void setFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Calendar calendar = Calendar.getInstance();
@@ -848,6 +851,11 @@ public class WeatherFragment extends Fragment {
                             , Float.parseFloat(windSpeedKmph), Float.parseFloat(windSpeedMph), city, weatherCode);
 
                 } catch (JSONException ignored) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(context, "Error connecting to weather data provider", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
             refreshAnimation.cancel();
@@ -864,7 +872,11 @@ public class WeatherFragment extends Fragment {
                 HttpEntity httpEntity = httpResponse.getEntity();
                 is = httpEntity.getContent();
             } catch (IOException e) {
-                e.printStackTrace();
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(context, "Error connecting to weather data provider", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
             try {
                 assert is != null;
@@ -877,7 +889,7 @@ public class WeatherFragment extends Fragment {
                 is.close();
                 json = sb.toString();
                 jsonObject = new JSONObject(json);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 ((Activity) context).runOnUiThread(new Runnable() {
                     public void run() {
                         Toast.makeText(context, "Error connecting to weather data provider", Toast.LENGTH_SHORT).show();

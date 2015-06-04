@@ -66,6 +66,7 @@ public class DeezerRadioFragment extends Fragment {
         }
     }
 
+    // After becoming (in-)visible make app to check weather selected item across all activity has changed
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -135,6 +136,7 @@ public class DeezerRadioFragment extends Fragment {
                 Log.e(TAG, "Error getting radios " + e.getMessage());
             }
         };
+        // Request to Deezer API
         DeezerRequest currUserRadioRequest = DeezerRequestFactory.requestRadios();
         currUserRadioRequest.setId(TAG);
         ((RingtoneActivity) getActivity()).deezerConnect.requestAsync(currUserRadioRequest, requestListener);

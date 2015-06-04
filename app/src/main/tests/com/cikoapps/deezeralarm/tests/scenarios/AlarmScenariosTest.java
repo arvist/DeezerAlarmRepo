@@ -3,7 +3,6 @@ package com.cikoapps.deezeralarm.tests.scenarios;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
-
 import com.cikoapps.deezeralarm.activities.AddAlarmActivity;
 import com.cikoapps.deezeralarm.activities.AlarmScreenActivity;
 import com.cikoapps.deezeralarm.activities.EditAlarmActivity;
@@ -121,7 +120,7 @@ public class AlarmScenariosTest extends ActivityInstrumentationTestCase2<MainAct
                 solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.RIGHT);
                 solo.scrollViewToSide(solo.getView("ringtone_pager"), Solo.RIGHT);
                 Thread.sleep(3500);
-                solo.clickInList(3);
+                solo.clickOnScreen(500.00f, 366.66f);
                 solo.clickOnView(solo.getView("confirmRingtone"));
             }
             TextView ringtoneTextView = (TextView) solo.getView("ringtone");

@@ -44,6 +44,7 @@ public class DeviceRingtoneFragment extends Fragment {
         RingtoneActivity.selectedRingtone.updateRingtone(RingtoneActivity.RINGTONE_ID, uri, name);
     }
 
+    // After becoming (in-)visible make app to check weather selected item across all activity has changed
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -69,7 +70,7 @@ public class DeviceRingtoneFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // Launch async task to get Device Ringtone obj
         new RingtoneAcquire().execute();
         mediaPlayer = new MediaPlayer();
     }
@@ -94,13 +95,13 @@ public class DeviceRingtoneFragment extends Fragment {
             recyclerView.setAdapter(mAdapter);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
-        } catch (NullPointerException e) {
-            Log.e(TAG, "Null pointer exception");
+        } catch (NullPointerException ignored) {
         }
         recyclerView.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
     }
 
+    // Ringtone Acquire async task
     class RingtoneAcquire extends AsyncTask<Void, Integer, String> {
 
         @Override

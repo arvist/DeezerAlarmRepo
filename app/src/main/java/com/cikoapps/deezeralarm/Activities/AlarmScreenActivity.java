@@ -174,7 +174,7 @@ public class AlarmScreenActivity extends Activity {
             adView.destroy();
         }
     }
-
+    // To finish app from activity's fragment
     public void finishApp() {
         finish();
     }

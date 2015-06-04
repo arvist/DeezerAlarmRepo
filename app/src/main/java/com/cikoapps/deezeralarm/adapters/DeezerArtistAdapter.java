@@ -34,6 +34,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
 
     public DeezerArtistAdapter(Context mContext, ArrayList<DeezerArtist> deezerArtists) {
         deezerArtistList = deezerArtists;
+        // Add null object to list to prevent confirm button overlapping with last object
         deezerArtistList.add(null);
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();
@@ -53,6 +54,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
     public void onBindViewHolder(DeezerArtistViewHolder holder, final int position) {
         final DeezerArtist deezerArtist = deezerArtistList.get(position);
         if (deezerArtist == null) {
+            // Make last object invisible
             holder.artistRadioButton.setWillNotDraw(true);
             holder.artistImageView.setWillNotDraw(true);
             holder.artistTextView.setWillNotDraw(true);
@@ -71,7 +73,14 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
                 if (images.get(position) != null) {
                     holder.artistImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(deezerArtist.imageUrlMedium, holder.artistImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    try {
+                        new ImageLoadTask(deezerArtist.imageUrlMedium, holder.artistImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } catch (Exception ignored) {
+                        /* Can occur when list is being scrolled up and down  app creates
+                         a thread for every new image load task  if image is not in downloaded
+                          image list, and id thread pool is full exception is thrown
+                        */
+                    }
                 }
             }
             holder.artistRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +130,7 @@ public class DeezerArtistAdapter extends RecyclerView.Adapter<DeezerArtistAdapte
         }
     }
 
+    // Async task to load artist image to list object
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final String url;

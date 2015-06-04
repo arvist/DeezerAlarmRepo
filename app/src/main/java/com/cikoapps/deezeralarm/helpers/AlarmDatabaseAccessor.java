@@ -62,6 +62,7 @@ public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
         return true;
     }
 
+    // Create database for app use only
     private void createDataBase() {
         boolean dbExist = isDatabaseValid();
         if (!dbExist) {
@@ -160,6 +161,7 @@ public class AlarmDatabaseAccessor extends SQLiteOpenHelper {
         Cursor cursor = myDataBase.rawQuery("select * from alarm", null);
 
         if (cursor.moveToFirst()) {
+            // Parse database result set rows to alarm objects
             do {
                 int _id = cursor.getInt(cursor.getColumnIndex(_ID));
                 String title = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_ALARM_NAME));

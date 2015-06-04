@@ -120,6 +120,7 @@ public class DeezerListAlarmFragment extends Fragment {
             Log.e(TAG, e.getMessage());
         }
     };
+    // Gives time to start playing Deezer list alarm, if expires plays default ringtone
     private final CountDownTimer countDownTimer = new CountDownTimer(30 * 1000, 1000) {
         @Override
         public void onTick(long millisUntilFinished) {
@@ -155,17 +156,14 @@ public class DeezerListAlarmFragment extends Fragment {
         boolean allowToConnect;
         allowToConnect = isAllowedToConnect(wiFiBool, context);
         if (allowToConnect) {
-            Log.e(TAG, "Trying to restore deezer session");
             // Restore or Login Deezer Account
             SessionStore sessionStore = new SessionStore();
             deezerConnect = new DeezerConnect(context.getApplicationContext(), DeezerBase.APP_ID);
+            // Restore Deezer session
             if (sessionStore.restore(deezerConnect, context.getApplicationContext())) {
-                Log.e(TAG, "Deezer session restored");
                 playAlarm();
             } else {
-                Log.e(TAG, "Deezer session restore failed");
                 // Launches the authentication process
-                Log.e(TAG, "Authorizing deezer account");
                 deezerConnect.authorize((AlarmScreenActivity) context, permissions, listener);
                 countDownTimer.start();
             }
@@ -217,6 +215,7 @@ public class DeezerListAlarmFragment extends Fragment {
         return view;
     }
 
+    // Release players
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -233,8 +232,7 @@ public class DeezerListAlarmFragment extends Fragment {
         }
     }
 
-
-
+    // Dismiss button function setting
     private void initializeDismissButton() {
         dismissButton.setOnClickListener(new View.OnClickListener() {
             @Override

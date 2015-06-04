@@ -53,6 +53,7 @@ public class DeezerArtistFragment extends Fragment {
         RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ARTIST_ID, id, name, "");
     }
 
+    // After becoming (in-)visible make app to check weather selected item across all activity has changed
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -77,6 +78,7 @@ public class DeezerArtistFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         boolean WiFiConnected = (new HelperClass(context)).isWifiConnected();
+        // Decide between data download and internet usage warning text
         if ((onlyWiFi && WiFiConnected) || !onlyWiFi) {
             getUserArtists();
         } else {
@@ -103,6 +105,7 @@ public class DeezerArtistFragment extends Fragment {
                 if (localDeezerArtistList.size() < 1) {
                     localDeezerArtistList.add(new DeezerArtist(-1, "No artists found", "", false));
                 }
+                // Sort by name
                 Collections.sort(localDeezerArtistList, new Comparator<DeezerArtist>() {
                     @Override
                     public int compare(DeezerArtist lhs, DeezerArtist rhs) {
@@ -126,6 +129,7 @@ public class DeezerArtistFragment extends Fragment {
             }
         };
 
+        // Data request to Deezer API
         DeezerRequest currUserArtistRequest = DeezerRequestFactory.requestCurrentUserArtists();
         currUserArtistRequest.setId(TAG);
         ((RingtoneActivity) getActivity()).deezerConnect.requestAsync(currUserArtistRequest, requestListener);

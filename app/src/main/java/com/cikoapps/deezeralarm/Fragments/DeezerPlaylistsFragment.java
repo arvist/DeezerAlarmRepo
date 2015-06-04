@@ -57,6 +57,7 @@ public class DeezerPlaylistsFragment extends Fragment {
         RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.PLAYLIST_ID, id, name, "");
     }
 
+    // After becoming (in-)visible make app to check weather selected item across all activity has changed
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

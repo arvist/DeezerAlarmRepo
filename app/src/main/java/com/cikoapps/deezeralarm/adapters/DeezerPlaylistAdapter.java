@@ -39,6 +39,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
                 deezerPlaylistList.add(null);
         }
         inflater = LayoutInflater.from(mContext);
+        // Array list to hold images for list objects
         images = new ArrayList<>();
         for (int i = 0; i < deezerPlaylistList.size(); i++) {
             images.add(null);
@@ -56,6 +57,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
     public void onBindViewHolder(DeezerPlaylistViewHolder holder, final int position) {
         final DeezerPlaylist deezerPlaylist = deezerPlaylistList.get(position);
         if (deezerPlaylist == null) {
+            // Make last null object invisible
             holder.playlistChecked.setWillNotDraw(true);
             holder.playListImage.setWillNotDraw(true);
             holder.playListImage.setImageBitmap(null);
@@ -79,10 +81,18 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
                     if (images.get(position) != null) {
                         holder.playListImage.setImageBitmap(images.get(position));
                     } else {
-                        new ImageLoadTask(deezerPlaylist.imageUrlMedium, holder.playListImage, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        try {
+                            new ImageLoadTask(deezerPlaylist.imageUrlMedium, holder.playListImage, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        } catch (Exception ignored) {
+                        /* Can occur when list is being scrolled up and down  app creates
+                         a thread for every new image load task  if image is not in downloaded
+                          image list, and id thread pool is full exception is thrown
+                        */
+                        }
                     }
                 }
             }
+            // Manage radio button clicks
             holder.playlistChecked.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -134,6 +144,7 @@ public class DeezerPlaylistAdapter extends RecyclerView.Adapter<DeezerPlaylistAd
         }
     }
 
+    // Async task to load images
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final String url;

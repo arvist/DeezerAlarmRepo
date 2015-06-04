@@ -34,6 +34,7 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
 
     public DeezerAlbumAdapter(Context mContext, ArrayList<DeezerAlbum> deezerAlbums) {
         albumsList = deezerAlbums;
+        // Empty album object
         deezerAlbums.add(null);
         inflater = LayoutInflater.from(mContext);
         images = new ArrayList<>();
@@ -52,6 +53,7 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
     @Override
     public void onBindViewHolder(DeezerAlbumViewHolder holder, final int position) {
         final DeezerAlbum deezerAlbum = albumsList.get(position);
+        // Last object in list invisible
         if (deezerAlbum == null) {
             holder.albumRadioButton.setWillNotDraw(true);
             holder.albumImageView.setWillNotDraw(true);
@@ -59,6 +61,8 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
             holder.albumTitleTextView.setWillNotDraw(true);
             holder.albumImageView.setImageBitmap(null);
         } else {
+            // Enable all views to holder in case holder
+            // was being used to hold null object
             holder.albumRadioButton.setWillNotDraw(false);
             holder.albumImageView.setWillNotDraw(false);
             holder.albumArtistTextView.setWillNotDraw(false);
@@ -76,7 +80,14 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
                 if (images.get(position) != null) {
                     holder.albumImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(deezerAlbum.imageUrlMedium, holder.albumImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    try {
+                        new ImageLoadTask(deezerAlbum.imageUrlMedium, holder.albumImageView, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } catch (Exception ignored) {
+                        /* Can occur when list is being scrolled up and down  app creates
+                         a thread for every new image load task  if image is not in downloaded
+                          image list, and id thread pool is full exception is thrown
+                        */
+                    }
                 }
             }
             holder.albumRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +118,7 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
 
     }
 
+    // Count of object in list
     @Override
     public int getItemCount() {
         return albumsList.size();
@@ -130,16 +142,15 @@ public class DeezerAlbumAdapter extends RecyclerView.Adapter<DeezerAlbumAdapter.
         }
     }
 
+    // Async task to assign album images to list objects
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final String url;
-        private final ImageView imageView;
         private final int position;
 
         public ImageLoadTask(String url, ImageView imageView, int position) {
             this.url = url;
             this.position = position;
-            this.imageView = imageView;
         }
 
         @Override

@@ -119,7 +119,7 @@ public class DeviceRingtoneAdapter extends RecyclerView.Adapter<DeviceRingtoneAd
                                     }
                                 }, 4 * 1000);
                             }
-                        });
+                        }); // Stop sound after 4 seconds
                         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {

@@ -24,8 +24,8 @@ public class AddAlarmActivityTest extends ActivityInstrumentationTestCase2<AddAl
         solo = new Solo(getInstrumentation(), getActivity());
     }
 
-    public void test0_appBarActions() {
-        if (solo.waitForActivity(RingtoneActivity.class)) {
+    public void test2_appBarActions() {
+        if (solo.waitForActivity(AddAlarmActivity.class)) {
             solo.clickOnView(solo.getView("app_bar_settings"));
             if (solo.waitForActivity(SettingsActivity.class)) {
                 solo.clickOnView(solo.getView("app_bar_back_btn"));
@@ -33,7 +33,7 @@ public class AddAlarmActivityTest extends ActivityInstrumentationTestCase2<AddAl
         }
     }
 
-    public void test1_buttons() {
+    public void test2_buttons() {
         solo.clickOnView(solo.getView("radioButtonYes"));
         if (solo.waitForDialogToOpen()) {
             solo.clickOnText("Cancel");
@@ -48,21 +48,24 @@ public class AddAlarmActivityTest extends ActivityInstrumentationTestCase2<AddAl
         }
     }
 
-    public void test2_repeatedDayDialog() {
-        RadioButton repeatYes = (RadioButton) solo.getView("radioButtonYes");
-        solo.clickOnView(repeatYes);
-        if (solo.waitForDialogToOpen()) {
-            solo.clickInList(0);
-            solo.clickOnText("Cancel");
-            solo.waitForDialogToClose(1000);
+    public void test0_repeatedDayDialog() {
+        if (solo.waitForActivity(AddAlarmActivity.class)) {
 
-            assertFalse(repeatYes.isChecked());
+            RadioButton repeatYes = (RadioButton) solo.getView("radioButtonYes");
             solo.clickOnView(repeatYes);
             if (solo.waitForDialogToOpen()) {
                 solo.clickInList(0);
-                solo.clickInList(1);
-                solo.clickOnText("Done");
-                assertTrue(repeatYes.isChecked());
+                solo.clickOnText("Cancel");
+                solo.waitForDialogToClose(1000);
+
+                assertFalse(repeatYes.isChecked());
+                solo.clickOnView(repeatYes);
+                if (solo.waitForDialogToOpen()) {
+                    solo.clickInList(0);
+                    solo.clickInList(1);
+                    solo.clickOnText("Done");
+                    assertTrue(repeatYes.isChecked());
+                }
             }
         }
     }

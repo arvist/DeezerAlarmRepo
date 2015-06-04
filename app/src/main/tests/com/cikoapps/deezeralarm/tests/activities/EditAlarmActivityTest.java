@@ -73,7 +73,6 @@ public class EditAlarmActivityTest extends ActivityInstrumentationTestCase2<Edit
         assertTrue(((RadioButton)solo.getView("radioButtonYes")).isChecked());
         assertTrue((alarmToneName + " by " + title).equalsIgnoreCase(((TextView) solo.getView("setRingtoneTextView")).getText().toString()));
     }
-
     public void test2_timePicker(){
         solo.clickOnView(solo.getView("timeTextView"));
         if(solo.waitForDialogToOpen()){

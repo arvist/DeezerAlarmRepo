@@ -10,7 +10,6 @@
         import android.os.CountDownTimer;
         import android.support.v7.widget.Toolbar;
         import android.text.format.DateFormat;
-        import android.util.Log;
         import android.view.View;
         import android.widget.EditText;
         import android.widget.ImageButton;
@@ -246,8 +245,10 @@
                         }
                         if (ringtoneName != null) {
                             setRingtoneName(ringtoneName);
-                            ((TextView) findViewById(R.id.ringtone)).setText(ringtoneName);
                             ((TextView) findViewById(R.id.ringtone)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
+                        } else {
+                             ringtoneName = "Default ringtone";
+                            ((TextView) findViewById(R.id.ringtone)).setText(ringtoneName);
                         }
                     }
                 }
@@ -267,7 +268,7 @@
                     if (artist != null)
                         ringtoneName = ringtoneName.concat(" by " + artist);
                 }
-                if (alarmToneName.length() < 1) ringtoneName = "Default ringtone";
+                if (alarmToneName.length() <2) ringtoneName = "Default ringtone";
                 ((TextView) findViewById(R.id.ringtone)).setText(ringtoneName);
                 ((TextView) findViewById(R.id.ringtone)).setTypeface(Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf"));
 

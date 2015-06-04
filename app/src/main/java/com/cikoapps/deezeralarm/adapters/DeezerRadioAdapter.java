@@ -35,6 +35,7 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
         deezerRadioList = new ArrayList<>(deezerRadio);
         deezerRadioList.add(null);
         inflater = LayoutInflater.from(mContext);
+        // List to hold radio list object images
         images = new ArrayList<>();
         for (int i = 0; i < deezerRadioList.size(); i++) {
             images.add(null);
@@ -52,6 +53,7 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
     public void onBindViewHolder(DeezerRadioViewHolder holder, final int position) {
         final DeezerRadio deezerRadio = deezerRadioList.get(position);
         if (deezerRadio == null) {
+            // Make last null object in list invisible
             holder.radioRadioButton.setWillNotDraw(true);
             holder.radioTitleTextView.setWillNotDraw(true);
             holder.radioImageView.setWillNotDraw(true);
@@ -71,9 +73,17 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
                 if (images.get(position) != null) {
                     holder.radioImageView.setImageBitmap(images.get(position));
                 } else {
-                    new ImageLoadTask(deezerRadio.imageUrlMedium, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    try {
+                        new ImageLoadTask(deezerRadio.imageUrlMedium, position).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } catch (Exception ignored) {
+                        /* Can occur when list is being scrolled up and down  app creates
+                         a thread for every new image load task  if image is not in downloaded
+                          image list, and id thread pool is full exception is thrown
+                        */
+                    }
                 }
             }
+            // Handle radio button clicks on objects
             holder.radioRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,6 +132,7 @@ public class DeezerRadioAdapter extends RecyclerView.Adapter<DeezerRadioAdapter.
         }
     }
 
+    // Async task to load images to radio objects
     public class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final String url;

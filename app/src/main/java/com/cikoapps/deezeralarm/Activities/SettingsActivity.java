@@ -422,7 +422,35 @@ public class SettingsActivity extends DeezerBase {
         });
     }
 
-    /* Aquires Device ringtone list in background */
+    public SharedPreferences.Editor getSharedPreferencesEditor() {
+        return sharedPreferencesEditor;
+    }
+
+    public void setSelectedVolume(int selectedVolume) {
+        this.selectedVolume = selectedVolume;
+    }
+
+    public void setRefreshTime(int refreshTime) {
+        this.refreshTime = refreshTime;
+    }
+
+    public void setSelectedRingtone(int selectedRingtone) {
+        this.selectedRingtone = selectedRingtone;
+    }
+
+    public int getSelectedRingtone() {
+        return selectedRingtone;
+    }
+
+    public int getRefreshTime() {
+        return refreshTime;
+    }
+
+    public int getSelectedVolume() {
+        return selectedVolume;
+    }
+
+    /* Aquires Device ringtone list in background  */
     class RingtoneAcquire extends AsyncTask<Void, Integer, String> {
         @Override
         protected String doInBackground(Void... params) {

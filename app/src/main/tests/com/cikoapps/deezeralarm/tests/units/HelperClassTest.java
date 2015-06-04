@@ -20,44 +20,50 @@ public class HelperClassTest extends ActivityInstrumentationTestCase2<MainActivi
         helperClass = new HelperClass(activity.getApplicationContext());
     }
 
-    public void testGetMonthFromInt(){
+    public void test_getMonthFromInt() {
         assertTrue("January".equalsIgnoreCase(HelperClass.getMonthFromInt(0)));
         assertTrue("December".equalsIgnoreCase(HelperClass.getMonthFromInt(11)));
         assertNull(HelperClass.getMonthFromInt(-1));
         assertNull(HelperClass.getMonthFromInt(12));
     }
-    public void testRound(){
+
+    public void test_round() {
         assertEquals(3.41,HelperClass.round(3.4051,2));
-        assertEquals(3.4,HelperClass.round(3.4050,2));
         assertEquals(3.40,HelperClass.round(3.4049,2));
     }
-    public void testTimeConversion(){
+
+    public void test_timeConversion() {
         assertTrue("1 min 0 sec".equalsIgnoreCase(HelperClass.timeConversion(60)));
         assertTrue("1 h 0 min 0 sec".equalsIgnoreCase(HelperClass.timeConversion(3600)));
         assertTrue("1 h 59 min 59 sec".equalsIgnoreCase(HelperClass.timeConversion(7199)));
     }
-    public void testRandomInteger(){
+
+    public void test_randomInteger() {
         int randomInt = HelperClass.randomInteger(1,10);
         assertTrue( randomInt > 0 && randomInt < 11);
     }
-    public void testIsWifiConnected(){
+
+    public void test_isWifiConnected() {
         assertNotNull(helperClass.isWifiConnected());
     }
-    public void testHaveNetworkConnection(){
+
+    public void test_haveNetworkConnection() {
         assertNotNull(helperClass.haveNetworkConnection());
     }
-    public void testAllFalse(){
+
+    public void test_allFalse() {
         assertTrue(HelperClass.allFalse(new boolean[]{false,false,false}));
-        assertTrue(HelperClass.allFalse(new boolean[]{false}));
         assertFalse(HelperClass.allFalse(new boolean[]{false,true,false}));
         assertFalse(HelperClass.allFalse(new boolean[]{true}));
     }
-    public void testOneOrMoreTrue(){
+
+    public void test_oneOrMoreTrue() {
         assertTrue(helperClass.oneOrMoreTrue(new boolean[]{true,false}));
         assertTrue(helperClass.oneOrMoreTrue(new boolean[]{true,true}));
         assertFalse(helperClass.oneOrMoreTrue(new boolean[]{false,false}));
     }
-    public void testIsLocationEnabled(){
+
+    public void test_isLocationEnabled() {
         assertNotNull(helperClass.isLocationEnabled());
     }
 }

@@ -74,6 +74,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
     private Application myApp;
     private final Handler mHandler = new Handler();
     private DeezerConnect deezerConnect;
+    // Change seekbar every 0.1s
     private final Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             radioPlayer.addOnPlayerProgressListener(new OnPlayerProgressListener() {
@@ -113,9 +114,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 playRadioRingtone();
 
             } else {
-                Log.e(TAG, "Deezer session restore failed");
                 // Launches the authentication process
-                Log.e(TAG, "Authorizing deezer account");
                 DialogListener listener = new DialogListener() {
                     public void onComplete(Bundle values) {
                         SessionStore sessionStore = new SessionStore();
@@ -303,6 +302,7 @@ public class DeezerRadioAlarmFragment extends Fragment {
                 nextSongButton.setEnabled(false);
                 nextSongButton.setClickable(false);
                 nextSongButton.setImageResource(R.drawable.ic_av_cant_skip_next);
+                // To prevent chaning next song more often than after 2s
                 new CountDownTimer(2000, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
@@ -368,7 +368,6 @@ public class DeezerRadioAlarmFragment extends Fragment {
         radioPlayer.addOnPlayerStateChangeListener(new OnPlayerStateChangeListener() {
             @Override
             public void onPlayerStateChange(PlayerState playerState, long l) {
-                //Log.e(TAG, "PlayerStateChanged to - " + playerState.name());
                 if (playerState.compareTo(PlayerState.valueOf("PLAYING")) == 0) {
                     ((AlarmScreenActivity) context).runOnUiThread(new Runnable() {
                         @Override

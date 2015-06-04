@@ -53,6 +53,7 @@ public class DeezerAlbumFragment extends Fragment {
         RingtoneActivity.selectedRingtone.updateDeezerRingtone(RingtoneActivity.ALBUM_ID, id, name, artist);
     }
 
+    // After becoming (in-)visible make app to check weather selected item across all activity has changed
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -77,6 +78,7 @@ public class DeezerAlbumFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         boolean WiFiConnected = (new HelperClass(context)).isWifiConnected();
+        // Decide between data download and internet usage warning text
         if ((onlyWiFi && WiFiConnected) || !onlyWiFi) {
             getUserAlbums();
         } else {
@@ -101,6 +103,7 @@ public class DeezerAlbumFragment extends Fragment {
                 if (localDeezerAlbumList.size() < 1) {
                     localDeezerAlbumList.add(new DeezerAlbum(-1, "No albums found", "", ""));
                 }
+                // Sort by name
                 Collections.sort(localDeezerAlbumList, new Comparator<DeezerAlbum>() {
                     @Override
                     public int compare(DeezerAlbum lhs, DeezerAlbum rhs) {
@@ -123,6 +126,7 @@ public class DeezerAlbumFragment extends Fragment {
                 Log.e(TAG, "Getting user album error - " + e.getMessage());
             }
         };
+        // Data request to Deezer API
         DeezerRequest currUserAlbumRequest = DeezerRequestFactory.requestCurrentUserAlbums();
         currUserAlbumRequest.setId(TAG);
         ((RingtoneActivity) getActivity()).deezerConnect.requestAsync(currUserAlbumRequest, requestListener);

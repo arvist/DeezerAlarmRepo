@@ -36,6 +36,8 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         this.mainActivityObject = mainActivity;
         inflater = LayoutInflater.from(context);
         this.alarmList = alarmList;
+        // To have one empty alarm object at the end of list, so when user have scrolled view to bottom confirm
+        // choice do not overlap with last list object
         this.alarmList.add(new Alarm("", -1, -1, -1, false, new boolean[]{false, false, false, false, false, false, false}, false, "", "", -1, -1, ""));
         robotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         robotoBold = Typeface.createFromAsset(context.getAssets(), "Roboto-Bold.ttf");
@@ -47,6 +49,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         return new AlarmViewHolder(view);
     }
 
+    // Called each time when object is being binded to new view holder
     @Override
     public void onBindViewHolder(final AlarmViewHolder alarmViewHolder, final int position) {
         Alarm alarm = alarmList.get(position);
@@ -69,6 +72,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
         alarmViewHolder.alarmSwitch.setWillNotDraw(false);
 
+        // Bug in app-compat libary, for android versions under 5.0 switch view is not being shown
         int currentApiVersion = Build.VERSION.SDK_INT;
         if (currentApiVersion < Build.VERSION_CODES.LOLLIPOP) {
             alarmViewHolder.alarmSwitch.setThumbResource(R.drawable.apptheme_switch_thumb_holo_light);
@@ -77,6 +81,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
 
         alarmViewHolder.alarmSwitch.setChecked(alarm.enabled);
         {
+            // Set orange color for all repeated days
             for (int i = 0; i < alarmViewHolder.daysTextViewList.size(); i++) {
                 TextView dayTextView = alarmViewHolder.daysTextViewList.get(i);
                 dayTextView.setTextColor(context.getResources().getColor(R.color.colorPrimaryText));
@@ -88,6 +93,7 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
                 }
             }
         }
+        // Make last(empty) alarm object invisible
         if (position == alarmList.size() - 1) {
             alarmViewHolder.titleTextView.setTextColor(context.getResources().getColor(R.color.colorTransparent));
             alarmViewHolder.timeTextView.setTextColor(context.getResources().getColor(R.color.colorTransparent));
@@ -150,12 +156,13 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         }
     }
 
-
+    // Count of alarm objects in list
     @Override
     public int getItemCount() {
         return this.alarmList.size();
     }
 
+    // Delete alarm object from list
     public int removeItem(int pos) {
         int alarm = alarmList.get(pos).id;
         alarmList.remove(pos);
@@ -163,12 +170,14 @@ public class AlarmViewAdapter extends RecyclerView.Adapter<AlarmViewAdapter.Alar
         return alarm;
     }
 
+    // Turn On/Off alarm object
     public Alarm turnItem(int pos) {
         alarmList.get(pos).enabled = !alarmList.get(pos).enabled;
         notifyItemChanged(pos);
         return alarmList.get(pos);
     }
 
+    // Return alarm object when edit button is pressed
     public Alarm getEditAlarm(int pos) {
         return alarmList.get(pos);
     }
